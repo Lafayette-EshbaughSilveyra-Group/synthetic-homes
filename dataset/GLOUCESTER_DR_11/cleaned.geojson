@@ -1,0 +1,59 @@
+{
+  "type": "FeatureCollection",
+  "mappers": [],
+  "project": {
+    "id": "cb89dbac-da94-41db-aaa2-70aebb8ff08b",
+    "name": "Generated Project",
+    "begin_date": "2024-06-26T00:00:00Z",
+    "end_date": "2025-06-26T00:00:00Z",
+    "cec_climate_zone": null,
+    "climate_zone": "4A",
+    "default_template": "90.1-2013",
+    "import_surrounding_buildings_as_shading": null,
+    "surface_elevation": null,
+    "tariff_filename": null,
+    "timesteps_per_hour": 1,
+    "weather_filename": "weather.epw"
+  },
+  "scenarios": [
+    {
+      "feature_mappings": [],
+      "id": "ddf79959-9bc4-42d3-a21a-e3407e99838a",
+      "name": "Base Scenario"
+    }
+  ],
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "2ec6a1ea-8f28-40b1-b75a-95ecd253c10a",
+        "name": "Generated Home",
+        "type": "Building",
+        "building_type": "Single family",
+        "floor_area": 2322,
+        "number_of_stories": 1,
+        "inspection_note": "The home, built in 1976, features aluminum/vinyl siding which appears to be in average condition. The windows seem original and could potentially benefit from upgrading to improve insulation and energy efficiency. The electric warm air heating system, combined with air conditioning, suggests modern HVAC amenities. The basement is fully finished, likely providing additional living space. Overall, the property is well-maintained but may benefit from updated insulation and window replacements to enhance energy efficiency.",
+        "Year Built": "1976",
+        "Total Square Feet Living Area": "2,322",
+        "Building Style": "BI-LEVEL",
+        "Exterior Wall Material": "ALUMINUM/VINYL SIDING",
+        "Heating Fuel Type": "ELECTRIC",
+        "Heating System Type": "WARM AIR",
+        "Heat/Air Cond": "AIR COND",
+        "Bedrooms": "4",
+        "Full Baths": "3",
+        "Half Baths": "0",
+        "Basement": "FULL",
+        "Number of Stories": "1",
+        "Grade": "B- - GOOD -"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.1652,
+          40.0379
+        ]
+      }
+    }
+  ]
+}

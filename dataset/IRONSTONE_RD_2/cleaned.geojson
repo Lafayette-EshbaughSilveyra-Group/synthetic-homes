@@ -1,0 +1,59 @@
+{
+  "type": "FeatureCollection",
+  "mappers": [],
+  "project": {
+    "id": "6337607c-ee37-4f2e-859e-2da00acb8bea",
+    "name": "Generated Project",
+    "begin_date": "2024-06-26T00:00:00Z",
+    "end_date": "2025-06-26T00:00:00Z",
+    "cec_climate_zone": null,
+    "climate_zone": "4A",
+    "default_template": "90.1-2013",
+    "import_surrounding_buildings_as_shading": null,
+    "surface_elevation": null,
+    "tariff_filename": null,
+    "timesteps_per_hour": 1,
+    "weather_filename": "weather.epw"
+  },
+  "scenarios": [
+    {
+      "feature_mappings": [],
+      "id": "15fd9b54-1950-4673-8b27-0ab69d564a63",
+      "name": "Base Scenario"
+    }
+  ],
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "62af0323-7eea-495f-85d3-e5aa4ec07187",
+        "name": "Generated Home",
+        "type": "Building",
+        "building_type": "Single family",
+        "floor_area": 2300,
+        "number_of_stories": 1,
+        "inspection_note": "The home, built in 1969, features a bi-level design with a full brick exterior, which provides moderate insulation. The electric warm air heating system is typical for this era, but checking its efficiency could be beneficial. The windows appear original and may lack modern energy efficiency, suggesting potential upgrades. Overall, the home is in good condition, but updating insulation and windows could substantially improve energy efficiency.",
+        "Year Built": "1969",
+        "Total Square Feet Living Area": "2300",
+        "Building Style": "BI-LEVEL",
+        "Exterior Wall Material": "BRICK",
+        "Heating Fuel Type": "ELECTRIC",
+        "Heating System Type": "WARM AIR",
+        "Heat/Air Cond": "NORMAL",
+        "Bedrooms": "3",
+        "Full Baths": "1",
+        "Half Baths": "1",
+        "Basement": "FULL",
+        "Number of Stories": "1",
+        "Grade": "C+ - AVERAGE +"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.1652,
+          39.9526
+        ]
+      }
+    }
+  ]
+}

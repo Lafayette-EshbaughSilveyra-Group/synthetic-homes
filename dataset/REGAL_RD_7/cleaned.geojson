@@ -1,0 +1,59 @@
+{
+  "type": "FeatureCollection",
+  "mappers": [],
+  "project": {
+    "id": "53e61781-cf24-4061-9c65-d2584dbd4162",
+    "name": "Generated Project",
+    "begin_date": "2024-06-26T00:00:00Z",
+    "end_date": "2025-06-26T00:00:00Z",
+    "cec_climate_zone": null,
+    "climate_zone": "4A",
+    "default_template": "90.1-2013",
+    "import_surrounding_buildings_as_shading": null,
+    "surface_elevation": null,
+    "tariff_filename": null,
+    "timesteps_per_hour": 1,
+    "weather_filename": "weather.epw"
+  },
+  "scenarios": [
+    {
+      "feature_mappings": [],
+      "id": "f4569603-bc05-4062-9559-54cc20b8431d",
+      "name": "Base Scenario"
+    }
+  ],
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "25632991-72e0-4534-8a14-48f389646e00",
+        "name": "Generated Home",
+        "type": "Building",
+        "building_type": "Single family",
+        "floor_area": 2398,
+        "number_of_stories": 2,
+        "inspection_note": "The home appears to be well-maintained with aluminum/vinyl siding providing decent insulation. The warm air heating system is electric, which can be efficient but should be evaluated for upgrades if it hasn't been updated since installation. The presence of air conditioning suggests good climate control. Windows seem to be in good condition; however, checking for drafts or older seals would be wise. The full basement might benefit from additional insulation to improve energy efficiency. Overall, the property is in excellent condition with potential for minor energy efficiency improvements.",
+        "Year Built": "1992",
+        "Total Square Feet Living Area": "2398",
+        "Building Style": "COLONIAL",
+        "Exterior Wall Material": "ALUMINUM/VINYL SIDING",
+        "Heating Fuel Type": "ELECTRIC",
+        "Heating System Type": "WARM AIR",
+        "Heat/Air Cond": "AIR COND",
+        "Bedrooms": "4",
+        "Full Baths": "2",
+        "Half Baths": "1",
+        "Basement": "FULL",
+        "Number of Stories": "2",
+        "Grade": "B - GOOD"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.1945,
+          40.0416
+        ]
+      }
+    }
+  ]
+}

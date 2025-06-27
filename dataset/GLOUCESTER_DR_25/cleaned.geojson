@@ -1,0 +1,59 @@
+{
+  "type": "FeatureCollection",
+  "mappers": [],
+  "project": {
+    "id": "25feb3c8-179f-4ceb-92ba-ba47f549f895",
+    "name": "Generated Project",
+    "begin_date": "2024-06-26T00:00:00Z",
+    "end_date": "2025-06-26T00:00:00Z",
+    "cec_climate_zone": null,
+    "climate_zone": "4A",
+    "default_template": "90.1-2013",
+    "import_surrounding_buildings_as_shading": null,
+    "surface_elevation": null,
+    "tariff_filename": null,
+    "timesteps_per_hour": 1,
+    "weather_filename": "weather.epw"
+  },
+  "scenarios": [
+    {
+      "feature_mappings": [],
+      "id": "fcdaef64-3856-4aa4-b292-4d5fd69c08b6",
+      "name": "Base Scenario"
+    }
+  ],
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "0d642ad2-e82e-4d29-a845-73514c244469",
+        "name": "Generated Home",
+        "type": "Building",
+        "building_type": "Single family",
+        "floor_area": 3060,
+        "number_of_stories": 2,
+        "inspection_note": "The home appears to be a well-maintained colonial style built in 1990. The aluminum/vinyl siding is in average condition, potentially providing moderate insulation. The HVAC system is electric with warm air distribution, which may benefit from an efficiency upgrade if original. Windows are double-pane and seem well-sealed, though checking for drafts could be beneficial. No recent upgrades are visible, but the structure suggests a solid energy performance typical of its era.",
+        "Year Built": "1990",
+        "Total Square Feet Living Area": "3060",
+        "Building Style": "COLONIAL",
+        "Exterior Wall Material": "ALUMINUM/VINYL SIDING",
+        "Heating Fuel Type": "ELECTRIC",
+        "Heating System Type": "WARM AIR",
+        "Heat/Air Cond": "AIR COND",
+        "Bedrooms": "4",
+        "Full Baths": "2",
+        "Half Baths": "1",
+        "Basement": "FULL",
+        "Number of Stories": "2",
+        "Grade": "B - GOOD"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.5995,
+          40.7754
+        ]
+      }
+    }
+  ]
+}

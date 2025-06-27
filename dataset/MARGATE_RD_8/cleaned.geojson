@@ -1,0 +1,59 @@
+{
+  "type": "FeatureCollection",
+  "mappers": [],
+  "project": {
+    "id": "63babe21-ac3f-4295-9968-9aa90f45296b",
+    "name": "Generated Project",
+    "begin_date": "2024-06-26T00:00:00Z",
+    "end_date": "2025-06-26T00:00:00Z",
+    "cec_climate_zone": null,
+    "climate_zone": "4A",
+    "default_template": "90.1-2013",
+    "import_surrounding_buildings_as_shading": null,
+    "surface_elevation": null,
+    "tariff_filename": null,
+    "timesteps_per_hour": 1,
+    "weather_filename": "weather.epw"
+  },
+  "scenarios": [
+    {
+      "feature_mappings": [],
+      "id": "bed2a5ab-0362-439f-864e-b6a25bef819e",
+      "name": "Base Scenario"
+    }
+  ],
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "78da1dc2-92c2-4c54-abb9-556b68009991",
+        "name": "Generated Home",
+        "type": "Building",
+        "building_type": "Single family",
+        "floor_area": 3994,
+        "number_of_stories": 2,
+        "inspection_note": "The home, built in 1990, is a well-maintained colonial style with a full brick exterior, which provides good thermal mass and energy efficiency. The electric warm air heating system appears to be in good condition, but its efficiency will depend on its age and maintenance history. Central air conditioning is present, offering modern climate control. Windows are double-hung and seem to be in good condition, likely providing adequate insulation. No obvious signs of energy-efficient upgrades such as solar panels or advanced insulation materials are visible. Overall, the property is in good condition but could benefit from a review of the HVAC system's efficiency.",
+        "Year Built": "1990",
+        "Total Square Feet Living Area": "3,994",
+        "Building Style": "COLONIAL",
+        "Exterior Wall Material": "BRICK",
+        "Heating Fuel Type": "ELECTRIC",
+        "Heating System Type": "WARM AIR",
+        "Heat/Air Cond": "AIR COND",
+        "Bedrooms": "5",
+        "Full Baths": "3",
+        "Half Baths": "1",
+        "Basement": "FULL",
+        "Number of Stories": "2",
+        "Grade": "B - GOOD"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.1652,
+          39.9526
+        ]
+      }
+    }
+  ]
+}

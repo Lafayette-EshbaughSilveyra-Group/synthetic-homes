@@ -1,0 +1,6 @@
+{
+  "insulation": 0.25,
+  "windows": 0.5,
+  "hvac": 0.75,
+  "sealing": 0.5
+}

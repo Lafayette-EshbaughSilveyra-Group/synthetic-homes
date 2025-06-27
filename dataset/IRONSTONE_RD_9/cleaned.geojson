@@ -1,0 +1,59 @@
+{
+  "type": "FeatureCollection",
+  "mappers": [],
+  "project": {
+    "id": "0988355e-c9af-467a-b5a3-a40d4d4550a1",
+    "name": "Generated Project",
+    "begin_date": "2024-06-26T00:00:00Z",
+    "end_date": "2025-06-26T00:00:00Z",
+    "cec_climate_zone": null,
+    "climate_zone": "4A",
+    "default_template": "90.1-2013",
+    "import_surrounding_buildings_as_shading": null,
+    "surface_elevation": null,
+    "tariff_filename": null,
+    "timesteps_per_hour": 1,
+    "weather_filename": "weather.epw"
+  },
+  "scenarios": [
+    {
+      "feature_mappings": [],
+      "id": "22122a61-65ed-4ecf-b330-e985b8528a32",
+      "name": "Base Scenario"
+    }
+  ],
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "a8c59c6c-cfcc-4a92-adb6-4bf6d6bb7b3c",
+        "name": "Generated Home",
+        "type": "Building",
+        "building_type": "Single family",
+        "floor_area": 2544,
+        "number_of_stories": 2,
+        "inspection_note": "The home, built in 1968, is a two-story Colonial style. The exterior is masonry/frame, suggesting good insulation. The electric warm air heating system is standard; however, the age may affect efficiency. Windows appear to be older, possibly affecting heat retention. Overall, the property is well-maintained, but upgrades to insulation or windows could enhance energy efficiency.",
+        "Year Built": "1968",
+        "Total Square Feet Living Area": "2,544",
+        "Building Style": "COLONIAL",
+        "Exterior Wall Material": "MASONRY/FRAME",
+        "Heating Fuel Type": "ELECTRIC",
+        "Heating System Type": "WARM AIR",
+        "Heat/Air Cond": "NORMAL",
+        "Bedrooms": "3",
+        "Full Baths": "1",
+        "Half Baths": "1",
+        "Basement": "FULL",
+        "Number of Stories": "2",
+        "Grade": "C+ - AVERAGE +"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.5,
+          40.5
+        ]
+      }
+    }
+  ]
+}

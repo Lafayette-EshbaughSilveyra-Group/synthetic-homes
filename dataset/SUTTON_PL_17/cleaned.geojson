@@ -1,0 +1,59 @@
+{
+  "type": "FeatureCollection",
+  "mappers": [],
+  "project": {
+    "id": "14b04d2f-2014-4d01-9105-39e0dc3ca5b2",
+    "name": "Generated Project",
+    "begin_date": "2024-06-26T00:00:00Z",
+    "end_date": "2025-06-26T00:00:00Z",
+    "cec_climate_zone": null,
+    "climate_zone": "4A",
+    "default_template": "90.1-2013",
+    "import_surrounding_buildings_as_shading": null,
+    "surface_elevation": null,
+    "tariff_filename": null,
+    "timesteps_per_hour": 1,
+    "weather_filename": "weather.epw"
+  },
+  "scenarios": [
+    {
+      "feature_mappings": [],
+      "id": "b322d3e6-3b52-4010-8322-daf39209f958",
+      "name": "Base Scenario"
+    }
+  ],
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "4dbf8b87-4151-4553-9a35-a00e3a7a2c3d",
+        "name": "Generated Home",
+        "type": "Building",
+        "building_type": "Single family",
+        "floor_area": 3260,
+        "number_of_stories": 2,
+        "inspection_note": "The home, built in 1976, is a colonial-style structure with aluminum/vinyl siding. The exterior appears well-maintained, suggesting good insulation which is crucial for energy efficiency. The warm air heating system is electric and includes air conditioning, which may benefit from a modern upgrade to enhance efficiency. Windows seem original and might be improved with double glazing to reduce heat loss. The full basement is present but not finished, providing potential for future insulation improvements. Overall, the property is in good condition with opportunities for energy efficiency upgrades.",
+        "Year Built": "1976",
+        "Total Square Feet Living Area": "3,260",
+        "Building Style": "COLONIAL",
+        "Exterior Wall Material": "ALUMINUM/VINYL SIDING",
+        "Heating Fuel Type": "ELECTRIC",
+        "Heating System Type": "WARM AIR",
+        "Heat/Air Cond": "AIR COND",
+        "Bedrooms": "4",
+        "Full Baths": "4",
+        "Half Baths": "0",
+        "Basement": "FULL",
+        "Number of Stories": "2",
+        "Grade": "B+ - GOOD +"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.1652,
+          40.0026
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "type": "FeatureCollection",
+  "mappers": [],
+  "project": {
+    "id": "7372d207-09a0-4bf0-8db8-41fee4801561",
+    "name": "Generated Project",
+    "begin_date": "2024-06-26T00:00:00Z",
+    "end_date": "2025-06-26T00:00:00Z",
+    "cec_climate_zone": null,
+    "climate_zone": "4A",
+    "default_template": "90.1-2013",
+    "import_surrounding_buildings_as_shading": null,
+    "surface_elevation": null,
+    "tariff_filename": null,
+    "timesteps_per_hour": 1,
+    "weather_filename": "weather.epw"
+  },
+  "scenarios": [
+    {
+      "feature_mappings": [],
+      "id": "2e6e9a9d-c090-4da2-9213-4bb0f4027617",
+      "name": "Base Scenario"
+    }
+  ],
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "13acacba-5ca4-42ed-be9e-24cd84827aba",
+        "name": "Generated Home",
+        "type": "Building",
+        "building_type": "Single family",
+        "floor_area": 2184,
+        "number_of_stories": 2,
+        "inspection_note": "The home, built in 1987, features aluminum/vinyl siding which appears to be in good condition. The electric warm air heating system is paired with air conditioning, suggesting a well-maintained HVAC system. The windows seem relatively modern, likely double-glazed, aiding in energy efficiency. The full basement is a plus for insulation, though further inspection of its sealing is recommended. Overall, the property reflects a colonial style with good energy efficiency features for its age.",
+        "Year Built": "1987",
+        "Total Square Feet Living Area": "2,184",
+        "Building Style": "COLONIAL",
+        "Exterior Wall Material": "ALUMINUM/VINYL SIDING",
+        "Heating Fuel Type": "ELECTRIC",
+        "Heating System Type": "WARM AIR",
+        "Heat/Air Cond": "AIR COND",
+        "Bedrooms": "4",
+        "Full Baths": "2",
+        "Half Baths": "1",
+        "Basement": "FULL",
+        "Number of Stories": "2",
+        "Grade": "B - GOOD"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.1652,
+          39.9526
+        ]
+      }
+    }
+  ]
+}

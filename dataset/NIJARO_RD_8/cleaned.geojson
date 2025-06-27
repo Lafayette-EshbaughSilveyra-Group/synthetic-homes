@@ -1,0 +1,59 @@
+{
+  "type": "FeatureCollection",
+  "mappers": [],
+  "project": {
+    "id": "fc5ee49e-3da5-467a-b780-2e11892f8107",
+    "name": "Generated Project",
+    "begin_date": "2024-06-26T00:00:00Z",
+    "end_date": "2025-06-26T00:00:00Z",
+    "cec_climate_zone": null,
+    "climate_zone": "4A",
+    "default_template": "90.1-2013",
+    "import_surrounding_buildings_as_shading": null,
+    "surface_elevation": null,
+    "tariff_filename": null,
+    "timesteps_per_hour": 1,
+    "weather_filename": "weather.epw"
+  },
+  "scenarios": [
+    {
+      "feature_mappings": [],
+      "id": "1b450453-8126-4e1a-9754-6bc0d1e68741",
+      "name": "Base Scenario"
+    }
+  ],
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "89038743-f77d-4b29-bdc7-8a6445842440",
+        "name": "Generated Home",
+        "type": "Building",
+        "building_type": "Single family",
+        "floor_area": 2324,
+        "number_of_stories": 2,
+        "inspection_note": "The home, built in 1987, appears well-maintained with aluminum/vinyl siding that provides decent insulation. The windows are double-glazed, which should offer good thermal performance. The electric warm air heating system seems original, suggesting it might be nearing the end of its effective lifespan. The presence of central air conditioning is a plus for energy efficiency. No significant upgrades or issues were visible, but checking the insulation in the attic and walls is recommended for optimal energy savings.",
+        "Year Built": "1987",
+        "Total Square Feet Living Area": "2,324",
+        "Building Style": "COLONIAL",
+        "Exterior Wall Material": "ALUMINUM/VINYL SIDING",
+        "Heating Fuel Type": "ELECTRIC",
+        "Heating System Type": "WARM AIR",
+        "Heat/Air Cond": "AIR COND",
+        "Bedrooms": "4",
+        "Full Baths": "2",
+        "Half Baths": "1",
+        "Basement": "FULL",
+        "Number of Stories": "2",
+        "Grade": "B - GOOD"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.1652,
+          39.9526
+        ]
+      }
+    }
+  ]
+}

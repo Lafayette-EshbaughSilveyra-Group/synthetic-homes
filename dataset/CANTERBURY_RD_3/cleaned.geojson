@@ -1,0 +1,59 @@
+{
+  "type": "FeatureCollection",
+  "mappers": [],
+  "project": {
+    "id": "6c008731-344e-4981-8e61-ca491d0771d2",
+    "name": "Generated Project",
+    "begin_date": "2024-06-26T00:00:00Z",
+    "end_date": "2025-06-26T00:00:00Z",
+    "cec_climate_zone": null,
+    "climate_zone": "4A",
+    "default_template": "90.1-2013",
+    "import_surrounding_buildings_as_shading": null,
+    "surface_elevation": null,
+    "tariff_filename": null,
+    "timesteps_per_hour": 1,
+    "weather_filename": "weather.epw"
+  },
+  "scenarios": [
+    {
+      "feature_mappings": [],
+      "id": "8dd11433-e770-4136-91ca-dc5732d5c796",
+      "name": "Base Scenario"
+    }
+  ],
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "0ebf8dc6-9250-4590-a3b4-ed397de9acc7",
+        "name": "Generated Home",
+        "type": "Building",
+        "building_type": "Single family",
+        "floor_area": 2793,
+        "number_of_stories": 2,
+        "inspection_note": "The home appears to be well-maintained with aluminum/vinyl siding, providing decent insulation. The electric warm air heating system is typical for homes of this age, but efficiency can vary. Windows look to be double-pane, which helps with energy efficiency. The HVAC system includes air conditioning, indicating a focus on comfort. Overall, the building is in good condition, with no major energy efficiency issues visible. Consider evaluating the age of the HVAC system for potential upgrades.",
+        "Year Built": "1993",
+        "Total Square Feet Living Area": "2,793",
+        "Building Style": "COLONIAL",
+        "Exterior Wall Material": "ALUMINUM/VINYL SIDING",
+        "Heating Fuel Type": "ELECTRIC",
+        "Heating System Type": "WARM AIR",
+        "Heat/Air Cond": "AIR COND",
+        "Bedrooms": "4",
+        "Full Baths": "2",
+        "Half Baths": "1",
+        "Basement": "FULL",
+        "Number of Stories": "2",
+        "Grade": "B+ - GOOD +"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.1652,
+          39.9526
+        ]
+      }
+    }
+  ]
+}

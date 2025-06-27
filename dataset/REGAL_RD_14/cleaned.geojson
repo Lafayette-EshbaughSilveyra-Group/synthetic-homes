@@ -1,0 +1,59 @@
+{
+  "type": "FeatureCollection",
+  "mappers": [],
+  "project": {
+    "id": "aa847fb9-703f-4f58-acc2-f77ff5b85ed3",
+    "name": "Generated Project",
+    "begin_date": "2024-06-26T00:00:00Z",
+    "end_date": "2025-06-26T00:00:00Z",
+    "cec_climate_zone": null,
+    "climate_zone": "4A",
+    "default_template": "90.1-2013",
+    "import_surrounding_buildings_as_shading": null,
+    "surface_elevation": null,
+    "tariff_filename": null,
+    "timesteps_per_hour": 1,
+    "weather_filename": "weather.epw"
+  },
+  "scenarios": [
+    {
+      "feature_mappings": [],
+      "id": "f9de0813-5f25-4877-b3fa-9c9b7aa9a8b9",
+      "name": "Base Scenario"
+    }
+  ],
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "9395a783-524a-434e-ad73-6830283e0ba4",
+        "name": "Generated Home",
+        "type": "Building",
+        "building_type": "Single family",
+        "floor_area": 2350,
+        "number_of_stories": 2,
+        "inspection_note": "The house, built in 1991, appears to be in excellent condition with aluminum/vinyl siding, which provides good insulation. The Colonial style home has a full basement and features a warm air electric heating system with air conditioning. Windows seem well-maintained, likely double-paned, enhancing energy efficiency. Overall, the property is in good shape with no visible signs of energy-related issues. Any HVAC upgrades would potentially improve efficiency.",
+        "Year Built": "1991",
+        "Total Square Feet Living Area": "2,350",
+        "Building Style": "COLONIAL",
+        "Exterior Wall Material": "ALUMINUM/VINYL SIDING",
+        "Heating Fuel Type": "ELECTRIC",
+        "Heating System Type": "WARM AIR",
+        "Heat/Air Cond": "AIR COND",
+        "Bedrooms": "4",
+        "Full Baths": "2",
+        "Half Baths": "1",
+        "Basement": "FULL",
+        "Number of Stories": "2",
+        "Grade": "B - GOOD"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.1652,
+          39.9526
+        ]
+      }
+    }
+  ]
+}

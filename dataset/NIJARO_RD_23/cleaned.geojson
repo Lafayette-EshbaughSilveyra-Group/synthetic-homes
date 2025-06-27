@@ -1,0 +1,59 @@
+{
+  "type": "FeatureCollection",
+  "mappers": [],
+  "project": {
+    "id": "08044a30-43dc-4a87-98e5-9ca1a8460365",
+    "name": "Generated Project",
+    "begin_date": "2024-06-26T00:00:00Z",
+    "end_date": "2025-06-26T00:00:00Z",
+    "cec_climate_zone": null,
+    "climate_zone": "4A",
+    "default_template": "90.1-2013",
+    "import_surrounding_buildings_as_shading": null,
+    "surface_elevation": null,
+    "tariff_filename": null,
+    "timesteps_per_hour": 1,
+    "weather_filename": "weather.epw"
+  },
+  "scenarios": [
+    {
+      "feature_mappings": [],
+      "id": "96c60ba0-6bee-47bf-8d51-631a79b47df7",
+      "name": "Base Scenario"
+    }
+  ],
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "739aaf11-e7c3-4c11-8c22-15e3be5c24df",
+        "name": "Generated Home",
+        "type": "Building",
+        "building_type": "Single family",
+        "floor_area": 2066,
+        "number_of_stories": 2,
+        "inspection_note": "The home, built in 1977, shows typical energy efficiency for its age. The aluminum/vinyl siding appears well-maintained, suggesting moderate insulation effectiveness. Windows seem original and may benefit from upgrades to double-pane for improved energy retention. The heating system uses warm air but lacks a specified fuel type, indicating potential for energy savings with a modern upgrade. The HVAC system is rated as normal, suggesting average performance. Consider inspecting the attic and basement for additional insulation opportunities.",
+        "Year Built": "1977",
+        "Total Square Feet Living Area": "2,066",
+        "Building Style": "COLONIAL",
+        "Exterior Wall Material": "ALUMINUM/VINYL SIDING",
+        "Heating Fuel Type": "UNKNOWN/NONE",
+        "Heating System Type": "WARM AIR",
+        "Heat/Air Cond": "NORMAL",
+        "Bedrooms": "4",
+        "Full Baths": "2",
+        "Half Baths": "1",
+        "Basement": "FULL",
+        "Number of Stories": "2",
+        "Grade": "C+ - AVERAGE +"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.1652,
+          39.9526
+        ]
+      }
+    }
+  ]
+}

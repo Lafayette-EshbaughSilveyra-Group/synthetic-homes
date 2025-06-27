@@ -1,0 +1,59 @@
+{
+  "type": "FeatureCollection",
+  "mappers": [],
+  "project": {
+    "id": "22ebd23d-1a1c-4f51-91ec-ecda601a2509",
+    "name": "Generated Project",
+    "begin_date": "2024-06-26T00:00:00Z",
+    "end_date": "2025-06-26T00:00:00Z",
+    "cec_climate_zone": null,
+    "climate_zone": "4A",
+    "default_template": "90.1-2013",
+    "import_surrounding_buildings_as_shading": null,
+    "surface_elevation": null,
+    "tariff_filename": null,
+    "timesteps_per_hour": 1,
+    "weather_filename": "weather.epw"
+  },
+  "scenarios": [
+    {
+      "feature_mappings": [],
+      "id": "6267e9bc-c897-4c9f-88b8-d1f4dd46db1b",
+      "name": "Base Scenario"
+    }
+  ],
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "5cb453fe-717c-4791-b068-e211ee0810b6",
+        "name": "Generated Home",
+        "type": "Building",
+        "building_type": "Single family",
+        "floor_area": 2741,
+        "number_of_stories": 2,
+        "inspection_note": "The home, built in 1989, appears to have well-maintained aluminum/vinyl siding, indicating good insulation properties for its age. The heating system is electric warm air with air conditioning, suggesting a focus on energy efficiency, though the system's age should be verified for optimal performance. Windows look original; upgrading to double-pane could improve energy retention. The colonial style home with a full basement and two stories is in good condition, but ensuring proper insulation in the attic and basement areas would enhance energy savings.",
+        "Year Built": "1989",
+        "Total Square Feet Living Area": "2,741",
+        "Building Style": "COLONIAL",
+        "Exterior Wall Material": "ALUMINUM/VINYL SIDING",
+        "Heating Fuel Type": "ELECTRIC",
+        "Heating System Type": "WARM AIR",
+        "Heat/Air Cond": "AIR COND",
+        "Bedrooms": "4",
+        "Full Baths": "2",
+        "Half Baths": "1",
+        "Basement": "FULL",
+        "Number of Stories": "2",
+        "Grade": "B+ - GOOD +"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.1652,
+          39.9526
+        ]
+      }
+    }
+  ]
+}

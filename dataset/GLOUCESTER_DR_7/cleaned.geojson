@@ -1,0 +1,59 @@
+{
+  "type": "FeatureCollection",
+  "mappers": [],
+  "project": {
+    "id": "41a59fc6-53b5-4c67-9145-09718a67a9be",
+    "name": "Generated Project",
+    "begin_date": "2024-06-26T00:00:00Z",
+    "end_date": "2025-06-26T00:00:00Z",
+    "cec_climate_zone": null,
+    "climate_zone": "4A",
+    "default_template": "90.1-2013",
+    "import_surrounding_buildings_as_shading": null,
+    "surface_elevation": null,
+    "tariff_filename": null,
+    "timesteps_per_hour": 1,
+    "weather_filename": "weather.epw"
+  },
+  "scenarios": [
+    {
+      "feature_mappings": [],
+      "id": "28179b23-7c8f-4031-b9c7-bce50a4312cd",
+      "name": "Base Scenario"
+    }
+  ],
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "78999f4b-6233-4ee9-8473-30c0757f60a3",
+        "name": "Generated Home",
+        "type": "Building",
+        "building_type": "Single family",
+        "floor_area": 2352,
+        "number_of_stories": 2,
+        "inspection_note": "The home, built in 1979, is a Colonial style with aluminum/vinyl siding. The exterior appears to be in good condition, suggesting regular maintenance. The windows seem original, indicating potential improvements in insulation could be made. The HVAC system utilizes electric warm air heating, and the presence of air conditioning is noted. However, the age of the HVAC system is not specified, which could impact efficiency. The full basement may offer opportunities for additional insulation. Overall, the home presents a solid structure with potential for energy efficiency upgrades.",
+        "Year Built": "1979",
+        "Total Square Feet Living Area": "2352",
+        "Building Style": "COLONIAL",
+        "Exterior Wall Material": "ALUMINUM/VINYL SIDING",
+        "Heating Fuel Type": "ELECTRIC",
+        "Heating System Type": "WARM AIR",
+        "Heat/Air Cond": "AIR COND",
+        "Bedrooms": "4",
+        "Full Baths": "2",
+        "Half Baths": "1",
+        "Basement": "FULL",
+        "Number of Stories": "2",
+        "Grade": "B - GOOD"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.1652,
+          40.0379
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "type": "FeatureCollection",
+  "mappers": [],
+  "project": {
+    "id": "88b10e34-cc10-4a08-9ae2-3a00a4703e64",
+    "name": "Generated Project",
+    "begin_date": "2024-06-26T00:00:00Z",
+    "end_date": "2025-06-26T00:00:00Z",
+    "cec_climate_zone": null,
+    "climate_zone": "4A",
+    "default_template": "90.1-2013",
+    "import_surrounding_buildings_as_shading": null,
+    "surface_elevation": null,
+    "tariff_filename": null,
+    "timesteps_per_hour": 1,
+    "weather_filename": "weather.epw"
+  },
+  "scenarios": [
+    {
+      "feature_mappings": [],
+      "id": "d37df366-f85c-4cf9-b363-5e3a37469fc8",
+      "name": "Base Scenario"
+    }
+  ],
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "e9027d7e-0509-40ac-a80f-06827ee72a71",
+        "name": "Generated Home",
+        "type": "Building",
+        "building_type": "Single family",
+        "floor_area": 2244,
+        "number_of_stories": 2,
+        "inspection_note": "The home, built in 1992, appears to be well-maintained with a colonial style. It features aluminum/vinyl siding, which suggests moderate insulation properties. The HVAC system is electric with warm air distribution, a common setup that might be original but appears functional. The presence of central air conditioning is a plus for energy efficiency. Windows look to be double-paned, offering decent thermal insulation. There are no visible signs of recent upgrades, but the overall condition is good, with potential for improved energy efficiency with modern insulation and sealing improvements.",
+        "Year Built": "1992",
+        "Total Square Feet Living Area": "2,244",
+        "Building Style": "COLONIAL",
+        "Exterior Wall Material": "ALUMINUM/VINYL SIDING",
+        "Heating Fuel Type": "ELECTRIC",
+        "Heating System Type": "WARM AIR",
+        "Heat/Air Cond": "AIR COND",
+        "Bedrooms": "4",
+        "Full Baths": "2",
+        "Half Baths": "1",
+        "Basement": "FULL",
+        "Number of Stories": "2",
+        "Grade": "B- - GOOD -"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.5,
+          40.5
+        ]
+      }
+    }
+  ]
+}

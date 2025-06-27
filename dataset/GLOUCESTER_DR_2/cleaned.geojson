@@ -1,0 +1,59 @@
+{
+  "type": "FeatureCollection",
+  "mappers": [],
+  "project": {
+    "id": "c2a0a52a-3607-48fb-b35e-f4307e62870e",
+    "name": "Generated Project",
+    "begin_date": "2024-06-26T00:00:00Z",
+    "end_date": "2025-06-26T00:00:00Z",
+    "cec_climate_zone": null,
+    "climate_zone": "4A",
+    "default_template": "90.1-2013",
+    "import_surrounding_buildings_as_shading": null,
+    "surface_elevation": null,
+    "tariff_filename": null,
+    "timesteps_per_hour": 1,
+    "weather_filename": "weather.epw"
+  },
+  "scenarios": [
+    {
+      "feature_mappings": [],
+      "id": "9c902805-04c2-4bac-9b7f-caa700e5744b",
+      "name": "Base Scenario"
+    }
+  ],
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "61967d10-f6ab-451c-9bcc-4db83bea956d",
+        "name": "Generated Home",
+        "type": "Building",
+        "building_type": "Single family",
+        "floor_area": 2447,
+        "number_of_stories": 2,
+        "inspection_note": "The home appears to have a modern design with a frame exterior. The windows seem to be double-paned, which is good for insulation, although they might benefit from weatherstripping updates. The electric warm air heating system and air conditioning indicate potentially higher efficiency if maintained well. No major upgrades visible, but overall the structure seems well-kept for its age. Consider checking the attic for any additional insulation opportunities, as there is no mention of an attic space.",
+        "Year Built": "1990",
+        "Total Square Feet Living Area": "2,447",
+        "Building Style": "MODERN",
+        "Exterior Wall Material": "FRAME",
+        "Heating Fuel Type": "ELECTRIC",
+        "Heating System Type": "WARM AIR",
+        "Heat/Air Cond": "AIR COND",
+        "Bedrooms": "4",
+        "Full Baths": "2",
+        "Half Baths": "1",
+        "Basement": "FULL",
+        "Number of Stories": "2",
+        "Grade": "B- - GOOD -"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.1652,
+          39.9526
+        ]
+      }
+    }
+  ]
+}

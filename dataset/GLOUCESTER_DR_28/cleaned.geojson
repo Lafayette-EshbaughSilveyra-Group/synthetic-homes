@@ -1,0 +1,59 @@
+{
+  "type": "FeatureCollection",
+  "mappers": [],
+  "project": {
+    "id": "09b6516f-1da1-4a78-aba8-b697b319cbd5",
+    "name": "Generated Project",
+    "begin_date": "2024-06-26T00:00:00Z",
+    "end_date": "2025-06-26T00:00:00Z",
+    "cec_climate_zone": null,
+    "climate_zone": "4A",
+    "default_template": "90.1-2013",
+    "import_surrounding_buildings_as_shading": null,
+    "surface_elevation": null,
+    "tariff_filename": null,
+    "timesteps_per_hour": 1,
+    "weather_filename": "weather.epw"
+  },
+  "scenarios": [
+    {
+      "feature_mappings": [],
+      "id": "10b1c3c6-21c1-40e1-af77-9fb0d622a352",
+      "name": "Base Scenario"
+    }
+  ],
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "036ca12c-ed52-42f8-af96-9fd0b2bdfa68",
+        "name": "Generated Home",
+        "type": "Building",
+        "building_type": "Single family",
+        "floor_area": 2894,
+        "number_of_stories": 2,
+        "inspection_note": "The home, built in 1992, appears to be well-maintained with a masonry/frame exterior that likely provides good insulation. The oil-based warm air heating system might be older, so checking the efficiency and potential for upgrading to a more modern system could be beneficial. Windows appear to be double-pane, which helps with energy efficiency, though assessing for any drafts or seal issues would be wise. The presence of air conditioning suggests a comfortable summer environment. Overall, the home seems to be in good condition with no immediate energy efficiency issues visible from the exterior.",
+        "Year Built": "1992",
+        "Total Square Feet Living Area": "2,894",
+        "Building Style": "COLONIAL",
+        "Exterior Wall Material": "MASONRY/FRAME",
+        "Heating Fuel Type": "OIL",
+        "Heating System Type": "WARM AIR",
+        "Heat/Air Cond": "AIR COND",
+        "Bedrooms": "4",
+        "Full Baths": "2",
+        "Half Baths": "1",
+        "Basement": "FULL",
+        "Number of Stories": "2",
+        "Grade": "B - GOOD"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.1945,
+          40.7934
+        ]
+      }
+    }
+  ]
+}

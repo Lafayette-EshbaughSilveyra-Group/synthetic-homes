@@ -1,0 +1,59 @@
+{
+  "type": "FeatureCollection",
+  "mappers": [],
+  "project": {
+    "id": "9f7e0af5-b381-470a-a4e6-56a4f58c3342",
+    "name": "Generated Project",
+    "begin_date": "2024-06-26T00:00:00Z",
+    "end_date": "2025-06-26T00:00:00Z",
+    "cec_climate_zone": null,
+    "climate_zone": "4A",
+    "default_template": "90.1-2013",
+    "import_surrounding_buildings_as_shading": null,
+    "surface_elevation": null,
+    "tariff_filename": null,
+    "timesteps_per_hour": 1,
+    "weather_filename": "weather.epw"
+  },
+  "scenarios": [
+    {
+      "feature_mappings": [],
+      "id": "29746112-d53d-49a5-ba62-8d280aa34eaf",
+      "name": "Base Scenario"
+    }
+  ],
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "7a0c0bec-8ba9-4a02-a1f0-cfc878a09363",
+        "name": "Generated Home",
+        "type": "Building",
+        "building_type": "Single family",
+        "floor_area": 2458,
+        "number_of_stories": 2,
+        "inspection_note": "The home, built in 1990, features aluminum/vinyl siding which appears to be in average condition for its age. The HVAC system is electric warm air with air conditioning, likely original but maintained. Windows are double paned, suggesting decent insulation, though some may benefit from sealing improvements. The full basement is typical for the area and may offer additional insulation opportunities. Overall, the property is well-maintained with potential for energy efficiency upgrades, particularly in attic insulation as it currently lacks any.",
+        "Year Built": "1990",
+        "Total Square Feet Living Area": "2,458",
+        "Building Style": "COLONIAL",
+        "Exterior Wall Material": "ALUMINUM/VINYL SIDING",
+        "Heating Fuel Type": "ELECTRIC",
+        "Heating System Type": "WARM AIR",
+        "Heat/Air Cond": "AIR COND",
+        "Bedrooms": "4",
+        "Full Baths": "2",
+        "Half Baths": "1",
+        "Basement": "FULL",
+        "Number of Stories": "2",
+        "Grade": "B - GOOD"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.1652,
+          39.9526
+        ]
+      }
+    }
+  ]
+}

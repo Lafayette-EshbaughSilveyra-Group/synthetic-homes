@@ -1,0 +1,59 @@
+{
+  "type": "FeatureCollection",
+  "mappers": [],
+  "project": {
+    "id": "14de455d-ba4e-4ffc-9ab3-750b12fdc578",
+    "name": "Generated Project",
+    "begin_date": "2024-06-26T00:00:00Z",
+    "end_date": "2025-06-26T00:00:00Z",
+    "cec_climate_zone": null,
+    "climate_zone": "4A",
+    "default_template": "90.1-2013",
+    "import_surrounding_buildings_as_shading": null,
+    "surface_elevation": null,
+    "tariff_filename": null,
+    "timesteps_per_hour": 1,
+    "weather_filename": "weather.epw"
+  },
+  "scenarios": [
+    {
+      "feature_mappings": [],
+      "id": "b5eee4a8-1614-41f0-ac00-ea2544713f2d",
+      "name": "Base Scenario"
+    }
+  ],
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "d212764b-9dfe-454f-83c6-94a5d8cb42d6",
+        "name": "Generated Home",
+        "type": "Building",
+        "building_type": "Single family",
+        "floor_area": 2184,
+        "number_of_stories": 2,
+        "inspection_note": "The home, built in 1986, appears to have aluminum/vinyl siding which is in average condition. The windows seem original, suggesting potential improvements in insulation could enhance energy efficiency. The electric warm air heating system is functional, though upgrading to a more modern system may offer better efficiency. The presence of air conditioning is beneficial for summer months. No obvious upgrades to insulation are visible, indicating potential for energy-saving improvements.",
+        "Year Built": "1986",
+        "Total Square Feet Living Area": "2184",
+        "Building Style": "COLONIAL",
+        "Exterior Wall Material": "ALUMINUM/VINYL SIDING",
+        "Heating Fuel Type": "ELECTRIC",
+        "Heating System Type": "WARM AIR",
+        "Heat/Air Cond": "AIR COND",
+        "Bedrooms": "4",
+        "Full Baths": "2",
+        "Half Baths": "1",
+        "Basement": "FULL",
+        "Number of Stories": "2",
+        "Grade": "B - GOOD"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.8733,
+          40.2737
+        ]
+      }
+    }
+  ]
+}

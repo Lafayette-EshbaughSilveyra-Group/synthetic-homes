@@ -1,0 +1,59 @@
+{
+  "type": "FeatureCollection",
+  "mappers": [],
+  "project": {
+    "id": "ba07522a-faee-468e-8d0a-c1a9ce9ae96c",
+    "name": "Generated Project",
+    "begin_date": "2024-06-26T00:00:00Z",
+    "end_date": "2025-06-26T00:00:00Z",
+    "cec_climate_zone": null,
+    "climate_zone": "4A",
+    "default_template": "90.1-2013",
+    "import_surrounding_buildings_as_shading": null,
+    "surface_elevation": null,
+    "tariff_filename": null,
+    "timesteps_per_hour": 1,
+    "weather_filename": "weather.epw"
+  },
+  "scenarios": [
+    {
+      "feature_mappings": [],
+      "id": "55f65897-6038-489c-90cd-c100b8bd4266",
+      "name": "Base Scenario"
+    }
+  ],
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cea29f12-1b7b-4f1a-ad6a-7dd5a94fb5ae",
+        "name": "Generated Home",
+        "type": "Building",
+        "building_type": "Single family",
+        "floor_area": 4468,
+        "number_of_stories": 2,
+        "inspection_note": "The home, built in 1981, has a modern style with stucco exterior walls. The electric heat pump system and central air conditioning suggest a focus on energy efficiency. However, there is no basement insulation, which could impact thermal retention. The windows appear aged, and upgrading to double-glazed units would improve energy efficiency. The house's good condition indicates that it has been well maintained, but further insulation improvements could enhance overall energy performance.",
+        "Year Built": "1981",
+        "Total Square Feet Living Area": "4,468",
+        "Building Style": "MODERN",
+        "Exterior Wall Material": "STUCCO",
+        "Heating Fuel Type": "ELECTRIC",
+        "Heating System Type": "HEAT PUMP",
+        "Heat/Air Cond": "AIR COND",
+        "Bedrooms": "3",
+        "Full Baths": "2",
+        "Half Baths": "1",
+        "Basement": "NONE",
+        "Number of Stories": "2",
+        "Grade": "A- - VERY GOOD -"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.1652,
+          39.9526
+        ]
+      }
+    }
+  ]
+}

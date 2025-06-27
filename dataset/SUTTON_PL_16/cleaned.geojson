@@ -1,0 +1,59 @@
+{
+  "type": "FeatureCollection",
+  "mappers": [],
+  "project": {
+    "id": "d2684b18-388e-46d6-baf7-8e2a45579267",
+    "name": "Generated Project",
+    "begin_date": "2024-06-26T00:00:00Z",
+    "end_date": "2025-06-26T00:00:00Z",
+    "cec_climate_zone": null,
+    "climate_zone": "4A",
+    "default_template": "90.1-2013",
+    "import_surrounding_buildings_as_shading": null,
+    "surface_elevation": null,
+    "tariff_filename": null,
+    "timesteps_per_hour": 1,
+    "weather_filename": "weather.epw"
+  },
+  "scenarios": [
+    {
+      "feature_mappings": [],
+      "id": "42124cd8-85a9-40b5-9836-6ec0d0de1ec0",
+      "name": "Base Scenario"
+    }
+  ],
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "d96329eb-5feb-4af1-807b-17befbd023ab",
+        "name": "Generated Home",
+        "type": "Building",
+        "building_type": "Single family",
+        "floor_area": 3143,
+        "number_of_stories": 2,
+        "inspection_note": "The home, built in 1975, appears to have well-maintained aluminum/vinyl siding. The gas warm air heating system is likely original but has been fitted with air conditioning, indicating some updates for efficiency. The windows are traditional, suggesting potential for energy loss if not upgraded. Insulation specifics are not visible, but given the age, an upgrade might improve performance. The colonial style and very good grade imply quality construction.",
+        "Year Built": "1975",
+        "Total Square Feet Living Area": "3,143",
+        "Building Style": "COLONIAL",
+        "Exterior Wall Material": "ALUMINUM/VINYL SIDING",
+        "Heating Fuel Type": "GAS",
+        "Heating System Type": "WARM AIR",
+        "Heat/Air Cond": "AIR COND",
+        "Bedrooms": "4",
+        "Full Baths": "2",
+        "Half Baths": "1",
+        "Basement": "PART",
+        "Number of Stories": "2",
+        "Grade": "A- - VERY GOOD -"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.1652,
+          39.9526
+        ]
+      }
+    }
+  ]
+}

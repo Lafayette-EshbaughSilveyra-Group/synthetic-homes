@@ -1,0 +1,59 @@
+{
+  "type": "FeatureCollection",
+  "mappers": [],
+  "project": {
+    "id": "1c60785e-84ca-4a13-9660-bdebc31a73fb",
+    "name": "Generated Project",
+    "begin_date": "2024-06-26T00:00:00Z",
+    "end_date": "2025-06-26T00:00:00Z",
+    "cec_climate_zone": null,
+    "climate_zone": "4A",
+    "default_template": "90.1-2013",
+    "import_surrounding_buildings_as_shading": null,
+    "surface_elevation": null,
+    "tariff_filename": null,
+    "timesteps_per_hour": 1,
+    "weather_filename": "weather.epw"
+  },
+  "scenarios": [
+    {
+      "feature_mappings": [],
+      "id": "242c4290-c2d9-41c3-9607-1d7e244dc6dc",
+      "name": "Base Scenario"
+    }
+  ],
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "a4f8c476-ca4a-495a-a626-a2ce6d81321b",
+        "name": "Generated Home",
+        "type": "Building",
+        "building_type": "Single family",
+        "floor_area": 2324,
+        "number_of_stories": 2,
+        "inspection_note": "The home appears to be well-maintained with aluminum/vinyl siding, which provides reasonable insulation. The windows seem to be original, potentially impacting energy efficiency. The electric warm air heating system is typical for the age of the house, though upgrading to a more modern system could improve efficiency. The presence of air conditioning is beneficial for comfort. No visible exterior insulation issues were noted, but further inspection inside would be necessary to assess insulation levels thoroughly. Overall, the house is in good condition, but window upgrades could enhance energy savings.",
+        "Year Built": "1989",
+        "Total Square Feet Living Area": "2324",
+        "Building Style": "COLONIAL",
+        "Exterior Wall Material": "ALUMINUM/VINYL SIDING",
+        "Heating Fuel Type": "ELECTRIC",
+        "Heating System Type": "WARM AIR",
+        "Heat/Air Cond": "AIR COND",
+        "Bedrooms": "4",
+        "Full Baths": "2",
+        "Half Baths": "1",
+        "Basement": "FULL",
+        "Number of Stories": "2",
+        "Grade": "B+ - GOOD +"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.1652,
+          39.9526
+        ]
+      }
+    }
+  ]
+}

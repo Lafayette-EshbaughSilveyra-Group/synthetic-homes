@@ -1,0 +1,59 @@
+{
+  "type": "FeatureCollection",
+  "mappers": [],
+  "project": {
+    "id": "89c0253a-95e3-4877-9f4c-b1fccc5cd7d8",
+    "name": "Generated Project",
+    "begin_date": "2024-06-26T00:00:00Z",
+    "end_date": "2025-06-26T00:00:00Z",
+    "cec_climate_zone": null,
+    "climate_zone": "4A",
+    "default_template": "90.1-2013",
+    "import_surrounding_buildings_as_shading": null,
+    "surface_elevation": null,
+    "tariff_filename": null,
+    "timesteps_per_hour": 1,
+    "weather_filename": "weather.epw"
+  },
+  "scenarios": [
+    {
+      "feature_mappings": [],
+      "id": "68845424-e3e3-455f-b65c-5f02f906a979",
+      "name": "Base Scenario"
+    }
+  ],
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "8117bf07-bd63-497d-9069-a85ec9695b93",
+        "name": "Generated Home",
+        "type": "Building",
+        "building_type": "Single family",
+        "floor_area": 1984,
+        "number_of_stories": 2,
+        "inspection_note": "The home, built in 1975, appears well-maintained with aluminum/vinyl siding, which provides decent insulation. The windows seem to be original, suggesting potential heat loss. The electric warm air heating system is likely efficient, but its age could reduce performance. The presence of air conditioning indicates good temperature control. No visible upgrades to the HVAC system are noted; an energy audit could recommend improvements.",
+        "Year Built": "1975",
+        "Total Square Feet Living Area": "1,984",
+        "Building Style": "COLONIAL",
+        "Exterior Wall Material": "ALUMINUM/VINYL SIDING",
+        "Heating Fuel Type": "ELECTRIC",
+        "Heating System Type": "WARM AIR",
+        "Heat/Air Cond": "AIR COND",
+        "Bedrooms": "4",
+        "Full Baths": "2",
+        "Half Baths": "0",
+        "Basement": "FULL",
+        "Number of Stories": "2",
+        "Grade": "C+ - AVERAGE +"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.1652,
+          39.9526
+        ]
+      }
+    }
+  ]
+}

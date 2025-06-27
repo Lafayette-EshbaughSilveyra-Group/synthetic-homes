@@ -1,0 +1,59 @@
+{
+  "type": "FeatureCollection",
+  "mappers": [],
+  "project": {
+    "id": "6e4dfb9e-2fe0-40de-a687-2f0c6abacf4e",
+    "name": "Generated Project",
+    "begin_date": "2024-06-26T00:00:00Z",
+    "end_date": "2025-06-26T00:00:00Z",
+    "cec_climate_zone": null,
+    "climate_zone": "4A",
+    "default_template": "90.1-2013",
+    "import_surrounding_buildings_as_shading": null,
+    "surface_elevation": null,
+    "tariff_filename": null,
+    "timesteps_per_hour": 1,
+    "weather_filename": "weather.epw"
+  },
+  "scenarios": [
+    {
+      "feature_mappings": [],
+      "id": "354a87ea-217a-4eff-abcc-e09b90796d63",
+      "name": "Base Scenario"
+    }
+  ],
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "01c9e6fb-319e-4030-b1f4-06969758a737",
+        "name": "Generated Home",
+        "type": "Building",
+        "building_type": "Single family",
+        "floor_area": 1688,
+        "number_of_stories": 1,
+        "inspection_note": "The home appears to have standard insulation for its age, but upgrading to modern standards could improve energy efficiency. The HVAC system is electric and warm air, likely original, suggesting it might benefit from an update to improve efficiency. Windows appear to be original with potential for better sealing or replacement to minimize heat loss. The aluminum/vinyl siding is in good condition, offering decent insulation, but additional thermal barriers could enhance performance. Overall, the home is well-maintained but could benefit from energy-efficient upgrades.",
+        "Year Built": "1978",
+        "Total Square Feet Living Area": "1,688",
+        "Building Style": "BI-LEVEL",
+        "Exterior Wall Material": "ALUMINUM/VINYL SIDING",
+        "Heating Fuel Type": "ELECTRIC",
+        "Heating System Type": "WARM AIR",
+        "Heat/Air Cond": "NORMAL",
+        "Bedrooms": "3",
+        "Full Baths": "1",
+        "Half Baths": "1",
+        "Basement": "FULL",
+        "Number of Stories": "1",
+        "Grade": "C+ - AVERAGE +"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.1652,
+          39.9526
+        ]
+      }
+    }
+  ]
+}

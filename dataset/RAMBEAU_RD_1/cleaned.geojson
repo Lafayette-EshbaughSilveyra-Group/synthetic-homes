@@ -1,0 +1,59 @@
+{
+  "type": "FeatureCollection",
+  "mappers": [],
+  "project": {
+    "id": "76f8506f-8669-4ad0-b5c0-a4b066eb3301",
+    "name": "Generated Project",
+    "begin_date": "2024-06-26T00:00:00Z",
+    "end_date": "2025-06-26T00:00:00Z",
+    "cec_climate_zone": null,
+    "climate_zone": "4A",
+    "default_template": "90.1-2013",
+    "import_surrounding_buildings_as_shading": null,
+    "surface_elevation": null,
+    "tariff_filename": null,
+    "timesteps_per_hour": 1,
+    "weather_filename": "weather.epw"
+  },
+  "scenarios": [
+    {
+      "feature_mappings": [],
+      "id": "18e1ed19-a1d9-469f-941b-553af6e3cd93",
+      "name": "Base Scenario"
+    }
+  ],
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "d2d724a6-e8fb-4a66-874d-5c52ab25dd3a",
+        "name": "Generated Home",
+        "type": "Building",
+        "building_type": "Single family",
+        "floor_area": 2188,
+        "number_of_stories": 2,
+        "inspection_note": "The home, built in 1985, features aluminum/vinyl siding, which appears to be in average condition. The windows look reasonably updated, likely providing good insulation, though a thorough check would be needed to confirm any drafts. The electric warm air heating system paired with air conditioning suggests a focus on year-round comfort, but the energy efficiency may vary depending on the system's age and maintenance. The full basement is a potential area for heat loss, necessitating proper insulation. Overall, the home's style and structure indicate it is well-suited for modern energy efficiency improvements.",
+        "Year Built": "1985",
+        "Total Square Feet Living Area": "2,188",
+        "Building Style": "COLONIAL",
+        "Exterior Wall Material": "ALUMINUM/VINYL SIDING",
+        "Heating Fuel Type": "ELECTRIC",
+        "Heating System Type": "WARM AIR",
+        "Heat/Air Cond": "AIR COND",
+        "Bedrooms": "4",
+        "Full Baths": "2",
+        "Half Baths": "1",
+        "Basement": "FULL",
+        "Number of Stories": "2",
+        "Grade": "B- - GOOD -"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.1652,
+          39.9526
+        ]
+      }
+    }
+  ]
+}

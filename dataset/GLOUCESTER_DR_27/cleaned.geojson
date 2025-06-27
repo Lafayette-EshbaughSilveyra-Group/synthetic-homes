@@ -1,0 +1,59 @@
+{
+  "type": "FeatureCollection",
+  "mappers": [],
+  "project": {
+    "id": "6ce29e06-1d93-41ee-88ac-f63e7000391b",
+    "name": "Generated Project",
+    "begin_date": "2024-06-26T00:00:00Z",
+    "end_date": "2025-06-26T00:00:00Z",
+    "cec_climate_zone": null,
+    "climate_zone": "4A",
+    "default_template": "90.1-2013",
+    "import_surrounding_buildings_as_shading": null,
+    "surface_elevation": null,
+    "tariff_filename": null,
+    "timesteps_per_hour": 1,
+    "weather_filename": "weather.epw"
+  },
+  "scenarios": [
+    {
+      "feature_mappings": [],
+      "id": "4546a3f1-5bb8-485f-8c50-5118abce49a4",
+      "name": "Base Scenario"
+    }
+  ],
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ce48d40e-e44f-4b47-adb6-a8c8efb4ca55",
+        "name": "Generated Home",
+        "type": "Building",
+        "building_type": "Single family",
+        "floor_area": 2552,
+        "number_of_stories": 2,
+        "inspection_note": "The home appears to have a well-maintained aluminum/vinyl siding exterior. Built in 1989, the insulation may require assessment to ensure it meets current standards. The warm air electric heating system is paired with air conditioning, suggesting a focus on indoor climate control. Windows are in good condition with no visible signs of wear, indicating potential energy efficiency. The full basement might benefit from additional insulation to improve heating efficiency. Overall, the property seems to be in good condition with no major energy-related issues visible.",
+        "Year Built": "1989",
+        "Total Square Feet Living Area": "2552",
+        "Building Style": "COLONIAL",
+        "Exterior Wall Material": "ALUMINUM/VINYL SIDING",
+        "Heating Fuel Type": "ELECTRIC",
+        "Heating System Type": "WARM AIR",
+        "Heat/Air Cond": "AIR COND",
+        "Bedrooms": "4",
+        "Full Baths": "2",
+        "Half Baths": "1",
+        "Basement": "FULL",
+        "Number of Stories": "2",
+        "Grade": "B- - GOOD -"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.1652,
+          39.9526
+        ]
+      }
+    }
+  ]
+}

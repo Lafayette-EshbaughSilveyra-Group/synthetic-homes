@@ -1,0 +1,85 @@
+Program Version,EnergyPlus, Version 25.1.0-68a4a7c774, YMD=2025.06.24 11:59
+1,5,Environment Title[],Latitude[deg],Longitude[deg],Time Zone[],Elevation[m]
+2,8,Day of Simulation[],Month[],Day of Month[],DST Indicator[1=yes 0=no],Hour[],StartMinute[],EndMinute[],DayType
+3,5,Cumulative Day of Simulation[],Month[],Day of Month[],DST Indicator[1=yes 0=no],DayType  ! When Daily Report Variables Requested
+4,2,Cumulative Days of Simulation[],Month[]  ! When Monthly Report Variables Requested
+5,1,Cumulative Days of Simulation[] ! When Run Period Report Variables Requested
+6,1,Calendar Year of Simulation[] ! When Annual Report Variables Requested
+7,1,MAINZONE,Zone Mean Air Temperature [C] !Hourly
+8,1,MAINZONE,Zone Air Temperature [C] !Hourly
+End of Data Dictionary
+1,RUNPERIOD1,  40.65, -75.43,  -5.00, 117.00
+2,1, 6,24, 0, 1, 0.00,60.00,Saturday
+7,20.777940305054848
+8,20.777940305054848
+2,1, 6,24, 0, 2, 0.00,60.00,Saturday
+7,20.59694010092977
+8,20.59694010092977
+2,1, 6,24, 0, 3, 0.00,60.00,Saturday
+7,20.390932319178276
+8,20.390932319178276
+2,1, 6,24, 0, 4, 0.00,60.00,Saturday
+7,20.196050649358508
+8,20.196050649358508
+2,1, 6,24, 0, 5, 0.00,60.00,Saturday
+7,19.972386211015813
+8,19.972386211015813
+2,1, 6,24, 0, 6, 0.00,60.00,Saturday
+7,19.831182518666502
+8,19.831182518666502
+2,1, 6,24, 0, 7, 0.00,60.00,Saturday
+7,19.825686447655862
+8,19.825686447655862
+2,1, 6,24, 0, 8, 0.00,60.00,Saturday
+7,19.8834726773364
+8,19.8834726773364
+2,1, 6,24, 0, 9, 0.00,60.00,Saturday
+7,19.98513689919103
+8,19.98513689919103
+2,1, 6,24, 0,10, 0.00,60.00,Saturday
+7,20.109528708162102
+8,20.109528708162102
+2,1, 6,24, 0,11, 0.00,60.00,Saturday
+7,20.186797970777942
+8,20.186797970777942
+2,1, 6,24, 0,12, 0.00,60.00,Saturday
+7,20.29875985666341
+8,20.29875985666341
+2,1, 6,24, 0,13, 0.00,60.00,Saturday
+7,20.446996097675047
+8,20.446996097675047
+2,1, 6,24, 0,14, 0.00,60.00,Saturday
+7,20.786623613338993
+8,20.786623613338993
+2,1, 6,24, 0,15, 0.00,60.00,Saturday
+7,21.30636370465599
+8,21.30636370465599
+2,1, 6,24, 0,16, 0.00,60.00,Saturday
+7,21.6960588557956
+8,21.6960588557956
+2,1, 6,24, 0,17, 0.00,60.00,Saturday
+7,21.982383895922737
+8,21.982383895922737
+2,1, 6,24, 0,18, 0.00,60.00,Saturday
+7,22.154968929080628
+8,22.154968929080628
+2,1, 6,24, 0,19, 0.00,60.00,Saturday
+7,22.21176240627468
+8,22.21176240627468
+2,1, 6,24, 0,20, 0.00,60.00,Saturday
+7,22.06919323910276
+8,22.06919323910276
+2,1, 6,24, 0,21, 0.00,60.00,Saturday
+7,21.793442590760677
+8,21.793442590760677
+2,1, 6,24, 0,22, 0.00,60.00,Saturday
+7,21.52769917623758
+8,21.52769917623758
+2,1, 6,24, 0,23, 0.00,60.00,Saturday
+7,21.283000426487963
+8,21.283000426487963
+2,1, 6,24, 0,24, 0.00,60.00,Saturday
+7,20.99149482550078
+8,20.99149482550078
+End of Data
+ Number of Records Written=          48

@@ -1,0 +1,59 @@
+{
+  "type": "FeatureCollection",
+  "mappers": [],
+  "project": {
+    "id": "0c762c5b-79a3-4668-bd99-8ead8bc2f4c2",
+    "name": "Generated Project",
+    "begin_date": "2024-06-26T00:00:00Z",
+    "end_date": "2025-06-26T00:00:00Z",
+    "cec_climate_zone": null,
+    "climate_zone": "4A",
+    "default_template": "90.1-2013",
+    "import_surrounding_buildings_as_shading": null,
+    "surface_elevation": null,
+    "tariff_filename": null,
+    "timesteps_per_hour": 1,
+    "weather_filename": "weather.epw"
+  },
+  "scenarios": [
+    {
+      "feature_mappings": [],
+      "id": "9f2a1b39-f4ea-449d-9252-40a201c23cc2",
+      "name": "Base Scenario"
+    }
+  ],
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "219b75de-8ea7-4e78-abb9-d7cd64a9c91a",
+        "name": "Generated Home",
+        "type": "Building",
+        "building_type": "Single family",
+        "floor_area": 882,
+        "number_of_stories": 1,
+        "inspection_note": "The home appears to be well-maintained with stucco exterior walls, which can provide decent insulation. The windows seem to be in good condition, likely double-paned, which helps improve energy efficiency. The electric warm air heating system is standard for a home of this age, though upgrading to a modern HVAC system might improve efficiency. No basement is present, which can reduce heat loss. Overall, the home is in average condition with potential for energy upgrades.",
+        "Year Built": "1983",
+        "Total Square Feet Living Area": "882",
+        "Building Style": "SPECIAL/OTHER",
+        "Exterior Wall Material": "STUCCO",
+        "Heating Fuel Type": "ELECTRIC",
+        "Heating System Type": "WARM AIR",
+        "Heat/Air Cond": "NORMAL",
+        "Bedrooms": "1",
+        "Full Baths": "1",
+        "Half Baths": "0",
+        "Basement": "NONE",
+        "Number of Stories": "1",
+        "Grade": "C+ - AVERAGE +"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.1945,
+          40.0274
+        ]
+      }
+    }
+  ]
+}

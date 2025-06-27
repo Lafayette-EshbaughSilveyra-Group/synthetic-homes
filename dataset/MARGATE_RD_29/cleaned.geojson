@@ -1,0 +1,59 @@
+{
+  "type": "FeatureCollection",
+  "mappers": [],
+  "project": {
+    "id": "6a27aecb-d37f-41b1-a57e-f5f931753896",
+    "name": "Generated Project",
+    "begin_date": "2024-06-26T00:00:00Z",
+    "end_date": "2025-06-26T00:00:00Z",
+    "cec_climate_zone": null,
+    "climate_zone": "4A",
+    "default_template": "90.1-2013",
+    "import_surrounding_buildings_as_shading": null,
+    "surface_elevation": null,
+    "tariff_filename": null,
+    "timesteps_per_hour": 1,
+    "weather_filename": "weather.epw"
+  },
+  "scenarios": [
+    {
+      "feature_mappings": [],
+      "id": "b26c24d4-f329-476b-a257-1c283f4f5f10",
+      "name": "Base Scenario"
+    }
+  ],
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "769bfa6c-c710-4bc8-af79-adaa960b3a1b",
+        "name": "Generated Home",
+        "type": "Building",
+        "building_type": "Single family",
+        "floor_area": 2146,
+        "number_of_stories": 1,
+        "inspection_note": "The home, built in 1992, appears well-maintained with modern aluminum/vinyl siding. The heating system is an electric heat pump, indicating efficient heating and cooling, paired with air conditioning. Windows look relatively new and likely double-glazed, enhancing insulation. The full basement could benefit from additional insulation for energy savings. Overall, the house seems to have good energy efficiency, though checking the HVAC system's age is advisable for potential upgrades.",
+        "Year Built": "1992",
+        "Total Square Feet Living Area": "2,146",
+        "Building Style": "MODERN",
+        "Exterior Wall Material": "ALUMINUM/VINYL SIDING",
+        "Heating Fuel Type": "ELECTRIC",
+        "Heating System Type": "HEAT PUMP",
+        "Heat/Air Cond": "AIR COND",
+        "Bedrooms": "3",
+        "Full Baths": "2",
+        "Half Baths": "1",
+        "Basement": "FULL",
+        "Number of Stories": "1",
+        "Grade": "B- - GOOD -"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.1652,
+          39.9526
+        ]
+      }
+    }
+  ]
+}

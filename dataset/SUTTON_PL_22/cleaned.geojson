@@ -1,0 +1,59 @@
+{
+  "type": "FeatureCollection",
+  "mappers": [],
+  "project": {
+    "id": "c1c6fd75-9623-43ff-b092-bbaba8561990",
+    "name": "Generated Project",
+    "begin_date": "2024-06-26T00:00:00Z",
+    "end_date": "2025-06-26T00:00:00Z",
+    "cec_climate_zone": null,
+    "climate_zone": "4A",
+    "default_template": "90.1-2013",
+    "import_surrounding_buildings_as_shading": null,
+    "surface_elevation": null,
+    "tariff_filename": null,
+    "timesteps_per_hour": 1,
+    "weather_filename": "weather.epw"
+  },
+  "scenarios": [
+    {
+      "feature_mappings": [],
+      "id": "b0ac95b5-f301-4ae4-bb79-8419a97faaac",
+      "name": "Base Scenario"
+    }
+  ],
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ce772ac7-dd85-4e7b-aee4-c11f160f3f9f",
+        "name": "Generated Home",
+        "type": "Building",
+        "building_type": "Single family",
+        "floor_area": 2996,
+        "number_of_stories": 2,
+        "inspection_note": "The home, built in 1979, appears to be in good condition. The aluminum/vinyl siding is typical for homes of this age and should provide decent insulation. The oil-based warm air heating system might be older, so efficiency could be improved with an upgrade. Central air conditioning is present, which is beneficial for energy efficiency. The windows look well-maintained, though upgrading to double-pane windows could improve insulation further. No visible signs of recent upgrades. The full basement may benefit from additional insulation to enhance energy efficiency.",
+        "Year Built": "1979",
+        "Total Square Feet Living Area": "2996",
+        "Building Style": "COLONIAL",
+        "Exterior Wall Material": "ALUMINUM/VINYL SIDING",
+        "Heating Fuel Type": "OIL",
+        "Heating System Type": "WARM AIR",
+        "Heat/Air Cond": "AIR COND",
+        "Bedrooms": "4",
+        "Full Baths": "2",
+        "Half Baths": "1",
+        "Basement": "FULL",
+        "Number of Stories": "2",
+        "Grade": "B+ - GOOD +"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.5,
+          40.5
+        ]
+      }
+    }
+  ]
+}

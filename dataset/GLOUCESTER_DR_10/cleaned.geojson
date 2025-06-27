@@ -1,0 +1,59 @@
+{
+  "type": "FeatureCollection",
+  "mappers": [],
+  "project": {
+    "id": "b1585fef-08d1-418e-8585-b59ef4cbf1ac",
+    "name": "Generated Project",
+    "begin_date": "2024-06-26T00:00:00Z",
+    "end_date": "2025-06-26T00:00:00Z",
+    "cec_climate_zone": null,
+    "climate_zone": "4A",
+    "default_template": "90.1-2013",
+    "import_surrounding_buildings_as_shading": null,
+    "surface_elevation": null,
+    "tariff_filename": null,
+    "timesteps_per_hour": 1,
+    "weather_filename": "weather.epw"
+  },
+  "scenarios": [
+    {
+      "feature_mappings": [],
+      "id": "f6394f26-7655-4808-8afb-d6c4c516408b",
+      "name": "Base Scenario"
+    }
+  ],
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "e8b6876c-87bd-433a-b403-5e6fce608e7d",
+        "name": "Generated Home",
+        "type": "Building",
+        "building_type": "Single family",
+        "floor_area": 2860,
+        "number_of_stories": 2,
+        "inspection_note": "The home, built in 1980, appears to be in good condition with aluminum/vinyl siding. The HVAC system is electric warm air, likely requiring an update if original. Windows appear double-glazed, which is beneficial for insulation. The full basement provides additional space but should be checked for insulation quality. Overall, the house seems to be well-maintained with potential for energy efficiency improvements in the HVAC system.",
+        "Year Built": "1980",
+        "Total Square Feet Living Area": "2860",
+        "Building Style": "COLONIAL",
+        "Exterior Wall Material": "ALUMINUM/VINYL SIDING",
+        "Heating Fuel Type": "ELECTRIC",
+        "Heating System Type": "WARM AIR",
+        "Heat/Air Cond": "AIR COND",
+        "Bedrooms": "5",
+        "Full Baths": "3",
+        "Half Baths": "0",
+        "Basement": "FULL",
+        "Number of Stories": "2",
+        "Grade": "B - GOOD"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.1945,
+          40.0635
+        ]
+      }
+    }
+  ]
+}

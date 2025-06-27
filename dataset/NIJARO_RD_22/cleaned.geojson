@@ -1,0 +1,59 @@
+{
+  "type": "FeatureCollection",
+  "mappers": [],
+  "project": {
+    "id": "57b52cbc-c7ef-43f6-9699-f053c1d32bf5",
+    "name": "Generated Project",
+    "begin_date": "2024-06-26T00:00:00Z",
+    "end_date": "2025-06-26T00:00:00Z",
+    "cec_climate_zone": null,
+    "climate_zone": "4A",
+    "default_template": "90.1-2013",
+    "import_surrounding_buildings_as_shading": null,
+    "surface_elevation": null,
+    "tariff_filename": null,
+    "timesteps_per_hour": 1,
+    "weather_filename": "weather.epw"
+  },
+  "scenarios": [
+    {
+      "feature_mappings": [],
+      "id": "c218bbbb-e715-4e49-93ab-4806f6ac40b2",
+      "name": "Base Scenario"
+    }
+  ],
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "bc036f06-d19d-4db7-bebb-366e6b70b2b7",
+        "name": "Generated Home",
+        "type": "Building",
+        "building_type": "Single family",
+        "floor_area": 1684,
+        "number_of_stories": 1,
+        "inspection_note": "The home, built in 1977, features aluminum/vinyl siding which appears to be in average condition. The windows seem original, likely single-pane, which may impact energy efficiency. The electric heating system is warm air, suggesting moderate efficiency, but the presence of air conditioning is a plus for comfort. The basement is full and finished, which may benefit from additional insulation to improve thermal performance. Overall, the property is well-maintained, though upgrading the windows and adding modern insulation could enhance energy efficiency.",
+        "Year Built": "1977",
+        "Total Square Feet Living Area": "1,684",
+        "Building Style": "BI-LEVEL",
+        "Exterior Wall Material": "ALUMINUM/VINYL SIDING",
+        "Heating Fuel Type": "ELECTRIC",
+        "Heating System Type": "WARM AIR",
+        "Heat/Air Cond": "AIR COND",
+        "Bedrooms": "3",
+        "Full Baths": "1",
+        "Half Baths": "1",
+        "Basement": "FULL",
+        "Number of Stories": "1",
+        "Grade": "C+ - AVERAGE +"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.1652,
+          39.9526
+        ]
+      }
+    }
+  ]
+}

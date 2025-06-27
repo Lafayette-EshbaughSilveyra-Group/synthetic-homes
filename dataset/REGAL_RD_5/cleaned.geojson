@@ -1,0 +1,59 @@
+{
+  "type": "FeatureCollection",
+  "mappers": [],
+  "project": {
+    "id": "6f74d72e-1730-4050-a4b6-b3dc6413158c",
+    "name": "Generated Project",
+    "begin_date": "2024-06-26T00:00:00Z",
+    "end_date": "2025-06-26T00:00:00Z",
+    "cec_climate_zone": null,
+    "climate_zone": "4A",
+    "default_template": "90.1-2013",
+    "import_surrounding_buildings_as_shading": null,
+    "surface_elevation": null,
+    "tariff_filename": null,
+    "timesteps_per_hour": 1,
+    "weather_filename": "weather.epw"
+  },
+  "scenarios": [
+    {
+      "feature_mappings": [],
+      "id": "9f194c9b-bb27-4994-80c0-9807d2ef4d43",
+      "name": "Base Scenario"
+    }
+  ],
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cb45742a-255c-4a28-b16c-f38dfb83ecab",
+        "name": "Generated Home",
+        "type": "Building",
+        "building_type": "Single family",
+        "floor_area": 2632,
+        "number_of_stories": 2,
+        "inspection_note": "The home appears well-maintained with aluminum/vinyl siding that likely offers moderate insulation. The windows seem to be original, likely double-pane, but checking for drafts would be advisable. The HVAC system is electric with warm air, supported by air conditioning, suggesting a modern setup from the 1990s. No visible signs of major upgrades, but the overall condition is good for its age. Consider an insulation upgrade in the attic to improve energy efficiency further.",
+        "Year Built": "1992",
+        "Total Square Feet Living Area": "2632",
+        "Building Style": "COLONIAL",
+        "Exterior Wall Material": "ALUMINUM/VINYL SIDING",
+        "Heating Fuel Type": "ELECTRIC",
+        "Heating System Type": "WARM AIR",
+        "Heat/Air Cond": "AIR COND",
+        "Bedrooms": "4",
+        "Full Baths": "2",
+        "Half Baths": "1",
+        "Basement": "FULL",
+        "Number of Stories": "2",
+        "Grade": "B- - GOOD -"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.1945,
+          40.0395
+        ]
+      }
+    }
+  ]
+}

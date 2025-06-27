@@ -1,0 +1,59 @@
+{
+  "type": "FeatureCollection",
+  "mappers": [],
+  "project": {
+    "id": "b9d4c379-9c90-4a7e-b77a-1fa7c1a381f5",
+    "name": "Generated Project",
+    "begin_date": "2024-06-26T00:00:00Z",
+    "end_date": "2025-06-26T00:00:00Z",
+    "cec_climate_zone": null,
+    "climate_zone": "4A",
+    "default_template": "90.1-2013",
+    "import_surrounding_buildings_as_shading": null,
+    "surface_elevation": null,
+    "tariff_filename": null,
+    "timesteps_per_hour": 1,
+    "weather_filename": "weather.epw"
+  },
+  "scenarios": [
+    {
+      "feature_mappings": [],
+      "id": "41848df9-eaa3-4050-9e3d-8e07ed77eef5",
+      "name": "Base Scenario"
+    }
+  ],
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "4d856b40-1d80-4cf8-9e84-69dc92a7b403",
+        "name": "Generated Home",
+        "type": "Building",
+        "building_type": "Single family",
+        "floor_area": 1812,
+        "number_of_stories": 2,
+        "inspection_note": "The home, built in 1968, appears to have a well-maintained exterior with masonry/frame walls. The heating system is an electric heat pump, which is efficient for this climate, but its age should be checked to ensure optimal performance. The windows look relatively new and likely provide good insulation. The air conditioning system is operational, suggesting adequate cooling during warmer months. No visible insulation issues were noted from the exterior. Overall, the home seems to be in good condition, with no apparent energy efficiency upgrades beyond standard maintenance.",
+        "Year Built": "1968",
+        "Total Square Feet Living Area": "1,812",
+        "Building Style": "COLONIAL",
+        "Exterior Wall Material": "MASONRY/FRAME",
+        "Heating Fuel Type": "ELECTRIC",
+        "Heating System Type": "HEAT PUMP",
+        "Heat/Air Cond": "AIR COND",
+        "Bedrooms": "3",
+        "Full Baths": "1",
+        "Half Baths": "1",
+        "Basement": "FULL",
+        "Number of Stories": "2",
+        "Grade": "C+ - AVERAGE +"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.1945,
+          40.0636
+        ]
+      }
+    }
+  ]
+}

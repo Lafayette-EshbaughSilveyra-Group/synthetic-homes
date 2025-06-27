@@ -1,0 +1,59 @@
+{
+  "type": "FeatureCollection",
+  "mappers": [],
+  "project": {
+    "id": "dbeaeaac-1a6f-43f4-b2a2-80f9f2858424",
+    "name": "Generated Project",
+    "begin_date": "2024-06-26T00:00:00Z",
+    "end_date": "2025-06-26T00:00:00Z",
+    "cec_climate_zone": null,
+    "climate_zone": "4A",
+    "default_template": "90.1-2013",
+    "import_surrounding_buildings_as_shading": null,
+    "surface_elevation": null,
+    "tariff_filename": null,
+    "timesteps_per_hour": 1,
+    "weather_filename": "weather.epw"
+  },
+  "scenarios": [
+    {
+      "feature_mappings": [],
+      "id": "7400c875-72ac-4a68-82a0-d35e14016298",
+      "name": "Base Scenario"
+    }
+  ],
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "d92a20d5-451f-4f37-abbe-378bef7c53db",
+        "name": "Generated Home",
+        "type": "Building",
+        "building_type": "Single family",
+        "floor_area": 2284,
+        "number_of_stories": 2,
+        "inspection_note": "The home, built in 1986, appears to be in good condition with aluminum/vinyl siding. The HVAC system is electric warm air with air conditioning, suggesting moderate efficiency but may benefit from an upgrade if over 20 years old. Windows seem to be standard for the period, likely double-pane but may not have the latest insulation technology. Partial basement is noted, which might be prone to energy loss if not properly insulated. Overall, the home maintains a good grade, though improvements in insulation and HVAC could enhance energy efficiency.",
+        "Year Built": "1986",
+        "Total Square Feet Living Area": "2,284",
+        "Building Style": "COLONIAL",
+        "Exterior Wall Material": "ALUMINUM/VINYL SIDING",
+        "Heating Fuel Type": "ELECTRIC",
+        "Heating System Type": "WARM AIR",
+        "Heat/Air Cond": "AIR COND",
+        "Bedrooms": "4",
+        "Full Baths": "2",
+        "Half Baths": "1",
+        "Basement": "PART",
+        "Number of Stories": "2",
+        "Grade": "B - GOOD"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.1652,
+          40.0048
+        ]
+      }
+    }
+  ]
+}

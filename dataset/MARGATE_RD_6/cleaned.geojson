@@ -1,0 +1,59 @@
+{
+  "type": "FeatureCollection",
+  "mappers": [],
+  "project": {
+    "id": "de4a18b0-81b3-4b0c-807c-36d1cc1856b0",
+    "name": "Generated Project",
+    "begin_date": "2024-06-26T00:00:00Z",
+    "end_date": "2025-06-26T00:00:00Z",
+    "cec_climate_zone": null,
+    "climate_zone": "4A",
+    "default_template": "90.1-2013",
+    "import_surrounding_buildings_as_shading": null,
+    "surface_elevation": null,
+    "tariff_filename": null,
+    "timesteps_per_hour": 1,
+    "weather_filename": "weather.epw"
+  },
+  "scenarios": [
+    {
+      "feature_mappings": [],
+      "id": "3f2c7c5c-5473-4183-8ca4-172a4223fce4",
+      "name": "Base Scenario"
+    }
+  ],
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cf302c11-94f0-46d9-a845-98d435423eaa",
+        "name": "Generated Home",
+        "type": "Building",
+        "building_type": "Single family",
+        "floor_area": 882,
+        "number_of_stories": 1,
+        "inspection_note": "The home appears to be well-maintained with stucco exterior walls providing decent insulation. The windows seem to be in average condition with no visible upgrades, suggesting potential heat loss areas. The electric warm air heating system is typical for homes built in the 1980s. No visible signs of recent upgrades or significant insulation enhancements. Overall, the home likely performs adequately for energy efficiency given its age and construction.",
+        "Year Built": "1983",
+        "Total Square Feet Living Area": "882",
+        "Building Style": "SPECIAL/OTHER",
+        "Exterior Wall Material": "STUCCO",
+        "Heating Fuel Type": "ELECTRIC",
+        "Heating System Type": "WARM AIR",
+        "Heat/Air Cond": "NORMAL",
+        "Bedrooms": "1",
+        "Full Baths": "1",
+        "Half Baths": "0",
+        "Basement": "NONE",
+        "Number of Stories": "1",
+        "Grade": "C+ - AVERAGE +"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.1652,
+          40.0379
+        ]
+      }
+    }
+  ]
+}

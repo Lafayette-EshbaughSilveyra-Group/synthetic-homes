@@ -1,0 +1,59 @@
+{
+  "type": "FeatureCollection",
+  "mappers": [],
+  "project": {
+    "id": "12244989-8f44-4fa3-81e1-5f6d23fa92ec",
+    "name": "Generated Project",
+    "begin_date": "2024-06-26T00:00:00Z",
+    "end_date": "2025-06-26T00:00:00Z",
+    "cec_climate_zone": null,
+    "climate_zone": "4A",
+    "default_template": "90.1-2013",
+    "import_surrounding_buildings_as_shading": null,
+    "surface_elevation": null,
+    "tariff_filename": null,
+    "timesteps_per_hour": 1,
+    "weather_filename": "weather.epw"
+  },
+  "scenarios": [
+    {
+      "feature_mappings": [],
+      "id": "891722d0-3aa8-434f-a50a-953940e9b71f",
+      "name": "Base Scenario"
+    }
+  ],
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "d12b61c2-2236-477d-837f-cef4084be23a",
+        "name": "Generated Home",
+        "type": "Building",
+        "building_type": "Single family",
+        "floor_area": 2067,
+        "number_of_stories": 1,
+        "inspection_note": "The split-level home, built in 1967, features a frame exterior which may require inspection for insulation efficiency. The electric warm air heating system is supplemented by air conditioning, though the system's age should be checked for energy efficiency. The windows appear original and may benefit from upgrades to double-pane for better insulation. The partial basement could be improved with insulation to prevent heat loss. Overall, the home appears well-maintained with average energy efficiency for its age.",
+        "Year Built": "1967",
+        "Total Square Feet Living Area": "2,067",
+        "Building Style": "SPLIT-LEVEL",
+        "Exterior Wall Material": "FRAME",
+        "Heating Fuel Type": "ELECTRIC",
+        "Heating System Type": "WARM AIR",
+        "Heat/Air Cond": "AIR COND",
+        "Bedrooms": "3",
+        "Full Baths": "2",
+        "Half Baths": "0",
+        "Basement": "PART",
+        "Number of Stories": "1",
+        "Grade": "C+ - AVERAGE +"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.1652,
+          40.0086
+        ]
+      }
+    }
+  ]
+}

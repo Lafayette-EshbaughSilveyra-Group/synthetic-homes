@@ -1,0 +1,59 @@
+{
+  "type": "FeatureCollection",
+  "mappers": [],
+  "project": {
+    "id": "a423f9e3-282c-409a-8ce7-b3bcd8605819",
+    "name": "Generated Project",
+    "begin_date": "2024-06-26T00:00:00Z",
+    "end_date": "2025-06-26T00:00:00Z",
+    "cec_climate_zone": null,
+    "climate_zone": "4A",
+    "default_template": "90.1-2013",
+    "import_surrounding_buildings_as_shading": null,
+    "surface_elevation": null,
+    "tariff_filename": null,
+    "timesteps_per_hour": 1,
+    "weather_filename": "weather.epw"
+  },
+  "scenarios": [
+    {
+      "feature_mappings": [],
+      "id": "727fb4c3-dbf5-4d4e-bebe-1c54154f3476",
+      "name": "Base Scenario"
+    }
+  ],
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "4be55e15-aa05-463f-b075-c9b9b7bf4cee",
+        "name": "Generated Home",
+        "type": "Building",
+        "building_type": "Single family",
+        "floor_area": 1934,
+        "number_of_stories": 1,
+        "inspection_note": "The home, built in 1993, appears to be in good condition with aluminum/vinyl siding. The heat pump system is a suitable choice for efficient heating and cooling, coupled with electric fuel. The presence of air conditioning adds to the home's comfort. Windows seem to be in fair condition, though upgrades to double glazing could improve energy efficiency. The full basement offers potential for additional insulation improvements. Overall, the property is well-maintained with a solid energy profile.",
+        "Year Built": "1993",
+        "Total Square Feet Living Area": "1,934",
+        "Building Style": "CAPE",
+        "Exterior Wall Material": "ALUMINUM/VINYL SIDING",
+        "Heating Fuel Type": "ELECTRIC",
+        "Heating System Type": "HEAT PUMP",
+        "Heat/Air Cond": "AIR COND",
+        "Bedrooms": "3",
+        "Full Baths": "2",
+        "Half Baths": "1",
+        "Basement": "FULL",
+        "Number of Stories": "1",
+        "Grade": "B- - GOOD -"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.1652,
+          39.9526
+        ]
+      }
+    }
+  ]
+}

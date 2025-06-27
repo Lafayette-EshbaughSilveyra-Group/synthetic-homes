@@ -1,0 +1,59 @@
+{
+  "type": "FeatureCollection",
+  "mappers": [],
+  "project": {
+    "id": "37aebb67-45f4-444c-b8fb-59c33d439287",
+    "name": "Generated Project",
+    "begin_date": "2024-06-26T00:00:00Z",
+    "end_date": "2025-06-26T00:00:00Z",
+    "cec_climate_zone": null,
+    "climate_zone": "4A",
+    "default_template": "90.1-2013",
+    "import_surrounding_buildings_as_shading": null,
+    "surface_elevation": null,
+    "tariff_filename": null,
+    "timesteps_per_hour": 1,
+    "weather_filename": "weather.epw"
+  },
+  "scenarios": [
+    {
+      "feature_mappings": [],
+      "id": "7887a98a-76e6-4615-9a46-f99f16d47351",
+      "name": "Base Scenario"
+    }
+  ],
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "327f5394-b764-45c0-9972-67dd34bd4bb3",
+        "name": "Generated Home",
+        "type": "Building",
+        "building_type": "Single family",
+        "floor_area": 1872,
+        "number_of_stories": 2,
+        "inspection_note": "The exterior of the home features aluminum and vinyl siding, providing decent insulation. Windows appear original and may benefit from upgrading to energy-efficient models. The hot water heating system is typical for the home's age but may require inspection to ensure efficiency. No visible HVAC upgrades or issues were noted. The home lacks a central air conditioning system, which could be considered for improved climate control.",
+        "Year Built": "1974",
+        "Total Square Feet Living Area": "1,872",
+        "Building Style": "COLONIAL",
+        "Exterior Wall Material": "ALUMINUM/VINYL SIDING",
+        "Heating Fuel Type": "UNKNOWN/NONE",
+        "Heating System Type": "HOT WATER",
+        "Heat/Air Cond": "NORMAL",
+        "Bedrooms": "4",
+        "Full Baths": "1",
+        "Half Baths": "1",
+        "Basement": "FULL",
+        "Number of Stories": "2",
+        "Grade": "B- - GOOD -"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.1945,
+          40.0326
+        ]
+      }
+    }
+  ]
+}

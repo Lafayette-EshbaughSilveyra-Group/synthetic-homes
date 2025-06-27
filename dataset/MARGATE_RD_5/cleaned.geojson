@@ -1,0 +1,59 @@
+{
+  "type": "FeatureCollection",
+  "mappers": [],
+  "project": {
+    "id": "2d4a86ac-e64e-4e39-b21d-6931bf8a8c54",
+    "name": "Generated Project",
+    "begin_date": "2024-06-26T00:00:00Z",
+    "end_date": "2025-06-26T00:00:00Z",
+    "cec_climate_zone": null,
+    "climate_zone": "4A",
+    "default_template": "90.1-2013",
+    "import_surrounding_buildings_as_shading": null,
+    "surface_elevation": null,
+    "tariff_filename": null,
+    "timesteps_per_hour": 1,
+    "weather_filename": "weather.epw"
+  },
+  "scenarios": [
+    {
+      "feature_mappings": [],
+      "id": "a7a8c819-2632-4760-95ef-78e487d9d94e",
+      "name": "Base Scenario"
+    }
+  ],
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "2fc75798-3305-46f5-a346-fb55b28b2906",
+        "name": "Generated Home",
+        "type": "Building",
+        "building_type": "Single family",
+        "floor_area": 882,
+        "number_of_stories": 1,
+        "inspection_note": "The home, built in 1983, features stucco exterior walls which appear in average condition. The heating system is electric warm air, typical for homes of this age, but it may lack efficiency compared to newer systems. No basement is present, reducing potential issues with basement insulation. Windows appear to be original, likely single-pane, which may impact energy efficiency. There are no visible signs of recent upgrades. Recommend checking attic insulation to improve overall energy conservation.",
+        "Year Built": "1983",
+        "Total Square Feet Living Area": "882",
+        "Building Style": "SPECIAL/OTHER",
+        "Exterior Wall Material": "STUCCO",
+        "Heating Fuel Type": "ELECTRIC",
+        "Heating System Type": "WARM AIR",
+        "Heat/Air Cond": "NORMAL",
+        "Bedrooms": "1",
+        "Full Baths": "1",
+        "Half Baths": "0",
+        "Basement": "NONE",
+        "Number of Stories": "1",
+        "Grade": "C+ - AVERAGE +"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.1652,
+          39.9526
+        ]
+      }
+    }
+  ]
+}

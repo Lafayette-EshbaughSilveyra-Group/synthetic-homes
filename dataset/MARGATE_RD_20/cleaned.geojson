@@ -1,0 +1,59 @@
+{
+  "type": "FeatureCollection",
+  "mappers": [],
+  "project": {
+    "id": "6fbcbac8-b738-4c6b-b716-b8e3e3095070",
+    "name": "Generated Project",
+    "begin_date": "2024-06-26T00:00:00Z",
+    "end_date": "2025-06-26T00:00:00Z",
+    "cec_climate_zone": null,
+    "climate_zone": "4A",
+    "default_template": "90.1-2013",
+    "import_surrounding_buildings_as_shading": null,
+    "surface_elevation": null,
+    "tariff_filename": null,
+    "timesteps_per_hour": 1,
+    "weather_filename": "weather.epw"
+  },
+  "scenarios": [
+    {
+      "feature_mappings": [],
+      "id": "fece2536-2efc-405f-86a9-8b5d29b63445",
+      "name": "Base Scenario"
+    }
+  ],
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "a2b771e3-cbb2-4899-b0e8-453f169f7190",
+        "name": "Generated Home",
+        "type": "Building",
+        "building_type": "Single family",
+        "floor_area": 2874,
+        "number_of_stories": 2,
+        "inspection_note": "The home, built in 1984, features a colonial style with aluminum/vinyl siding. The HVAC system is electric warm air with air conditioning, suggesting moderate efficiency typical for its age. The windows appear original; upgrading to double-pane could improve energy efficiency. The full basement could be better insulated for enhanced energy savings. Overall, the property is in good condition, but energy improvements could be considered.",
+        "Year Built": "1984",
+        "Total Square Feet Living Area": "2,874",
+        "Building Style": "COLONIAL",
+        "Exterior Wall Material": "ALUMINUM/VINYL SIDING",
+        "Heating Fuel Type": "ELECTRIC",
+        "Heating System Type": "WARM AIR",
+        "Heat/Air Cond": "AIR COND",
+        "Bedrooms": "4",
+        "Full Baths": "3",
+        "Half Baths": "0",
+        "Basement": "FULL",
+        "Number of Stories": "2",
+        "Grade": "B+ - GOOD +"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.1945,
+          40.0633
+        ]
+      }
+    }
+  ]
+}

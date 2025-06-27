@@ -1,0 +1,59 @@
+{
+  "type": "FeatureCollection",
+  "mappers": [],
+  "project": {
+    "id": "1bb21e40-008a-465b-91ed-35f0fb5815bc",
+    "name": "Generated Project",
+    "begin_date": "2024-06-26T00:00:00Z",
+    "end_date": "2025-06-26T00:00:00Z",
+    "cec_climate_zone": null,
+    "climate_zone": "4A",
+    "default_template": "90.1-2013",
+    "import_surrounding_buildings_as_shading": null,
+    "surface_elevation": null,
+    "tariff_filename": null,
+    "timesteps_per_hour": 1,
+    "weather_filename": "weather.epw"
+  },
+  "scenarios": [
+    {
+      "feature_mappings": [],
+      "id": "9538abc1-9bd8-4830-bd76-e5545a6dafd7",
+      "name": "Base Scenario"
+    }
+  ],
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "299d0ccd-f3e2-4232-9cf3-df4b5f628310",
+        "name": "Generated Home",
+        "type": "Building",
+        "building_type": "Single family",
+        "floor_area": 2271,
+        "number_of_stories": 2,
+        "inspection_note": "The home appears to be in good condition with aluminum/vinyl siding which should offer reasonable insulation. The heating is electric with a warm air system, suggesting a likely mid-efficiency furnace. The air conditioning is present, but the age is not specified, so efficiency may vary. Windows appear to be double-glazed, which is good for energy retention, though checking for drafts or seals is recommended. The house was built in 1987, which means insulation standards may not be up to modern codes. Consider assessing attic insulation as no attic is indicated. Overall, a solid structure with potential for energy efficiency improvements, particularly in insulation and HVAC upgrades.",
+        "Year Built": "1987",
+        "Total Square Feet Living Area": "2,271",
+        "Building Style": "COLONIAL",
+        "Exterior Wall Material": "ALUMINUM/VINYL SIDING",
+        "Heating Fuel Type": "ELECTRIC",
+        "Heating System Type": "WARM AIR",
+        "Heat/Air Cond": "AIR COND",
+        "Bedrooms": "4",
+        "Full Baths": "2",
+        "Half Baths": "1",
+        "Basement": "FULL",
+        "Number of Stories": "2",
+        "Grade": "B - GOOD"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.1652,
+          40.0045
+        ]
+      }
+    }
+  ]
+}

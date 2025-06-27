@@ -1,0 +1,59 @@
+{
+  "type": "FeatureCollection",
+  "mappers": [],
+  "project": {
+    "id": "286b22dd-80f2-41b2-9d9f-1ce2fbc06a3c",
+    "name": "Generated Project",
+    "begin_date": "2024-06-26T00:00:00Z",
+    "end_date": "2025-06-26T00:00:00Z",
+    "cec_climate_zone": null,
+    "climate_zone": "4A",
+    "default_template": "90.1-2013",
+    "import_surrounding_buildings_as_shading": null,
+    "surface_elevation": null,
+    "tariff_filename": null,
+    "timesteps_per_hour": 1,
+    "weather_filename": "weather.epw"
+  },
+  "scenarios": [
+    {
+      "feature_mappings": [],
+      "id": "1fa95da7-3e65-4c41-8595-af4d2f80b532",
+      "name": "Base Scenario"
+    }
+  ],
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "a03057fa-b364-45cd-96fe-63a19b5e0008",
+        "name": "Generated Home",
+        "type": "Building",
+        "building_type": "Single family",
+        "floor_area": 3298,
+        "number_of_stories": 2,
+        "inspection_note": "The home, built in 1992, features aluminum/vinyl siding which appears to be in average condition for its age. The HVAC system is electric warm air with air conditioning, likely original and may benefit from an efficiency upgrade. Windows are double-hung, typical of the colonial style, but inspecting their seals would be advisable to ensure energy efficiency. The full basement could offer additional insulation opportunities. Overall, the property is well-maintained with potential for energy improvements.",
+        "Year Built": "1992",
+        "Total Square Feet Living Area": "3,298",
+        "Building Style": "COLONIAL",
+        "Exterior Wall Material": "ALUMINUM/VINYL SIDING",
+        "Heating Fuel Type": "ELECTRIC",
+        "Heating System Type": "WARM AIR",
+        "Heat/Air Cond": "AIR COND",
+        "Bedrooms": "5",
+        "Full Baths": "3",
+        "Half Baths": "2",
+        "Basement": "FULL",
+        "Number of Stories": "2",
+        "Grade": "B- - GOOD -"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.8867,
+          40.2737
+        ]
+      }
+    }
+  ]
+}

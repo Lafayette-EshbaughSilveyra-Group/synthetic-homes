@@ -1,0 +1,59 @@
+{
+  "type": "FeatureCollection",
+  "mappers": [],
+  "project": {
+    "id": "b0772fe7-5904-4c0d-a137-4a0d3584c64b",
+    "name": "Generated Project",
+    "begin_date": "2024-06-26T00:00:00Z",
+    "end_date": "2025-06-26T00:00:00Z",
+    "cec_climate_zone": null,
+    "climate_zone": "4A",
+    "default_template": "90.1-2013",
+    "import_surrounding_buildings_as_shading": null,
+    "surface_elevation": null,
+    "tariff_filename": null,
+    "timesteps_per_hour": 1,
+    "weather_filename": "weather.epw"
+  },
+  "scenarios": [
+    {
+      "feature_mappings": [],
+      "id": "11334845-0735-4f82-9ec9-5519da6628e0",
+      "name": "Base Scenario"
+    }
+  ],
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "7407a2db-ea82-47db-b903-cd2d4f9c9a14",
+        "name": "Generated Home",
+        "type": "Building",
+        "building_type": "Single family",
+        "floor_area": 2256,
+        "number_of_stories": 2,
+        "inspection_note": "The home, built in 1980, is a colonial style with aluminum/vinyl siding. The full basement offers potential for additional insulation improvements. The electric warm air heating system is complemented by air conditioning, suggesting an overall efficient HVAC setup for the era. Windows appear to be double-pane, which is beneficial for energy conservation. The siding looks well-maintained, contributing to the home's insulation. No visible recent upgrades, but the structure is in good condition.",
+        "Year Built": "1980",
+        "Total Square Feet Living Area": "2,256",
+        "Building Style": "COLONIAL",
+        "Exterior Wall Material": "ALUMINUM/VINYL SIDING",
+        "Heating Fuel Type": "ELECTRIC",
+        "Heating System Type": "WARM AIR",
+        "Heat/Air Cond": "AIR COND",
+        "Bedrooms": "4",
+        "Full Baths": "2",
+        "Half Baths": "1",
+        "Basement": "FULL",
+        "Number of Stories": "2",
+        "Grade": "B - GOOD"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.1945,
+          40.0633
+        ]
+      }
+    }
+  ]
+}

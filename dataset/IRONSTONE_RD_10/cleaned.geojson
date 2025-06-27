@@ -1,0 +1,59 @@
+{
+  "type": "FeatureCollection",
+  "mappers": [],
+  "project": {
+    "id": "62cca628-9a2f-4198-a0f0-faadae237267",
+    "name": "Generated Project",
+    "begin_date": "2024-06-26T00:00:00Z",
+    "end_date": "2025-06-26T00:00:00Z",
+    "cec_climate_zone": null,
+    "climate_zone": "4A",
+    "default_template": "90.1-2013",
+    "import_surrounding_buildings_as_shading": null,
+    "surface_elevation": null,
+    "tariff_filename": null,
+    "timesteps_per_hour": 1,
+    "weather_filename": "weather.epw"
+  },
+  "scenarios": [
+    {
+      "feature_mappings": [],
+      "id": "5e70d0a6-e959-41df-ade4-4108b896b325",
+      "name": "Base Scenario"
+    }
+  ],
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "95f42acc-1efa-4282-889c-26f3f447f598",
+        "name": "Generated Home",
+        "type": "Building",
+        "building_type": "Single family",
+        "floor_area": 3057,
+        "number_of_stories": 1,
+        "inspection_note": "The home, built in 1969, appears to have original frame construction. The HVAC system uses electric warm air heating, supplemented by air conditioning, which is typical for homes of this era. Windows might need an upgrade as they could potentially be single-pane, affecting energy efficiency. Insulation in walls and attic may be minimal or outdated, common in homes from this period. Upgrading to double-pane windows and enhancing insulation would improve energy efficiency significantly. The exterior looks well-maintained, but further inspection of the HVAC system's age could reveal the need for potential upgrades.",
+        "Year Built": "1969",
+        "Total Square Feet Living Area": "3,057",
+        "Building Style": "BI-LEVEL",
+        "Exterior Wall Material": "FRAME",
+        "Heating Fuel Type": "ELECTRIC",
+        "Heating System Type": "WARM AIR",
+        "Heat/Air Cond": "AIR COND",
+        "Bedrooms": "5",
+        "Full Baths": "2",
+        "Half Baths": "",
+        "Basement": "FULL",
+        "Number of Stories": "1",
+        "Grade": "C+ - AVERAGE +"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.1945,
+          40.0633
+        ]
+      }
+    }
+  ]
+}

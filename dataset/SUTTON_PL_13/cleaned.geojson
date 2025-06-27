@@ -1,0 +1,59 @@
+{
+  "type": "FeatureCollection",
+  "mappers": [],
+  "project": {
+    "id": "dc5d31ed-22f2-4666-8c0b-52a225166aae",
+    "name": "Generated Project",
+    "begin_date": "2024-06-26T00:00:00Z",
+    "end_date": "2025-06-26T00:00:00Z",
+    "cec_climate_zone": null,
+    "climate_zone": "4A",
+    "default_template": "90.1-2013",
+    "import_surrounding_buildings_as_shading": null,
+    "surface_elevation": null,
+    "tariff_filename": null,
+    "timesteps_per_hour": 1,
+    "weather_filename": "weather.epw"
+  },
+  "scenarios": [
+    {
+      "feature_mappings": [],
+      "id": "8b16d97f-2a2a-4df9-9d9d-db32e297d373",
+      "name": "Base Scenario"
+    }
+  ],
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "d105c11c-93ac-404a-bf1e-f05d1838ac3e",
+        "name": "Generated Home",
+        "type": "Building",
+        "building_type": "Single family",
+        "floor_area": 3245,
+        "number_of_stories": 1,
+        "inspection_note": "The home, built in 1974, has a split-level design with aluminum/vinyl siding, suggesting moderate insulation properties. The heating system is warm air, but the fuel type is unknown, which may impact energy efficiency. The presence of air conditioning is a positive feature. Windows appear dated, which may lead to energy loss. The full basement could provide additional insulation if properly maintained. Overall, the property's energy efficiency could benefit from window upgrades and a review of the heating system's fuel source.",
+        "Year Built": "1974",
+        "Total Square Feet Living Area": "3,245",
+        "Building Style": "SPLIT-LEVEL",
+        "Exterior Wall Material": "ALUMINUM/VINYL SIDING",
+        "Heating Fuel Type": "UNKNOWN/NONE",
+        "Heating System Type": "WARM AIR",
+        "Heat/Air Cond": "AIR COND",
+        "Bedrooms": "3",
+        "Full Baths": "2",
+        "Half Baths": "1",
+        "Basement": "FULL",
+        "Number of Stories": "1",
+        "Grade": "B+ - GOOD +"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.1652,
+          39.9526
+        ]
+      }
+    }
+  ]
+}

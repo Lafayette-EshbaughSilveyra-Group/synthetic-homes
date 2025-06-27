@@ -1,0 +1,59 @@
+{
+  "type": "FeatureCollection",
+  "mappers": [],
+  "project": {
+    "id": "11d06c85-fdf2-41ca-afa7-fb5a906d4f5c",
+    "name": "Generated Project",
+    "begin_date": "2024-06-26T00:00:00Z",
+    "end_date": "2025-06-26T00:00:00Z",
+    "cec_climate_zone": null,
+    "climate_zone": "4A",
+    "default_template": "90.1-2013",
+    "import_surrounding_buildings_as_shading": null,
+    "surface_elevation": null,
+    "tariff_filename": null,
+    "timesteps_per_hour": 1,
+    "weather_filename": "weather.epw"
+  },
+  "scenarios": [
+    {
+      "feature_mappings": [],
+      "id": "2a679f2f-17fd-4909-b860-d7b1cede4251",
+      "name": "Base Scenario"
+    }
+  ],
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "811dc6c0-f339-4ada-a9b2-9eba0f4f09eb",
+        "name": "Generated Home",
+        "type": "Building",
+        "building_type": "Single family",
+        "floor_area": 2292,
+        "number_of_stories": 2,
+        "inspection_note": "The colonial-style home built in 1985 appears well-maintained with aluminum/vinyl siding. The HVAC system is electric with hot water heating, indicating potential for efficiency improvements with newer technologies. The air conditioning is present, which is beneficial for summer months. Windows appear standard for the build year; upgrading to double-pane windows could enhance insulation. The full basement offers opportunities for additional insulation to reduce heat loss. Overall, the property is in good condition with room for energy efficiency upgrades.",
+        "Year Built": "1985",
+        "Total Square Feet Living Area": "2,292",
+        "Building Style": "COLONIAL",
+        "Exterior Wall Material": "ALUMINUM/VINYL SIDING",
+        "Heating Fuel Type": "ELECTRIC",
+        "Heating System Type": "HOT WATER",
+        "Heat/Air Cond": "AIR COND",
+        "Bedrooms": "4",
+        "Full Baths": "2",
+        "Half Baths": "1",
+        "Basement": "FULL",
+        "Number of Stories": "2",
+        "Grade": "B - GOOD"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.1652,
+          39.9526
+        ]
+      }
+    }
+  ]
+}

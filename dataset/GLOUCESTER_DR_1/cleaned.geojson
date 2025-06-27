@@ -1,0 +1,59 @@
+{
+  "type": "FeatureCollection",
+  "mappers": [],
+  "project": {
+    "id": "1adb1f1e-d561-440d-a5d0-0f3a497f5669",
+    "name": "Generated Project",
+    "begin_date": "2024-06-26T00:00:00Z",
+    "end_date": "2025-06-26T00:00:00Z",
+    "cec_climate_zone": null,
+    "climate_zone": "4A",
+    "default_template": "90.1-2013",
+    "import_surrounding_buildings_as_shading": null,
+    "surface_elevation": null,
+    "tariff_filename": null,
+    "timesteps_per_hour": 1,
+    "weather_filename": "weather.epw"
+  },
+  "scenarios": [
+    {
+      "feature_mappings": [],
+      "id": "73d4b9f5-b302-4d62-b6d7-a3bd6c4da40d",
+      "name": "Base Scenario"
+    }
+  ],
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "7be2fa65-5d3a-4b6b-a18c-880430591e3c",
+        "name": "Generated Home",
+        "type": "Building",
+        "building_type": "Single family",
+        "floor_area": 2687,
+        "number_of_stories": 2,
+        "inspection_note": "The home, built in 1994, has a colonial style with aluminum/vinyl siding, indicative of standard insulation levels for that period. The windows appear double-glazed, which should help in maintaining energy efficiency. The heating system is gas-powered warm air, and the presence of air conditioning suggests a complete HVAC system. While the system might still be functional, considering its age, an evaluation for potential upgrades could enhance efficiency. The full basement could offer additional insulation benefits, though it should be checked for moisture issues. Overall, the property seems well-maintained with no visible signs of significant wear or energy inefficiencies from the exterior.",
+        "Year Built": "1994",
+        "Total Square Feet Living Area": "2,687",
+        "Building Style": "COLONIAL",
+        "Exterior Wall Material": "ALUMINUM/VINYL SIDING",
+        "Heating Fuel Type": "GAS",
+        "Heating System Type": "WARM AIR",
+        "Heat/Air Cond": "AIR COND",
+        "Bedrooms": "4",
+        "Full Baths": "2",
+        "Half Baths": "1",
+        "Basement": "FULL",
+        "Number of Stories": "2",
+        "Grade": "B - GOOD"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.1652,
+          40.1106
+        ]
+      }
+    }
+  ]
+}

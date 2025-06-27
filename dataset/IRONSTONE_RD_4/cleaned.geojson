@@ -1,0 +1,59 @@
+{
+  "type": "FeatureCollection",
+  "mappers": [],
+  "project": {
+    "id": "5205403b-3744-4dee-b0e3-e526437ba802",
+    "name": "Generated Project",
+    "begin_date": "2024-06-26T00:00:00Z",
+    "end_date": "2025-06-26T00:00:00Z",
+    "cec_climate_zone": null,
+    "climate_zone": "4A",
+    "default_template": "90.1-2013",
+    "import_surrounding_buildings_as_shading": null,
+    "surface_elevation": null,
+    "tariff_filename": null,
+    "timesteps_per_hour": 1,
+    "weather_filename": "weather.epw"
+  },
+  "scenarios": [
+    {
+      "feature_mappings": [],
+      "id": "14f60c8b-c838-4e78-9647-91e86bad14cc",
+      "name": "Base Scenario"
+    }
+  ],
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "e82c0df4-96b0-4a15-ad12-3add6b1b9939",
+        "name": "Generated Home",
+        "type": "Building",
+        "building_type": "Single family",
+        "floor_area": 1788,
+        "number_of_stories": 1,
+        "inspection_note": "The home, built in 1969, appears to have a solid masonry/frame exterior indicating good insulation properties for its age. The split-level design and full basement offer potential areas for heat loss if not properly insulated. The electric hot water heating system is typical but may benefit from an upgrade to improve efficiency. Windows look original and may not be double-glazed, which could lead to energy inefficiency. Overall, the house seems to be in average condition, but upgrading to modern HVAC systems and improving window insulation could enhance energy efficiency.",
+        "Year Built": "1969",
+        "Total Square Feet Living Area": "1,788",
+        "Building Style": "SPLIT-LEVEL",
+        "Exterior Wall Material": "MASONRY/FRAME",
+        "Heating Fuel Type": "ELECTRIC",
+        "Heating System Type": "HOT WATER",
+        "Heat/Air Cond": "NORMAL",
+        "Bedrooms": "3",
+        "Full Baths": "1",
+        "Half Baths": "1",
+        "Basement": "FULL",
+        "Number of Stories": "1",
+        "Grade": "C+ - AVERAGE +"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.1652,
+          40.0379
+        ]
+      }
+    }
+  ]
+}

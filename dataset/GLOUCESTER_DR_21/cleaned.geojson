@@ -1,0 +1,59 @@
+{
+  "type": "FeatureCollection",
+  "mappers": [],
+  "project": {
+    "id": "f79e0c19-75e9-45b3-82de-c2862392043e",
+    "name": "Generated Project",
+    "begin_date": "2024-06-26T00:00:00Z",
+    "end_date": "2025-06-26T00:00:00Z",
+    "cec_climate_zone": null,
+    "climate_zone": "4A",
+    "default_template": "90.1-2013",
+    "import_surrounding_buildings_as_shading": null,
+    "surface_elevation": null,
+    "tariff_filename": null,
+    "timesteps_per_hour": 1,
+    "weather_filename": "weather.epw"
+  },
+  "scenarios": [
+    {
+      "feature_mappings": [],
+      "id": "141de996-a748-4f48-803c-91b7b6be29b7",
+      "name": "Base Scenario"
+    }
+  ],
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "01025676-4b75-49ba-962a-b8a888cd232c",
+        "name": "Generated Home",
+        "type": "Building",
+        "building_type": "Single family",
+        "floor_area": 2482,
+        "number_of_stories": 2,
+        "inspection_note": "The home appears well-maintained with aluminum/vinyl siding, providing decent insulation. The windows look original, likely double-pane, which may benefit from upgrades to improve energy efficiency. The electric warm air heating system suggests moderate efficiency; checking the age of the HVAC unit is recommended to assess potential upgrades. Central air conditioning is present, enhancing comfort. The full basement could be a source of heat loss if not properly insulated.",
+        "Year Built": "1980",
+        "Total Square Feet Living Area": "2,482",
+        "Building Style": "COLONIAL",
+        "Exterior Wall Material": "ALUMINUM/VINYL SIDING",
+        "Heating Fuel Type": "ELECTRIC",
+        "Heating System Type": "WARM AIR",
+        "Heat/Air Cond": "AIR COND",
+        "Bedrooms": "4",
+        "Full Baths": "2",
+        "Half Baths": "1",
+        "Basement": "FULL",
+        "Number of Stories": "2",
+        "Grade": "B - GOOD"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.1652,
+          40.0379
+        ]
+      }
+    }
+  ]
+}

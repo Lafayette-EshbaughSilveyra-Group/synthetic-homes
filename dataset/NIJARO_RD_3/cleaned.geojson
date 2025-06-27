@@ -1,0 +1,59 @@
+{
+  "type": "FeatureCollection",
+  "mappers": [],
+  "project": {
+    "id": "7d8ebc62-3bc8-4969-b2eb-9adde1470c0f",
+    "name": "Generated Project",
+    "begin_date": "2024-06-26T00:00:00Z",
+    "end_date": "2025-06-26T00:00:00Z",
+    "cec_climate_zone": null,
+    "climate_zone": "4A",
+    "default_template": "90.1-2013",
+    "import_surrounding_buildings_as_shading": null,
+    "surface_elevation": null,
+    "tariff_filename": null,
+    "timesteps_per_hour": 1,
+    "weather_filename": "weather.epw"
+  },
+  "scenarios": [
+    {
+      "feature_mappings": [],
+      "id": "4c5deb74-d230-4a88-ab60-338f13f0f64b",
+      "name": "Base Scenario"
+    }
+  ],
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "9235f710-9d40-40a7-af3e-1a7d12c8b198",
+        "name": "Generated Home",
+        "type": "Building",
+        "building_type": "Single family",
+        "floor_area": 1688,
+        "number_of_stories": 1,
+        "inspection_note": "The home, built in 1970, appears to have aluminum/vinyl siding which is typical for the era. The windows seem original and might benefit from upgrading to improve energy efficiency. The warm air heating system is electric, and the presence of air conditioning is a plus for comfort. Given the age, insulation in the walls and attic could be improved unless previously upgraded. The full basement might offer additional insulation challenges but also potential for energy efficiency improvements. There are no visible signs of recent upgrades to HVAC or windows from the exterior.",
+        "Year Built": "1970",
+        "Total Square Feet Living Area": "1,688",
+        "Building Style": "RANCH",
+        "Exterior Wall Material": "ALUMINUM/VINYL SIDING",
+        "Heating Fuel Type": "ELECTRIC",
+        "Heating System Type": "WARM AIR",
+        "Heat/Air Cond": "AIR COND",
+        "Bedrooms": "3",
+        "Full Baths": "1",
+        "Half Baths": "1",
+        "Basement": "FULL",
+        "Number of Stories": "1",
+        "Grade": "C+ - AVERAGE +"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.123456,
+          40.123456
+        ]
+      }
+    }
+  ]
+}
