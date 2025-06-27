@@ -9,13 +9,10 @@
 5. Classifies the EnergyPlus results and inspection report, giving the ground truth using OpenAI's API
 
 OUTPUTS:
-`dataset/{entry_folder}/results.json`           ⌉
-
-                                                | INPUTS (i.e., X)
-
-`dataset/{entry_folder}/inspection_report.txt`  ⌋
-
-`dataset/{entry_folder}/label.json`             ] GROUND TRUTH (i.e., Y)
+| $X$ (Input Data) | $Y$ (Ground Truth) |
+|------------------|--------------------|
+| `dataset/*/results.json` — EnergyPlus simulation results | `dataset/*/label.json` — Data label $\in \mathbb{R}^4$ |
+| `dataset/*/cleaned.geojson["features"][0]["inspection_note"]` — synthetically generated inspection note | |
 
 > **Note**: All of these are compiled for the entire dataset into `final_dataset.jsonl`
 
