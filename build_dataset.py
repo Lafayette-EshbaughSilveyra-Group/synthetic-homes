@@ -46,6 +46,16 @@ import requests
 import zipfile
 from io import BytesIO, StringIO
 
+import os
+import json
+import time
+import requests
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
 
 def init_driver(headless=False):
     options = Options()
@@ -128,6 +138,66 @@ def get_total_record_count(driver):
         return 1
 
 
+def scrape_sketch_details(driver):
+    """
+    Scrapes the table with class 'rgMasterTable' inside div.rgDataDiv and returns a dictionary
+    mapping the third <td>'s text to the integer value of the fourth <td> in each row.
+
+    Args:
+        driver: Selenium WebDriver object, assumed to be on the target page.
+
+    Returns:
+        dict: { third_td_text: int(fourth_td_text) }
+    """
+    details = {}
+
+    iframe = driver.find_element(By.TAG_NAME, "iframe")
+    driver.switch_to.frame(iframe)
+
+    # Wait for the table inside div.rgDataDiv to load
+    WebDriverWait(driver, 20).until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, "div.rgDataDiv table.rgMasterTable"))
+    )
+
+    table = driver.find_element(By.CSS_SELECTOR, "div#RadGrid1_GridData table")
+    rows = table.find_elements(By.TAG_NAME, "tr")
+
+    print(f"[INFO] {len(rows)} rows found.")
+
+    for row in rows:
+        tds = row.find_elements(By.TAG_NAME, "td")
+        if len(tds) >= 4:
+            key = tds[2].text.strip()
+            value_text = tds[3].text.strip()
+            try:
+                value = int(value_text.replace(',', ''))  # Remove commas if numbers are formatted
+                details[key] = value
+            except ValueError:
+                continue  # Skip rows where the fourth td is not an integer
+
+    return details
+
+
+def scrape_sketch_image(driver, address_folder):
+    """
+    Takes a screenshot of the sketch image (with overlays rendered) and saves it to address_folder.
+
+    Args:
+        driver: Selenium WebDriver object, assumed to be on the target page.
+        address_folder: str, path to save the screenshot.
+    """
+    # Wait for image to load (max 10 seconds)
+    WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.ID, "BinImage"))
+    )
+
+    time.sleep(2)
+
+    element = driver.find_element(By.ID, "BinImage")
+    element.screenshot(f"{address_folder}/sketch.png")
+    driver.switch_to.default_content()
+
+
 def scrape_all_records_on_street(driver, street_name, output_dir):
     base_url = "https://www.ncpub.org/_web/search/commonsearch.aspx?mode=address"
     driver.get(base_url)
@@ -166,11 +236,16 @@ def scrape_all_records_on_street(driver, street_name, output_dir):
             click_tab(driver, "Photos")
             folder = os.path.join(output_dir, data.get("address", f"{street_name}_{i}").replace(" ", "_"))
             os.makedirs(folder, exist_ok=True)
-            photo_urls = scrape_and_download_photos_from_photoDetails(driver, folder)
+            scrape_and_download_photos_from_photoDetails(driver, folder)
 
-            data["photo_urls"] = photo_urls
+            click_tab(driver, "Sketch")
+            sketch_data = scrape_sketch_details(driver)
+            scrape_sketch_image(driver, folder)
+
+            data["sketch_data"] = sketch_data
 
             out_json = os.path.join(folder, "data.json")
+
             with open(out_json, 'w', encoding='utf-8') as f:
                 json.dump(data, f, indent=2)
 
@@ -180,11 +255,11 @@ def scrape_all_records_on_street(driver, street_name, output_dir):
                 driver.find_element(By.ID, "DTLNavigator_imageNext").click()
                 time.sleep(2)
         except Exception as e:
-            print(f"[WARN] Skipped record {i + 1} due to error: {e}")
+            print(f"[WARN] Skipped record {i} due to error: {e}")
             break
 
 
-def delete_folders_without_jpg(dataset_dir="dataset"):
+def delete_folders_without_jpg_or_png(dataset_dir="dataset"):
     deleted = 0
     for folder in os.listdir(dataset_dir):
         home_path = os.path.join(dataset_dir, folder)
@@ -192,9 +267,10 @@ def delete_folders_without_jpg(dataset_dir="dataset"):
             continue
 
         has_jpg = any(f.lower().endswith(".jpg") for f in os.listdir(home_path))
-        if not has_jpg:
+        has_png = any(f.lower().endswith(".png") for f in os.listdir(home_path))
+        if not has_jpg or not has_png:
             shutil.rmtree(home_path)
-            print(f"[CLEANED] Removed: {folder}")
+            print(f"[CLEANED] Removed {folder} due to missing home images or floor plan sketches.")
             deleted += 1
 
     print(f"Cleanup complete. {deleted} folders removed.")
@@ -205,48 +281,65 @@ def encode_image(filepath):
         return base64.b64encode(f.read()).decode('utf-8')
 
 
-def generate_geojson_and_note(house_data, image_path, model="gpt-4o"):
+def generate_geojson_and_note(house_data, image_path, sketch_path):
     image_base64 = encode_image(image_path)
+    sketch_base64 = encode_image(sketch_path)
 
     # ----- Prompt Setup -----
     prompt = f"""
-You are a certified **home energy inspection expert** and data specialist working on a project to generate synthetic inspection reports for single-family homes. You are helping build a training set for a home efficiency AI model.
+    You are a certified **home energy inspection expert** and data specialist working on a project to generate synthetic inspection reports for single-family homes. You are helping build a training set for a home efficiency AI model.
 
-You are given:
-- Structured residential property data in JSON format
-- A photo of the exterior of the home
+    You are given:
+    - Structured residential property data in JSON format, including descriptions of the home's floorplan sketch
+    - A sketch of the floorplan of the home 
+    - A photo of the exterior of the home
 
-Use these to generate two outputs:
-1. A **GeoJSON Feature** with a fictional but plausible (longitude, latitude) location in Pennsylvania. Populate `"properties"` using the provided JSON fields:
-   - "Year Built"
-   - "Total Square Feet Living Area"
-   - "Building Style"
-   - "Exterior Wall Material"
-   - "Heating Fuel Type"
-   - "Heating System Type"
-   - "Heat/Air Cond"
-   - "Bedrooms"
-   - "Full Baths"
-   - "Half Baths"
-   - "Basement"
-   - "Number of Stories"
-   - "Grade"
+    Use these to generate two outputs:
 
-2. A short **inspection note** written as if you had just walked around the home. Focus on energy-related characteristics: insulation, HVAC age/type, visible window quality, age, materials, and any notable upgrades or issues you can infer from the attributes or image.
+    1. A **GeoJSON File** with:
+       - A fictional but plausible (longitude, latitude) location in Bethlehem, Pennsylvania.
+       - A `"type": "FeatureCollection"` containing exactly **one Feature** (representing the entire building footprint, including any additions or attached garages that are part of the conditioned or structural footprint).
+       - Each Feature having:
+         - `"type": "Feature"`
+         - `"geometry"` as a Polygon or MultiPolygon representing the building footprint (including additions and garages if relevant) with realistic coordinates in Bethlehem, PA.
+         - `"properties"` populated using the provided JSON fields:
+           - "Year Built"
+           - "Total Square Feet Living Area"
+           - "Building Style"
+           - "Exterior Wall Material"
+           - "Heating Fuel Type"
+           - "Heating System Type"
+           - "Heat/Air Cond"
+           - "Bedrooms"
+           - "Full Baths"
+           - "Half Baths"
+           - "Basement"
+           - "Number of Stories"
+           - "Grade"
+       - The footprint polygon(s) should have plausible residential dimensions consistent with “Total Square Feet Living Area”. For example, a 2000 sqft home should not have a 10x10 ft footprint.
+       - Exclude any sketch zones that are unnecessary for energy analysis (e.g. patio or porch).
 
-Here is the structured property data:
+    2. A short **inspection note** written as if you had just walked around the home. Focus on energy-related characteristics: insulation, HVAC age/type, visible window quality, age, materials, and any notable upgrades or issues you can infer from the attributes or image.
 
-{json.dumps(house_data)}
+    Here is the structured property data:
 
-Return a single raw JSON object, like this:
+    {json.dumps(house_data)}
 
-{{
-  "geojson": {{ ... }},
-  "inspection_note": "..."
-}}
+    Ensure:
+    - The GeoJSON is a valid FeatureCollection with exactly one Feature as described.
+    - The geometry coordinates are realistic and located within Bethlehem, PA.
+    - The footprint dimensions are consistent with the "Total Square Feet Living Area".
+    - Additions or attached garages should be included in the geometry if they are part of the structural building footprint.
 
-Output **only valid JSON**, no backticks or explanation.
-"""
+    Return a single raw JSON object, like this:
+
+    {{
+      "geojson": {{ ... }},
+      "inspection_note": "..."
+    }}
+
+    Output **only valid JSON**, no backticks or explanation.
+    """
     # ----- API Call -----
 
     response = client.chat.completions.create(
@@ -256,7 +349,8 @@ Output **only valid JSON**, no backticks or explanation.
                 "role": "user",
                 "content": [
                     {"type": "text", "text": prompt},
-                    {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{image_base64}"}}
+                    {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{image_base64}"}},
+                    {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{sketch_base64}"}},
                 ]
             }
         ],
@@ -275,7 +369,8 @@ def generate_geojson_and_note_for_all_entries():
             print(f"[→] Generating for {home_folder}")
             result = generate_geojson_and_note(
                 json.load(open(os.path.join(home_folder, "data.json"))),
-                os.path.join(home_folder, "photo_1.jpg")
+                os.path.join(home_folder, "photo_1.jpg"),
+                os.path.join(home_folder, "sketch.png")
             )
             json.dump(result, open(os.path.join(home_folder, "preprocessed.json"), "w", encoding='utf-8'), indent=2)
             print(f"[GENERATED] {home_folder}")
@@ -362,27 +457,179 @@ def transform_dataset(dataset_folder='dataset', weather_station='KABE'):
             json.dump(data, f)
 
 
+# @depricated to allow for more detail in the idf files
+#
+# def generate_idf_from_geojson(geojson: dict, idf_path: str):
+#     idf = IDF(StringIO("Version,25.1;"))
+#
+#     # Metadata and simulation setup - VERSION already included in StringIO above
+#     idf.newidfobject("TIMESTEP", Number_of_Timesteps_per_Hour=4)
+#
+#     # Add Site Location (required)
+#     idf.newidfobject("SITE:LOCATION",
+#                      Name="Site Location",
+#                      Latitude=40.0,
+#                      Longitude=-75.0,
+#                      Time_Zone=-5.0,
+#                      Elevation=200.0)
+#
+#     idf.newidfobject("SIMULATIONCONTROL",
+#                      Do_Zone_Sizing_Calculation="No",
+#                      Do_System_Sizing_Calculation="No",
+#                      Do_Plant_Sizing_Calculation="No",
+#                      Run_Simulation_for_Weather_File_Run_Periods="Yes",
+#                      Run_Simulation_for_Sizing_Periods="No")
+#
+#     today = datetime.today()
+#     idf.newidfobject("RUNPERIOD",
+#                      Name="RunPeriod1",
+#                      Begin_Month=today.month,
+#                      Begin_Day_of_Month=today.day,
+#                      End_Month=today.month,
+#                      End_Day_of_Month=today.day,
+#                      Use_Weather_File_Holidays_and_Special_Days="Yes",
+#                      Use_Weather_File_Daylight_Saving_Period="Yes",
+#                      Apply_Weekend_Holiday_Rule="Yes",
+#                      Use_Weather_File_Rain_Indicators="Yes",
+#                      Use_Weather_File_Snow_Indicators="Yes")
+#
+#     # Extract geometry info
+#     building = next(f for f in geojson["features"] if f["properties"]["type"] == "Building")
+#     props = building["properties"]
+#     name = props.get("name", "GeneratedHome")
+#     floor_area = props.get("floor_area", 100.0)
+#     stories = props.get("number_of_stories", 1)
+#
+#     length = width = floor_area ** 0.5
+#     height = stories * 3
+#
+#     idf.newidfobject("BUILDING",
+#                      Name=name,
+#                      North_Axis=0.0,
+#                      Terrain="Suburbs",
+#                      Loads_Convergence_Tolerance_Value=0.04,
+#                      Temperature_Convergence_Tolerance_Value=0.4,
+#                      Solar_Distribution="FullExterior",
+#                      Maximum_Number_of_Warmup_Days=25,
+#                      Minimum_Number_of_Warmup_Days=6)
+#
+#     idf.newidfobject("GLOBALGEOMETRYRULES",
+#                      Starting_Vertex_Position="UpperLeftCorner",
+#                      Vertex_Entry_Direction="CounterClockWise",
+#                      Coordinate_System="Relative")
+#
+#     idf.newidfobject("ZONE", Name="MainZone")
+#
+#     # Materials
+#     idf.newidfobject("MATERIAL", Name="Wall Material", Roughness="Rough",
+#                      Thickness=0.2, Conductivity=0.5, Density=1400,
+#                      Specific_Heat=1000, Thermal_Absorptance=0.9,
+#                      Solar_Absorptance=0.7, Visible_Absorptance=0.7)
+#     idf.newidfobject("MATERIAL", Name="Floor Material", Roughness="Rough",
+#                      Thickness=0.1, Conductivity=1.0, Density=2000,
+#                      Specific_Heat=1000, Thermal_Absorptance=0.9,
+#                      Solar_Absorptance=0.7, Visible_Absorptance=0.7)
+#     idf.newidfobject("MATERIAL", Name="Roof Material", Roughness="Rough",
+#                      Thickness=0.15, Conductivity=0.3, Density=800,
+#                      Specific_Heat=1200, Thermal_Absorptance=0.9,
+#                      Solar_Absorptance=0.7, Visible_Absorptance=0.7)
+#
+#     idf.newidfobject("CONSTRUCTION", Name="Wall Construction", Outside_Layer="Wall Material")
+#     idf.newidfobject("CONSTRUCTION", Name="Floor Construction", Outside_Layer="Floor Material")
+#     idf.newidfobject("CONSTRUCTION", Name="Roof Construction", Outside_Layer="Roof Material")
+#
+#     # Surfaces - Fixed vertex order for floor and roof
+#     surfaces = {
+#         "South Wall": [(0, 0, 0), (0, 0, height), (length, 0, height), (length, 0, 0)],
+#         "East Wall": [(length, 0, 0), (length, 0, height), (length, width, height), (length, width, 0)],
+#         "North Wall": [(length, width, 0), (length, width, height), (0, width, height), (0, width, 0)],
+#         "West Wall": [(0, width, 0), (0, width, height), (0, 0, height), (0, 0, 0)],
+#         "Floor": [(0, width, 0), (length, width, 0), (length, 0, 0), (0, 0, 0)],  # Fixed order
+#         "Roof": [(0, 0, height), (length, 0, height), (length, width, height), (0, width, height)]  # Fixed order
+#     }
+#
+#     for name, verts in surfaces.items():
+#         surface_type = "Wall" if "Wall" in name else "Roof" if name == "Roof" else "Floor"
+#         construction = f"{surface_type} Construction"
+#         sun = "NoSun" if surface_type == "Floor" else "SunExposed"
+#         wind = "NoWind" if surface_type == "Floor" else "WindExposed"
+#         outside = "Ground" if surface_type == "Floor" else "Outdoors"
+#
+#         idf.newidfobject("BUILDINGSURFACE:DETAILED",
+#                          Name=name,
+#                          Surface_Type=surface_type,
+#                          Construction_Name=construction,
+#                          Zone_Name="MainZone",
+#                          Outside_Boundary_Condition=outside,
+#                          Sun_Exposure=sun,
+#                          Wind_Exposure=wind,
+#                          Number_of_Vertices=4,
+#                          Vertex_1_Xcoordinate=verts[0][0], Vertex_1_Ycoordinate=verts[0][1],
+#                          Vertex_1_Zcoordinate=verts[0][2],
+#                          Vertex_2_Xcoordinate=verts[1][0], Vertex_2_Ycoordinate=verts[1][1],
+#                          Vertex_2_Zcoordinate=verts[1][2],
+#                          Vertex_3_Xcoordinate=verts[2][0], Vertex_3_Ycoordinate=verts[2][1],
+#                          Vertex_3_Zcoordinate=verts[2][2],
+#                          Vertex_4_Xcoordinate=verts[3][0], Vertex_4_Ycoordinate=verts[3][1],
+#                          Vertex_4_Zcoordinate=verts[3][2])
+#
+#     # Infiltration - Using correct field names
+#     idf.newidfobject("ZONEINFILTRATION:DESIGNFLOWRATE",
+#                      Name="MainZone Infiltration",
+#                      Zone_or_ZoneList_or_Space_or_SpaceList_Name="MainZone",
+#                      Schedule_Name="AlwaysOn",
+#                      Design_Flow_Rate_Calculation_Method="Flow/Area",
+#                      Design_Flow_Rate=0.0,
+#                      Flow_Rate_per_Floor_Area=0.0002,
+#                      Flow_Rate_per_Exterior_Surface_Area=0.0,
+#                      Air_Changes_per_Hour=0.0,
+#                      Constant_Term_Coefficient=1.0,
+#                      Temperature_Term_Coefficient=0.0,
+#                      Velocity_Term_Coefficient=0.0,
+#                      Velocity_Squared_Term_Coefficient=0.0)
+#
+#     # Schedules
+#     idf.newidfobject("SCHEDULETYPELIMITS", Name="Fraction", Lower_Limit_Value=0.0, Upper_Limit_Value=1.0,
+#                      Numeric_Type="Continuous", Unit_Type="Dimensionless")
+#
+#     idf.newidfobject("SCHEDULE:COMPACT", Name="AlwaysOn", Schedule_Type_Limits_Name="Fraction",
+#                      Field_1="Through: 12/31", Field_2="For: AllDays", Field_3="Until: 24:00, 1")
+#
+#     # Remove thermostat control since we don't have HVAC system
+#     # This prevents the fatal error about thermostatic control without equipment connections
+#
+#     # Just add basic output variables for thermal analysis
+#     for var in [
+#         "Zone Air Temperature",
+#         "Zone Mean Air Temperature",
+#         "Zone Infiltration Sensible Heat Gain",
+#         "Zone Infiltration Air Change Rate"
+#     ]:
+#         idf.newidfobject("OUTPUT:VARIABLE",
+#                          Variable_Name=var,
+#                          Reporting_Frequency="Hourly")
+#
+#     # Write to file
+#     idf.save(idf_path)
+
+
 def generate_idf_from_geojson(geojson: dict, idf_path: str):
     idf = IDF(StringIO("Version,25.1;"))
 
-    # Metadata and simulation setup - VERSION already included in StringIO above
+    # Simulation metadata
     idf.newidfobject("TIMESTEP", Number_of_Timesteps_per_Hour=4)
-
-    # Add Site Location (required)
     idf.newidfobject("SITE:LOCATION",
                      Name="Site Location",
                      Latitude=40.0,
                      Longitude=-75.0,
                      Time_Zone=-5.0,
                      Elevation=200.0)
-
     idf.newidfobject("SIMULATIONCONTROL",
                      Do_Zone_Sizing_Calculation="No",
                      Do_System_Sizing_Calculation="No",
                      Do_Plant_Sizing_Calculation="No",
                      Run_Simulation_for_Weather_File_Run_Periods="Yes",
                      Run_Simulation_for_Sizing_Periods="No")
-
     today = datetime.today()
     idf.newidfobject("RUNPERIOD",
                      Name="RunPeriod1",
@@ -396,18 +643,8 @@ def generate_idf_from_geojson(geojson: dict, idf_path: str):
                      Use_Weather_File_Rain_Indicators="Yes",
                      Use_Weather_File_Snow_Indicators="Yes")
 
-    # Extract geometry info
-    building = next(f for f in geojson["features"] if f["properties"]["type"] == "Building")
-    props = building["properties"]
-    name = props.get("name", "GeneratedHome")
-    floor_area = props.get("floor_area", 100.0)
-    stories = props.get("number_of_stories", 1)
-
-    length = width = floor_area ** 0.5
-    height = stories * 3
-
     idf.newidfobject("BUILDING",
-                     Name=name,
+                     Name="GeneratedBuilding",
                      North_Axis=0.0,
                      Terrain="Suburbs",
                      Loads_Convergence_Tolerance_Value=0.04,
@@ -421,9 +658,42 @@ def generate_idf_from_geojson(geojson: dict, idf_path: str):
                      Vertex_Entry_Direction="CounterClockWise",
                      Coordinate_System="Relative")
 
-    idf.newidfobject("ZONE", Name="MainZone")
+    # Schedule type limits
+    idf.newidfobject("SCHEDULETYPELIMITS",
+                     Name="Fraction",
+                     Lower_Limit_Value=0.0,
+                     Upper_Limit_Value=1.0,
+                     Numeric_Type="Continuous",
+                     Unit_Type="Dimensionless")
 
-    # Materials
+    idf.newidfobject("SCHEDULETYPELIMITS",
+                     Name="Temperature",
+                     Unit_Type="Temperature")
+
+    # AlwaysOn schedule
+    idf.newidfobject("SCHEDULE:COMPACT",
+                     Name="AlwaysOn",
+                     Schedule_Type_Limits_Name="Fraction",
+                     Field_1="Through: 12/31",
+                     Field_2="For: AllDays",
+                     Field_3="Until: 24:00, 1")
+
+    # Heating and cooling setpoint schedules
+    idf.newidfobject("SCHEDULE:COMPACT",
+                     Name="HeatingSetpoint",
+                     Schedule_Type_Limits_Name="Temperature",
+                     Field_1="Through: 12/31",
+                     Field_2="For: AllDays",
+                     Field_3="Until: 24:00, 20")  # 20°C
+
+    idf.newidfobject("SCHEDULE:COMPACT",
+                     Name="CoolingSetpoint",
+                     Schedule_Type_Limits_Name="Temperature",
+                     Field_1="Through: 12/31",
+                     Field_2="For: AllDays",
+                     Field_3="Until: 24:00, 24")  # 24°C
+
+    # Materials and constructions
     idf.newidfobject("MATERIAL", Name="Wall Material", Roughness="Rough",
                      Thickness=0.2, Conductivity=0.5, Density=1400,
                      Specific_Heat=1000, Thermal_Absorptance=0.9,
@@ -441,78 +711,94 @@ def generate_idf_from_geojson(geojson: dict, idf_path: str):
     idf.newidfobject("CONSTRUCTION", Name="Floor Construction", Outside_Layer="Floor Material")
     idf.newidfobject("CONSTRUCTION", Name="Roof Construction", Outside_Layer="Roof Material")
 
-    # Surfaces - Fixed vertex order for floor and roof
-    surfaces = {
-        "South Wall": [(0, 0, 0), (0, 0, height), (length, 0, height), (length, 0, 0)],
-        "East Wall": [(length, 0, 0), (length, 0, height), (length, width, height), (length, width, 0)],
-        "North Wall": [(length, width, 0), (length, width, height), (0, width, height), (0, width, 0)],
-        "West Wall": [(0, width, 0), (0, width, height), (0, 0, height), (0, 0, 0)],
-        "Floor": [(0, width, 0), (length, width, 0), (length, 0, 0), (0, 0, 0)],  # Fixed order
-        "Roof": [(0, 0, height), (length, 0, height), (length, width, height), (0, width, height)]  # Fixed order
-    }
+    zone_defs = []
 
-    for name, verts in surfaces.items():
-        surface_type = "Wall" if "Wall" in name else "Roof" if name == "Roof" else "Floor"
-        construction = f"{surface_type} Construction"
-        sun = "NoSun" if surface_type == "Floor" else "SunExposed"
-        wind = "NoWind" if surface_type == "Floor" else "WindExposed"
-        outside = "Ground" if surface_type == "Floor" else "Outdoors"
+    for feature in geojson["features"]:
+        props = feature["properties"]
+        zone_name = props.get("name", "UnnamedZone").replace(" ", "_")
+        area_sqft = props.get("area_sqft", 100.0)
+        area_m2 = area_sqft * 0.092903
+        length = width = math.sqrt(area_m2)
+        height = props.get("height_ft", 10.0) * 0.3048
+        conditioned = props.get("conditioned", True)
 
-        idf.newidfobject("BUILDINGSURFACE:DETAILED",
-                         Name=name,
-                         Surface_Type=surface_type,
-                         Construction_Name=construction,
-                         Zone_Name="MainZone",
-                         Outside_Boundary_Condition=outside,
-                         Sun_Exposure=sun,
-                         Wind_Exposure=wind,
-                         Number_of_Vertices=4,
-                         Vertex_1_Xcoordinate=verts[0][0], Vertex_1_Ycoordinate=verts[0][1],
-                         Vertex_1_Zcoordinate=verts[0][2],
-                         Vertex_2_Xcoordinate=verts[1][0], Vertex_2_Ycoordinate=verts[1][1],
-                         Vertex_2_Zcoordinate=verts[1][2],
-                         Vertex_3_Xcoordinate=verts[2][0], Vertex_3_Ycoordinate=verts[2][1],
-                         Vertex_3_Zcoordinate=verts[2][2],
-                         Vertex_4_Xcoordinate=verts[3][0], Vertex_4_Ycoordinate=verts[3][1],
-                         Vertex_4_Zcoordinate=verts[3][2])
+        x0, y0 = feature["geometry"]["coordinates"][0][0]
 
-    # Infiltration - Using correct field names
-    idf.newidfobject("ZONEINFILTRATION:DESIGNFLOWRATE",
-                     Name="MainZone Infiltration",
-                     Zone_or_ZoneList_or_Space_or_SpaceList_Name="MainZone",
-                     Schedule_Name="AlwaysOn",
-                     Design_Flow_Rate_Calculation_Method="Flow/Area",
-                     Design_Flow_Rate=0.0,
-                     Flow_Rate_per_Floor_Area=0.0002,
-                     Flow_Rate_per_Exterior_Surface_Area=0.0,
-                     Air_Changes_per_Hour=0.0,
-                     Constant_Term_Coefficient=1.0,
-                     Temperature_Term_Coefficient=0.0,
-                     Velocity_Term_Coefficient=0.0,
-                     Velocity_Squared_Term_Coefficient=0.0)
+        zone_defs.append({
+            "name": zone_name, "x0": x0, "y0": y0,
+            "length": length, "width": width,
+            "height": height, "conditioned": conditioned
+        })
 
-    # Schedules
-    idf.newidfobject("SCHEDULETYPELIMITS", Name="Fraction", Lower_Limit_Value=0.0, Upper_Limit_Value=1.0,
-                     Numeric_Type="Continuous", Unit_Type="Dimensionless")
+        idf.newidfobject("ZONE",
+                         Name=zone_name,
+                         X_Origin=x0,
+                         Y_Origin=y0,
+                         Z_Origin=0)
 
-    idf.newidfobject("SCHEDULE:COMPACT", Name="AlwaysOn", Schedule_Type_Limits_Name="Fraction",
-                     Field_1="Through: 12/31", Field_2="For: AllDays", Field_3="Until: 24:00, 1")
+        # Surfaces
+        surfaces = {
+            "South Wall": [(0, 0, 0), (0, 0, height), (length, 0, height), (length, 0, 0)],
+            "East Wall": [(length, 0, 0), (length, 0, height), (length, width, height), (length, width, 0)],
+            "North Wall": [(length, width, 0), (length, width, height), (0, width, height), (0, width, 0)],
+            "West Wall": [(0, width, 0), (0, width, height), (0, 0, height), (0, 0, 0)],
+            "Floor": [(0, width, 0), (length, width, 0), (length, 0, 0), (0, 0, 0)],
+            "Roof": [(0, 0, height), (length, 0, height), (length, width, height), (0, width, height)]
+        }
 
-    # Remove thermostat control since we don't have HVAC system
-    # This prevents the fatal error about thermostatic control without equipment connections
+        for surf_name, verts in surfaces.items():
+            surface_type = "Wall" if "Wall" in surf_name else "Roof" if surf_name == "Roof" else "Floor"
+            construction = f"{surface_type} Construction"
+            sun = "NoSun" if surface_type == "Floor" else "SunExposed"
+            wind = "NoWind" if surface_type == "Floor" else "WindExposed"
+            outside = "Ground" if surface_type == "Floor" else "Outdoors"
 
-    # Just add basic output variables for thermal analysis
-    for var in [
+            vertex_dict = {}
+            for i, v in enumerate(verts):
+                vertex_dict[f"Vertex_{i + 1}_Xcoordinate"] = v[0] + x0
+                vertex_dict[f"Vertex_{i + 1}_Ycoordinate"] = v[1] + y0
+                vertex_dict[f"Vertex_{i + 1}_Zcoordinate"] = v[2]
+
+            idf.newidfobject("BUILDINGSURFACE:DETAILED",
+                             Name=f"{zone_name}_{surf_name}",
+                             Surface_Type=surface_type,
+                             Construction_Name=construction,
+                             Zone_Name=zone_name,
+                             Outside_Boundary_Condition=outside,
+                             Sun_Exposure=sun,
+                             Wind_Exposure=wind,
+                             Number_of_Vertices=4,
+                             **vertex_dict)
+
+        # Thermostat for conditioned zones
+        if conditioned:
+            idf.newidfobject("HVACTEMPLATE:THERMOSTAT",
+                             Name=f"{zone_name}_Thermostat",
+                             Heating_Setpoint_Schedule_Name="HeatingSetpoint",
+                             Cooling_Setpoint_Schedule_Name="CoolingSetpoint")
+
+            # HVAC system
+            idf.newidfobject("HVACTEMPLATE:ZONE:IDEALLOADSAIRSYSTEM",
+                             Zone_Name=zone_name,
+                             Template_Thermostat_Name=f"{zone_name}_Thermostat")
+
+    # Outputs
+    output_vars = [
         "Zone Air Temperature",
         "Zone Mean Air Temperature",
         "Zone Infiltration Sensible Heat Gain",
-        "Zone Infiltration Air Change Rate"
-    ]:
+        "Zone Infiltration Air Change Rate",
+        "Zone Ideal Loads Supply Air Total Heating Energy",
+        "Zone Ideal Loads Supply Air Total Cooling Energy",
+        "Zone Ideal Loads Supply Air Total Heating Rate",
+        "Zone Ideal Loads Supply Air Total Cooling Rate"
+    ]
+
+    for var in output_vars:
         idf.newidfobject("OUTPUT:VARIABLE",
                          Variable_Name=var,
                          Reporting_Frequency="Hourly")
 
-    # Write to file
     idf.save(idf_path)
 
 
@@ -730,7 +1016,7 @@ if __name__ == "__main__":
         for street in STREETS:
             scrape_all_records_on_street(driver, street, output_dir)
         driver.quit()
-        delete_folders_without_jpg()
+        delete_folders_without_jpg_or_png()
         print(bold_green(f"({CHECK}) [1/6] NorCo Assessor Data Saved"))
     else: print(bold_green(f"(—) [1/6] Skipped Scraping of NorCo Assessor Data"))
 
