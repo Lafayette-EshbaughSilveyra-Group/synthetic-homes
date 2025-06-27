@@ -10,7 +10,9 @@
 
 OUTPUTS:
 `dataset/{entry_folder}/results.json`           ⌉
+
                                                 | INPUTS (i.e., X)
+
 `dataset/{entry_folder}/inspection_report.txt`  ⌋
 
 `dataset/{entry_folder}/label.json`             ] GROUND TRUTH (i.e., Y)
