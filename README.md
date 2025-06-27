@@ -8,14 +8,6 @@
 4. Runs EnergyPlus on the IDF,
 5. Classifies the EnergyPlus results and inspection report, giving the ground truth using OpenAI's API
 
-OUTPUTS:
-| $X$ (Input Data) | $Y$ (Ground Truth) |
-|------------------|--------------------|
-| `dataset/*/results.json` — EnergyPlus simulation results | `dataset/*/label.json` — Data label $\in \mathbb{R}^4$ |
-| `dataset/*/cleaned.geojson["features"][0]["inspection_note"]` — synthetically generated inspection note | |
-
-> **Note**: All of these are compiled for the entire dataset into `final_dataset.jsonl`
-
 ```mermaid
 flowchart TB
     A[Department of Assessment] -- tablular data, images --> B["GPT-4o"]
@@ -26,3 +18,12 @@ flowchart TB
     E -- labels --> G["Y (ground truth)"]
 ```
 _Figure 1_: The flow of data through the dataset generation pipeline
+
+## Outputs
+
+| $X$ (Input Data) | $Y$ (Ground Truth) |
+|------------------|--------------------|
+| `dataset/*/results.json` — EnergyPlus simulation results | `dataset/*/label.json` — Data label $\in \mathbb{R}^4$ |
+| `dataset/*/cleaned.geojson["features"][0]["inspection_note"]` — synthetically generated inspection note | |
+
+> **Note**: All of these are compiled for the entire dataset into `final_dataset.jsonl`
