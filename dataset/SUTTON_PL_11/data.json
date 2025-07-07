@@ -30,8 +30,11 @@
   "Basement": "FULL",
   "Exterior Wall Material": "STUCCO",
   "Physical Condition": "AV",
-  "photo_urls": [
-    "https://www.ncpub.org/_web/api/document/dHlsZXI6RG9tYWluLkRvY3VtZW50VHlwZT01OTtJZD0yMDMyMjkzOw==/standard?token=RnNBOFBQNFhzakRDS3dzVVFPYm1wVHpMMFhZR2FvVGZSWEFmRkc5SDE0az0=",
-    "https://www.ncpub.org/_web/api/document/dHlsZXI6RG9tYWluLkRvY3VtZW50VHlwZT01OTtJZD0yMDMyMzA4Ow==/standard?token=RnNBOFBQNFhzakRDS3dzVVFPYm1wVHpMMFhZR2FvVGZSWEFmRkc5SDE0az0="
-  ]
+  "sketch_data": {
+    "Main Building": 1344,
+    "A1 - 10:1S FR ONE STORY FRAME": 831,
+    "A2 - 11:OFP OPEN FRAME PORCH": 60,
+    "A3 - 33:MA_PT CONC/MAS PATIO": 468,
+    "DET GARAGE - RG1:FRAME OR CB DETACHED GARAGE": 792
+  }
 }

@@ -30,7 +30,12 @@
   "Basement": "FULL",
   "Exterior Wall Material": "ALUMINUM/VINYL SIDING",
   "Physical Condition": "GD",
-  "photo_urls": [
-    "https://www.ncpub.org/_web/api/document/dHlsZXI6RG9tYWluLkRvY3VtZW50VHlwZT01OTtJZD0xODA2NTczOw==/standard?token=RnNBOFBQNFhzakRDS3dzVVFPYm1wVHpMMFhZR2FvVGZSWEFmRkc5SDE0az0="
-  ]
+  "sketch_data": {
+    "Main Building": 1040,
+    "A1 - 50:UNFIN BSMT": 208,
+    "A2 - 33:MA_PT CONC/MAS PATIO": 240,
+    "A3 - 16:FROVR FRAME OVERHANG": 44,
+    "A4 - 16:FROVR FRAME OVERHANG": 24,
+    "A5 - 16:FROVR FRAME OVERHANG": 80
+  }
 }

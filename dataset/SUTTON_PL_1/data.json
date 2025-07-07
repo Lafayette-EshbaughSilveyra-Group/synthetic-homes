@@ -30,7 +30,10 @@
   "Basement": "FULL",
   "Exterior Wall Material": "ALUMINUM/VINYL SIDING",
   "Physical Condition": "AV",
-  "photo_urls": [
-    "https://www.ncpub.org/_web/api/document/dHlsZXI6RG9tYWluLkRvY3VtZW50VHlwZT01OTtJZD0xODAxOTA4Ow==/standard?token=RnNBOFBQNFhzakRDS3dzVVFPYm1wVHpMMFhZR2FvVGZSWEFmRkc5SDE0az0="
-  ]
+  "sketch_data": {
+    "Main Building": 1236,
+    "A1 - 50:UNFIN BSMT": 240,
+    "A2 - 11:OFP OPEN FRAME PORCH": 70,
+    "RC POOL - RP3:REINFORCED CONCRETE POOL": 722
+  }
 }

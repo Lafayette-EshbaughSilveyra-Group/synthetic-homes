@@ -1,0 +1,142 @@
+[
+  {
+    "example_id": "HVACC-2",
+    "mean_insulation": 0.3801773576920967,
+    "std_insulation": 0.0,
+    "mean_hvac": 0.2893658931373483,
+    "std_hvac": 0.0
+  },
+  {
+    "example_id": "WALLR-5",
+    "mean_insulation": 0.2624269520740353,
+    "std_insulation": 0.0,
+    "mean_hvac": 0.2661922993855742,
+    "std_hvac": 0.0
+  },
+  {
+    "example_id": "WALLR-2",
+    "mean_insulation": 0.5299273950282427,
+    "std_insulation": 0.0,
+    "mean_hvac": 0.28821766492488327,
+    "std_hvac": 0.0
+  },
+  {
+    "example_id": "HVACC-5",
+    "mean_insulation": 0.37364339160097626,
+    "std_insulation": 0.0,
+    "mean_hvac": 0.2680929238867414,
+    "std_hvac": 0.0
+  },
+  {
+    "example_id": "WALLR-3",
+    "mean_insulation": 0.37305480691634124,
+    "std_insulation": 0.0,
+    "mean_hvac": 0.2752611695030812,
+    "std_hvac": 0.0
+  },
+  {
+    "example_id": "HVACC-4",
+    "mean_insulation": 0.3822350154995119,
+    "std_insulation": 0.0,
+    "mean_hvac": 0.2710212832618581,
+    "std_hvac": 0.0
+  },
+  {
+    "example_id": "HVACC-3",
+    "mean_insulation": 0.37401969915960015,
+    "std_insulation": 0.0,
+    "mean_hvac": 0.2752427084320728,
+    "std_hvac": 0.0
+  },
+  {
+    "example_id": "WALLR-4",
+    "mean_insulation": 0.2999942633867736,
+    "std_insulation": 0.0,
+    "mean_hvac": 0.27043060482530346,
+    "std_hvac": 0.0
+  },
+  {
+    "example_id": "ROOFR-1",
+    "mean_insulation": 0.520600863056067,
+    "std_insulation": 0.0,
+    "mean_hvac": 0.29256806448650796,
+    "std_hvac": 0.0
+  },
+  {
+    "example_id": "HVACH-4",
+    "mean_insulation": 0.37630146054546726,
+    "std_insulation": 0.0,
+    "mean_hvac": 0.2751989630815126,
+    "std_hvac": 0.0
+  },
+  {
+    "example_id": "HVACH-3",
+    "mean_insulation": 0.378531906462622,
+    "std_insulation": 0.0,
+    "mean_hvac": 0.275156005574183,
+    "std_hvac": 0.0
+  },
+  {
+    "example_id": "HVACH-2",
+    "mean_insulation": 0.38467389265086005,
+    "std_insulation": 0.0,
+    "mean_hvac": 0.2750357768242764,
+    "std_hvac": 0.0
+  },
+  {
+    "example_id": "HVACH-5",
+    "mean_insulation": 0.3752997962200837,
+    "std_insulation": 0.0,
+    "mean_hvac": 0.27521815457446314,
+    "std_hvac": 0.0
+  },
+  {
+    "example_id": "ROOFR-3",
+    "mean_insulation": 0.378303040767178,
+    "std_insulation": 0.0,
+    "mean_hvac": 0.2751604134352941,
+    "std_hvac": 0.0
+  },
+  {
+    "example_id": "ROOFR-4",
+    "mean_insulation": 0.3604207972166202,
+    "std_insulation": 0.0,
+    "mean_hvac": 0.27310692275116716,
+    "std_hvac": 0.0
+  },
+  {
+    "example_id": "WALLR-1",
+    "mean_insulation": 0.75,
+    "std_insulation": 0.0,
+    "mean_hvac": 0.3051143302514939,
+    "std_hvac": 0.0
+  },
+  {
+    "example_id": "HVACC-1",
+    "mean_insulation": 0.3798306593384937,
+    "std_insulation": 0.0,
+    "mean_hvac": 0.33211349769215687,
+    "std_hvac": 0.0
+  },
+  {
+    "example_id": "ROOFR-5",
+    "mean_insulation": 0.3401900293427243,
+    "std_insulation": 0.0,
+    "mean_hvac": 0.27198435373454716,
+    "std_hvac": 0.0
+  },
+  {
+    "example_id": "ROOFR-2",
+    "mean_insulation": 0.4188616508405625,
+    "std_insulation": 0.0,
+    "mean_hvac": 0.2784032989572829,
+    "std_hvac": 0.0
+  },
+  {
+    "example_id": "HVACH-1",
+    "mean_insulation": 0.3756686156001395,
+    "std_insulation": 0.0,
+    "mean_hvac": 0.27521111425798317,
+    "std_hvac": 0.0
+  }
+]

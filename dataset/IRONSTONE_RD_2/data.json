@@ -30,7 +30,8 @@
   "Basement": "FULL",
   "Exterior Wall Material": "BRICK",
   "Physical Condition": "AV",
-  "photo_urls": [
-    "https://www.ncpub.org/_web/api/document/dHlsZXI6RG9tYWluLkRvY3VtZW50VHlwZT01OTtJZD0xODA1MDI4Ow==/standard?token=RnNBOFBQNFhzakRDS3dzVVFPYm1wVHpMMFhZR2FvVGZSWEFmRkc5SDE0az0="
-  ]
+  "sketch_data": {
+    "Main Building": 1560,
+    "A1 - 33:MA_PT CONC/MAS PATIO": 156
+  }
 }

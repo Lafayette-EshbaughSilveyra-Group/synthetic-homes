@@ -30,7 +30,12 @@
   "Basement": "FULL",
   "Exterior Wall Material": "MASONRY/FRAME",
   "Physical Condition": "AV",
-  "photo_urls": [
-    "https://www.ncpub.org/_web/api/document/dHlsZXI6RG9tYWluLkRvY3VtZW50VHlwZT01OTtJZD0xODA1NDYzOw==/standard?token=RnNBOFBQNFhzakRDS3dzVVFPYm1wVHpMMFhZR2FvVGZSWEFmRkc5SDE0az0="
-  ]
+  "sketch_data": {
+    "Main Building": 1024,
+    "A1 - 16:FROVR FRAME OVERHANG": 64,
+    "A2 - 11:OFP OPEN FRAME PORCH": 88,
+    "A3 - 20:1SMAS MASONRY": 432,
+    "A4 - 23:MG/BG MASONRY/BRICK GARAGE": 648,
+    "A5 - 11:OFP OPEN FRAME PORCH": 192
+  }
 }

@@ -30,8 +30,15 @@
   "Basement": "FULL",
   "Exterior Wall Material": "ALUMINUM/VINYL SIDING",
   "Physical Condition": "AV",
-  "photo_urls": [
-    "https://www.ncpub.org/_web/api/document/dHlsZXI6RG9tYWluLkRvY3VtZW50VHlwZT01OTtJZD0yNTI0NDkzOw==/standard?token=RnNBOFBQNFhzakRDS3dzVVFPYm1wVHpMMFhZR2FvVGZSWEFmRkc5SDE0az0=",
-    "https://www.ncpub.org/_web/api/document/dHlsZXI6RG9tYWluLkRvY3VtZW50VHlwZT01OTtJZD0xODAyNTk4Ow==/standard?token=RnNBOFBQNFhzakRDS3dzVVFPYm1wVHpMMFhZR2FvVGZSWEFmRkc5SDE0az0="
-  ]
+  "sketch_data": {
+    "Main Building": 1252,
+    "A1 - 10/18:1S FR ONE STORY FRAME/AT UN ATTIC-UNFINISHED": 506,
+    "A2 - 15:FRBAY FRAME BAY": 8,
+    "A3 - 35:MASONRY STOOP": 66,
+    "A4 - 15:FRBAY FRAME BAY": 8,
+    "A5 - 15:FRBAY FRAME BAY": 8,
+    "A6 - 11:OFP OPEN FRAME PORCH": 132,
+    "A7 - 31:WDDCK WOOD DECKS": 672,
+    "FRAME SHED - RS1:FRAME UTILITY SHED": 240
+  }
 }

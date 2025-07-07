@@ -30,8 +30,13 @@
   "Basement": "FULL",
   "Exterior Wall Material": "ALUMINUM/VINYL SIDING",
   "Physical Condition": "AV",
-  "photo_urls": [
-    "https://www.ncpub.org/_web/api/document/dHlsZXI6RG9tYWluLkRvY3VtZW50VHlwZT01OTtJZD0yNTM1NTUzOw==/standard?token=RnNBOFBQNFhzakRDS3dzVVFPYm1wVHpMMFhZR2FvVGZSWEFmRkc5SDE0az0=",
-    "https://www.ncpub.org/_web/api/document/dHlsZXI6RG9tYWluLkRvY3VtZW50VHlwZT01OTtJZD0xODA2MTk4Ow==/standard?token=RnNBOFBQNFhzakRDS3dzVVFPYm1wVHpMMFhZR2FvVGZSWEFmRkc5SDE0az0="
-  ]
+  "sketch_data": {
+    "Main Building": 1232,
+    "A1 - 50:UNFIN BSMT": 308,
+    "A2 - 11:OFP OPEN FRAME PORCH": 32,
+    "A3 - 33:MA_PT CONC/MAS PATIO": 252,
+    "A4 - 16:FROVR FRAME OVERHANG": 88,
+    "RC POOL - RP3:REINFORCED CONCRETE POOL": 528,
+    "DET GARAGE - RG1:FRAME OR CB DETACHED GARAGE": 672
+  }
 }

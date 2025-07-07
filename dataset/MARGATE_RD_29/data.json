@@ -30,7 +30,10 @@
   "Basement": "FULL",
   "Exterior Wall Material": "ALUMINUM/VINYL SIDING",
   "Physical Condition": "EX",
-  "photo_urls": [
-    "https://www.ncpub.org/_web/api/document/dHlsZXI6RG9tYWluLkRvY3VtZW50VHlwZT01OTtJZD0xODAwOTc4Ow==/standard?token=RnNBOFBQNFhzakRDS3dzVVFPYm1wVHpMMFhZR2FvVGZSWEFmRkc5SDE0az0="
-  ]
+  "sketch_data": {
+    "Main Building": 1533,
+    "A1 - 13/18:FR GR FRAME GARAGE/AT UN ATTIC-UNFINISHED": 484,
+    "A2 - 31:WDDCK WOOD DECKS": 432,
+    "A3 - 35:MASONRY STOOP": 28
+  }
 }

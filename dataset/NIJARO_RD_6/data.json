@@ -30,7 +30,10 @@
   "Basement": "FULL",
   "Exterior Wall Material": "ALUMINUM/VINYL SIDING",
   "Physical Condition": "AV",
-  "photo_urls": [
-    "https://www.ncpub.org/_web/api/document/dHlsZXI6RG9tYWluLkRvY3VtZW50VHlwZT01OTtJZD0xODA0MzUzOw==/standard?token=RnNBOFBQNFhzakRDS3dzVVFPYm1wVHpMMFhZR2FvVGZSWEFmRkc5SDE0az0="
-  ]
+  "sketch_data": {
+    "Main Building": 1348,
+    "A1 - 11:OFP OPEN FRAME PORCH": 32,
+    "A2 - 13:FR GR FRAME GARAGE": 660,
+    "A3 - 11:OFP OPEN FRAME PORCH": 336
+  }
 }

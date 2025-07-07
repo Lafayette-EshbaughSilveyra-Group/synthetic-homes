@@ -30,7 +30,12 @@
   "Basement": "FULL",
   "Exterior Wall Material": "MASONRY/FRAME",
   "Physical Condition": "AV",
-  "photo_urls": [
-    "https://www.ncpub.org/_web/api/document/dHlsZXI6RG9tYWluLkRvY3VtZW50VHlwZT01OTtJZD0xODA1Mjk4Ow==/standard?token=RnNBOFBQNFhzakRDS3dzVVFPYm1wVHpMMFhZR2FvVGZSWEFmRkc5SDE0az0="
-  ]
+  "sketch_data": {
+    "Main Building": 1204,
+    "A1 - 11:OFP OPEN FRAME PORCH": 40,
+    "A2 - 50:UNFIN BSMT": 80,
+    "A3 - 20:1SMAS MASONRY": 72,
+    "A4 - 50:UNFIN BSMT": 120,
+    "A5 - 11:OFP OPEN FRAME PORCH": 209
+  }
 }

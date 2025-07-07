@@ -30,7 +30,14 @@
   "Basement": "FULL",
   "Exterior Wall Material": "ALUMINUM/VINYL SIDING",
   "Physical Condition": "AV",
-  "photo_urls": [
-    "https://www.ncpub.org/_web/api/document/dHlsZXI6RG9tYWluLkRvY3VtZW50VHlwZT01OTtJZD0xODAxMDk4Ow==/standard?token=RnNBOFBQNFhzakRDS3dzVVFPYm1wVHpMMFhZR2FvVGZSWEFmRkc5SDE0az0="
-  ]
+  "sketch_data": {
+    "Main Building": 1035,
+    "A1 - 11:OFP OPEN FRAME PORCH": 270,
+    "A2 - 10:1S FR ONE STORY FRAME": 276,
+    "A3 - 13:FR GR FRAME GARAGE": 469,
+    "A4 - 16:FROVR FRAME OVERHANG": 24,
+    "A5 - 12:EFP ENCL FRAME PORCH": 168,
+    "A6 - 16:FROVR FRAME OVERHANG": 90,
+    "VINYL POOL - RP2:PREFABRICATED VINYL POOL": 544
+  }
 }

@@ -30,7 +30,12 @@
   "Basement": "FULL",
   "Exterior Wall Material": "MASONRY/FRAME",
   "Physical Condition": "EX",
-  "photo_urls": [
-    "https://www.ncpub.org/_web/api/document/dHlsZXI6RG9tYWluLkRvY3VtZW50VHlwZT01OTtJZD0xODAzMDAzOw==/standard?token=RnNBOFBQNFhzakRDS3dzVVFPYm1wVHpMMFhZR2FvVGZSWEFmRkc5SDE0az0="
-  ]
+  "sketch_data": {
+    "Main Building": 1340,
+    "A1 - 50/10:UNFIN BSMT/1S FR ONE STORY FRAME": 196,
+    "A2 - 50/11/10:UNFIN BSMT/OFP OPEN FRAME PORCH/1S FR ONE STORY FRAME": 18,
+    "A3 - 11:OFP OPEN FRAME PORCH": 240,
+    "A4 - 13:FR GR FRAME GARAGE": 726,
+    "A5 - 35:MASONRY STOOP": 36
+  }
 }

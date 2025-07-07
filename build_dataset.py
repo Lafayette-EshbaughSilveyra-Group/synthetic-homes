@@ -15,46 +15,46 @@ OUTPUTS:
 """
 
 import base64
+import glob
+import json
+import math
 import os
+import re
+import shutil
+import subprocess
 import sys
 import time
-import glob
-import shutil
 import uuid
-import json
-from datetime import datetime, timedelta
-import pandas as pd
+from datetime import datetime
+from datetime import timedelta
+from io import StringIO
 
+import pandas as pd
 import requests
 from dotenv import load_dotenv
+from eppy.modeleditor import IDF
 from openai import OpenAI, RateLimitError
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
-import glob
-import json
-import math
-import os
-from eppy.modeleditor import IDF
-import urllib.request
-from pathlib import Path
-import subprocess
-from datetime import datetime
-import requests
-import zipfile
-from io import BytesIO, StringIO
 
-import os
-import json
-import time
-import requests
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
+
+def generate_geojson_and_note_for_all_entries():
+    for home_folder in glob.glob("dataset/*"):
+        try:
+            print(f"[→] Generating for {home_folder}")
+            result = generate_geojson_and_note(
+                json.load(open(os.path.join(home_folder, "data.json"))),
+                os.path.join(home_folder, "photo_1.jpg"),
+                os.path.join(home_folder, "sketch.png")
+            )
+            json.dump(result, open(os.path.join(home_folder, "preprocessed.json"), "w", encoding='utf-8'), indent=2)
+            print(f"[GENERATED] {home_folder}")
+        except Exception as e:
+            print(f"[FAILED] {home_folder} [WILL BE DELETED]: {e}")
+            shutil.rmtree(home_folder, ignore_errors=True)
 
 
 def init_driver(headless=False):
@@ -252,7 +252,34 @@ def scrape_all_records_on_street(driver, street_name, output_dir):
             print(f"[SAVED] {data.get('address', 'Unknown')}")
 
             if i < total - 1:
-                driver.find_element(By.ID, "DTLNavigator_imageNext").click()
+                # Switch to iframe containing Next button
+                try:
+                    time.sleep(2)
+                    iframes = driver.find_elements(By.TAG_NAME, "iframe")
+                    print(f"[INFO] Found {len(iframes)} iframes.")
+
+                    next_button_found = False
+                    for idx, iframe in enumerate(iframes):
+                        driver.switch_to.frame(iframe)
+                        try:
+                            next_button = driver.find_element(By.CSS_SELECTOR, "#DTLNavigator_imageNext")
+                            print(f"[INFO] Found Next button in iframe {idx}.")
+                            driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", next_button)
+                            time.sleep(0.2)
+                            next_button.click()
+                            print("[INFO] Clicked Next button successfully.")
+                            next_button_found = True
+                            driver.switch_to.default_content()
+                            break
+                        except:
+                            driver.switch_to.default_content()
+                            continue
+
+                    if not next_button_found:
+                        print("[ERROR] Next button not found in any iframe.")
+
+                except Exception as e:
+                    print(f"[ERROR] Switching to iframe or clicking Next button failed: {e}")
                 time.sleep(2)
         except Exception as e:
             print(f"[WARN] Skipped record {i} due to error: {e}")
@@ -281,7 +308,7 @@ def encode_image(filepath):
         return base64.b64encode(f.read()).decode('utf-8')
 
 
-def generate_geojson_and_note(house_data, image_path, sketch_path):
+def generate_geojson_and_note(house_data, image_path, sketch_path, client):
     image_base64 = encode_image(image_path)
     sketch_base64 = encode_image(sketch_path)
 
@@ -316,6 +343,12 @@ def generate_geojson_and_note(house_data, image_path, sketch_path):
            - "Basement"
            - "Number of Stories"
            - "Grade"
+         - Also include **estimated building performance parameters** within properties:
+           - `"hvac_heating_cop"`: Estimated HVAC heating system COP (Coefficient of Performance); Range [0, 1]
+           - `"hvac_cooling_cop"`: Estimated HVAC cooling system COP (Coefficient of Performance)
+           - `"wall_r_value"`: Estimated wall insulation R-value (ft²·°F·hr/BTU)
+           - `"roof_r_value"`: Estimated roof insulation R-value (ft²·°F·hr/BTU)
+           - `"air_change_rate"`: Estimated air change rate; range [0, 1]
        - The footprint polygon(s) should have plausible residential dimensions consistent with “Total Square Feet Living Area”. For example, a 2000 sqft home should not have a 10x10 ft footprint.
        - Exclude any sketch zones that are unnecessary for energy analysis (e.g. patio or porch).
 
@@ -330,11 +363,28 @@ def generate_geojson_and_note(house_data, image_path, sketch_path):
     - The geometry coordinates are realistic and located within Bethlehem, PA.
     - The footprint dimensions are consistent with the "Total Square Feet Living Area".
     - Additions or attached garages should be included in the geometry if they are part of the structural building footprint.
+    - The performance parameters are realistic and consistent with the home characteristics and inspection note.
 
     Return a single raw JSON object, like this:
 
     {{
-      "geojson": {{ ... }},
+      "geojson": {{
+        "type": "FeatureCollection",
+        "features": [
+          {{
+            "type": "Feature",
+            "geometry": {{ ... }},
+            "properties": {{
+              ...,
+              "air_change_rate": ...,
+              "hvac_heating_cop": ...,
+              "hvac_cooling_cop": ...,
+              "wall_r_value": ...,
+              "roof_r_value": ...,
+            }}
+          }}
+        ]
+      }},
       "inspection_note": "..."
     }}
 
@@ -343,14 +393,14 @@ def generate_geojson_and_note(house_data, image_path, sketch_path):
     # ----- API Call -----
 
     response = client.chat.completions.create(
-        model="gpt-4o",
+        model="gpt-4.1-mini",
         messages=[
             {
                 "role": "user",
                 "content": [
                     {"type": "text", "text": prompt},
                     {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{image_base64}"}},
-                    {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{sketch_base64}"}},
+                    {"type": "image_url", "image_url": {"url": f"data:image/png;base64,{sketch_base64}"}},
                 ]
             }
         ],
@@ -362,21 +412,6 @@ def generate_geojson_and_note(house_data, image_path, sketch_path):
     reply = response.choices[0].message.content
     return json.loads(reply)
 
-
-def generate_geojson_and_note_for_all_entries():
-    for home_folder in glob.glob("dataset/*"):
-        try:
-            print(f"[→] Generating for {home_folder}")
-            result = generate_geojson_and_note(
-                json.load(open(os.path.join(home_folder, "data.json"))),
-                os.path.join(home_folder, "photo_1.jpg"),
-                os.path.join(home_folder, "sketch.png")
-            )
-            json.dump(result, open(os.path.join(home_folder, "preprocessed.json"), "w", encoding='utf-8'), indent=2)
-            print(f"[GENERATED] {home_folder}")
-        except Exception as e:
-            print(f"[FAILED] {home_folder} [WILL BE DELETED]: {e}")
-            shutil.rmtree(home_folder, ignore_errors=True)
 
 def clean_gpt_geojson(gpt_output):
     def safe_int(val):
@@ -457,162 +492,6 @@ def transform_dataset(dataset_folder='dataset', weather_station='KABE'):
             json.dump(data, f)
 
 
-# @depricated to allow for more detail in the idf files
-#
-# def generate_idf_from_geojson(geojson: dict, idf_path: str):
-#     idf = IDF(StringIO("Version,25.1;"))
-#
-#     # Metadata and simulation setup - VERSION already included in StringIO above
-#     idf.newidfobject("TIMESTEP", Number_of_Timesteps_per_Hour=4)
-#
-#     # Add Site Location (required)
-#     idf.newidfobject("SITE:LOCATION",
-#                      Name="Site Location",
-#                      Latitude=40.0,
-#                      Longitude=-75.0,
-#                      Time_Zone=-5.0,
-#                      Elevation=200.0)
-#
-#     idf.newidfobject("SIMULATIONCONTROL",
-#                      Do_Zone_Sizing_Calculation="No",
-#                      Do_System_Sizing_Calculation="No",
-#                      Do_Plant_Sizing_Calculation="No",
-#                      Run_Simulation_for_Weather_File_Run_Periods="Yes",
-#                      Run_Simulation_for_Sizing_Periods="No")
-#
-#     today = datetime.today()
-#     idf.newidfobject("RUNPERIOD",
-#                      Name="RunPeriod1",
-#                      Begin_Month=today.month,
-#                      Begin_Day_of_Month=today.day,
-#                      End_Month=today.month,
-#                      End_Day_of_Month=today.day,
-#                      Use_Weather_File_Holidays_and_Special_Days="Yes",
-#                      Use_Weather_File_Daylight_Saving_Period="Yes",
-#                      Apply_Weekend_Holiday_Rule="Yes",
-#                      Use_Weather_File_Rain_Indicators="Yes",
-#                      Use_Weather_File_Snow_Indicators="Yes")
-#
-#     # Extract geometry info
-#     building = next(f for f in geojson["features"] if f["properties"]["type"] == "Building")
-#     props = building["properties"]
-#     name = props.get("name", "GeneratedHome")
-#     floor_area = props.get("floor_area", 100.0)
-#     stories = props.get("number_of_stories", 1)
-#
-#     length = width = floor_area ** 0.5
-#     height = stories * 3
-#
-#     idf.newidfobject("BUILDING",
-#                      Name=name,
-#                      North_Axis=0.0,
-#                      Terrain="Suburbs",
-#                      Loads_Convergence_Tolerance_Value=0.04,
-#                      Temperature_Convergence_Tolerance_Value=0.4,
-#                      Solar_Distribution="FullExterior",
-#                      Maximum_Number_of_Warmup_Days=25,
-#                      Minimum_Number_of_Warmup_Days=6)
-#
-#     idf.newidfobject("GLOBALGEOMETRYRULES",
-#                      Starting_Vertex_Position="UpperLeftCorner",
-#                      Vertex_Entry_Direction="CounterClockWise",
-#                      Coordinate_System="Relative")
-#
-#     idf.newidfobject("ZONE", Name="MainZone")
-#
-#     # Materials
-#     idf.newidfobject("MATERIAL", Name="Wall Material", Roughness="Rough",
-#                      Thickness=0.2, Conductivity=0.5, Density=1400,
-#                      Specific_Heat=1000, Thermal_Absorptance=0.9,
-#                      Solar_Absorptance=0.7, Visible_Absorptance=0.7)
-#     idf.newidfobject("MATERIAL", Name="Floor Material", Roughness="Rough",
-#                      Thickness=0.1, Conductivity=1.0, Density=2000,
-#                      Specific_Heat=1000, Thermal_Absorptance=0.9,
-#                      Solar_Absorptance=0.7, Visible_Absorptance=0.7)
-#     idf.newidfobject("MATERIAL", Name="Roof Material", Roughness="Rough",
-#                      Thickness=0.15, Conductivity=0.3, Density=800,
-#                      Specific_Heat=1200, Thermal_Absorptance=0.9,
-#                      Solar_Absorptance=0.7, Visible_Absorptance=0.7)
-#
-#     idf.newidfobject("CONSTRUCTION", Name="Wall Construction", Outside_Layer="Wall Material")
-#     idf.newidfobject("CONSTRUCTION", Name="Floor Construction", Outside_Layer="Floor Material")
-#     idf.newidfobject("CONSTRUCTION", Name="Roof Construction", Outside_Layer="Roof Material")
-#
-#     # Surfaces - Fixed vertex order for floor and roof
-#     surfaces = {
-#         "South Wall": [(0, 0, 0), (0, 0, height), (length, 0, height), (length, 0, 0)],
-#         "East Wall": [(length, 0, 0), (length, 0, height), (length, width, height), (length, width, 0)],
-#         "North Wall": [(length, width, 0), (length, width, height), (0, width, height), (0, width, 0)],
-#         "West Wall": [(0, width, 0), (0, width, height), (0, 0, height), (0, 0, 0)],
-#         "Floor": [(0, width, 0), (length, width, 0), (length, 0, 0), (0, 0, 0)],  # Fixed order
-#         "Roof": [(0, 0, height), (length, 0, height), (length, width, height), (0, width, height)]  # Fixed order
-#     }
-#
-#     for name, verts in surfaces.items():
-#         surface_type = "Wall" if "Wall" in name else "Roof" if name == "Roof" else "Floor"
-#         construction = f"{surface_type} Construction"
-#         sun = "NoSun" if surface_type == "Floor" else "SunExposed"
-#         wind = "NoWind" if surface_type == "Floor" else "WindExposed"
-#         outside = "Ground" if surface_type == "Floor" else "Outdoors"
-#
-#         idf.newidfobject("BUILDINGSURFACE:DETAILED",
-#                          Name=name,
-#                          Surface_Type=surface_type,
-#                          Construction_Name=construction,
-#                          Zone_Name="MainZone",
-#                          Outside_Boundary_Condition=outside,
-#                          Sun_Exposure=sun,
-#                          Wind_Exposure=wind,
-#                          Number_of_Vertices=4,
-#                          Vertex_1_Xcoordinate=verts[0][0], Vertex_1_Ycoordinate=verts[0][1],
-#                          Vertex_1_Zcoordinate=verts[0][2],
-#                          Vertex_2_Xcoordinate=verts[1][0], Vertex_2_Ycoordinate=verts[1][1],
-#                          Vertex_2_Zcoordinate=verts[1][2],
-#                          Vertex_3_Xcoordinate=verts[2][0], Vertex_3_Ycoordinate=verts[2][1],
-#                          Vertex_3_Zcoordinate=verts[2][2],
-#                          Vertex_4_Xcoordinate=verts[3][0], Vertex_4_Ycoordinate=verts[3][1],
-#                          Vertex_4_Zcoordinate=verts[3][2])
-#
-#     # Infiltration - Using correct field names
-#     idf.newidfobject("ZONEINFILTRATION:DESIGNFLOWRATE",
-#                      Name="MainZone Infiltration",
-#                      Zone_or_ZoneList_or_Space_or_SpaceList_Name="MainZone",
-#                      Schedule_Name="AlwaysOn",
-#                      Design_Flow_Rate_Calculation_Method="Flow/Area",
-#                      Design_Flow_Rate=0.0,
-#                      Flow_Rate_per_Floor_Area=0.0002,
-#                      Flow_Rate_per_Exterior_Surface_Area=0.0,
-#                      Air_Changes_per_Hour=0.0,
-#                      Constant_Term_Coefficient=1.0,
-#                      Temperature_Term_Coefficient=0.0,
-#                      Velocity_Term_Coefficient=0.0,
-#                      Velocity_Squared_Term_Coefficient=0.0)
-#
-#     # Schedules
-#     idf.newidfobject("SCHEDULETYPELIMITS", Name="Fraction", Lower_Limit_Value=0.0, Upper_Limit_Value=1.0,
-#                      Numeric_Type="Continuous", Unit_Type="Dimensionless")
-#
-#     idf.newidfobject("SCHEDULE:COMPACT", Name="AlwaysOn", Schedule_Type_Limits_Name="Fraction",
-#                      Field_1="Through: 12/31", Field_2="For: AllDays", Field_3="Until: 24:00, 1")
-#
-#     # Remove thermostat control since we don't have HVAC system
-#     # This prevents the fatal error about thermostatic control without equipment connections
-#
-#     # Just add basic output variables for thermal analysis
-#     for var in [
-#         "Zone Air Temperature",
-#         "Zone Mean Air Temperature",
-#         "Zone Infiltration Sensible Heat Gain",
-#         "Zone Infiltration Air Change Rate"
-#     ]:
-#         idf.newidfobject("OUTPUT:VARIABLE",
-#                          Variable_Name=var,
-#                          Reporting_Frequency="Hourly")
-#
-#     # Write to file
-#     idf.save(idf_path)
-
-
 def generate_idf_from_geojson(geojson: dict, idf_path: str):
     idf = IDF(StringIO("Version,25.1;"))
 
@@ -625,23 +504,59 @@ def generate_idf_from_geojson(geojson: dict, idf_path: str):
                      Time_Zone=-5.0,
                      Elevation=200.0)
     idf.newidfobject("SIMULATIONCONTROL",
-                     Do_Zone_Sizing_Calculation="No",
-                     Do_System_Sizing_Calculation="No",
+                     Do_Zone_Sizing_Calculation="Yes",
+                     Do_System_Sizing_Calculation="Yes",
                      Do_Plant_Sizing_Calculation="No",
                      Run_Simulation_for_Weather_File_Run_Periods="Yes",
                      Run_Simulation_for_Sizing_Periods="No")
-    today = datetime.today()
+    # Fixed simulation over a year
     idf.newidfobject("RUNPERIOD",
-                     Name="RunPeriod1",
-                     Begin_Month=today.month,
-                     Begin_Day_of_Month=today.day,
-                     End_Month=today.month,
-                     End_Day_of_Month=today.day,
+                     Name="July",
+                     Begin_Month=1,
+                     Begin_Day_of_Month=1,
+                     End_Month=12,
+                     End_Day_of_Month=31,
                      Use_Weather_File_Holidays_and_Special_Days="Yes",
                      Use_Weather_File_Daylight_Saving_Period="Yes",
                      Apply_Weekend_Holiday_Rule="Yes",
                      Use_Weather_File_Rain_Indicators="Yes",
                      Use_Weather_File_Snow_Indicators="Yes")
+
+    # Winter design day
+    idf.newidfobject("SIZINGPERIOD:DESIGNDAY",
+                     Name="WinterDesignDay",
+                     Month=1,
+                     Day_of_Month=21,
+                     Day_Type="WinterDesignDay",
+                     Maximum_DryBulb_Temperature=-6.7,
+                     Daily_DryBulb_Temperature_Range=0,
+                     Humidity_Condition_Type="Wetbulb",
+                     Wetbulb_or_DewPoint_at_Maximum_DryBulb=-8.8,
+                     Barometric_Pressure=101325,
+                     Wind_Speed=4.9,
+                     Wind_Direction=270,
+                     Rain_Indicator="No",
+                     Snow_Indicator="Yes",
+                     Daylight_Saving_Time_Indicator="No",
+                     Solar_Model_Indicator="ASHRAEClearSky")
+
+    # Summer design day
+    idf.newidfobject("SIZINGPERIOD:DESIGNDAY",
+                     Name="SummerDesignDay",
+                     Month=7,
+                     Day_of_Month=21,
+                     Day_Type="SummerDesignDay",
+                     Maximum_DryBulb_Temperature=33.0,
+                     Daily_DryBulb_Temperature_Range=11.0,
+                     Humidity_Condition_Type="Wetbulb",
+                     Wetbulb_or_DewPoint_at_Maximum_DryBulb=23.0,
+                     Barometric_Pressure=101325,
+                     Wind_Speed=4.9,
+                     Wind_Direction=230,
+                     Rain_Indicator="No",
+                     Snow_Indicator="No",
+                     Daylight_Saving_Time_Indicator="Yes",
+                     Solar_Model_Indicator="ASHRAEClearSky")
 
     idf.newidfobject("BUILDING",
                      Name="GeneratedBuilding",
@@ -665,12 +580,11 @@ def generate_idf_from_geojson(geojson: dict, idf_path: str):
                      Upper_Limit_Value=1.0,
                      Numeric_Type="Continuous",
                      Unit_Type="Dimensionless")
-
     idf.newidfobject("SCHEDULETYPELIMITS",
                      Name="Temperature",
                      Unit_Type="Temperature")
 
-    # AlwaysOn schedule
+    # AlwaysOn and temperature schedules
     idf.newidfobject("SCHEDULE:COMPACT",
                      Name="AlwaysOn",
                      Schedule_Type_Limits_Name="Fraction",
@@ -678,128 +592,442 @@ def generate_idf_from_geojson(geojson: dict, idf_path: str):
                      Field_2="For: AllDays",
                      Field_3="Until: 24:00, 1")
 
-    # Heating and cooling setpoint schedules
     idf.newidfobject("SCHEDULE:COMPACT",
                      Name="HeatingSetpoint",
                      Schedule_Type_Limits_Name="Temperature",
                      Field_1="Through: 12/31",
                      Field_2="For: AllDays",
-                     Field_3="Until: 24:00, 20")  # 20°C
+                     Field_3="Until: 24:00, 20")
 
     idf.newidfobject("SCHEDULE:COMPACT",
                      Name="CoolingSetpoint",
                      Schedule_Type_Limits_Name="Temperature",
                      Field_1="Through: 12/31",
                      Field_2="For: AllDays",
-                     Field_3="Until: 24:00, 24")  # 24°C
+                     Field_3="Until: 24:00, 24")
 
-    # Materials and constructions
+    # Extract parameters from GeoJSON
+    feature = geojson["features"][0]
+    props = feature["properties"]
+
+    wall_r_value = props.get("wall_r_value", 13.0)
+    roof_r_value = props.get("roof_r_value", 30.0)
+    window_u_value = props.get("window_u_value", 2.0)
+    heating_cop = props.get("hvac_heating_cop", 0.8)
+    cooling_cop = props.get("hvac_cooling_cop", 3.0)
+
+    # Convert R-values to SI and compute conductivity
+    def r_to_si(r_ip):
+        return r_ip * 0.1761
+
+    wall_conductivity = 0.2 / r_to_si(wall_r_value)
+    roof_conductivity = 0.15 / r_to_si(roof_r_value)
+
+    # Define materials
     idf.newidfobject("MATERIAL", Name="Wall Material", Roughness="Rough",
-                     Thickness=0.2, Conductivity=0.5, Density=1400,
-                     Specific_Heat=1000, Thermal_Absorptance=0.9,
-                     Solar_Absorptance=0.7, Visible_Absorptance=0.7)
-    idf.newidfobject("MATERIAL", Name="Floor Material", Roughness="Rough",
-                     Thickness=0.1, Conductivity=1.0, Density=2000,
+                     Thickness=0.2, Conductivity=wall_conductivity, Density=1400,
                      Specific_Heat=1000, Thermal_Absorptance=0.9,
                      Solar_Absorptance=0.7, Visible_Absorptance=0.7)
     idf.newidfobject("MATERIAL", Name="Roof Material", Roughness="Rough",
-                     Thickness=0.15, Conductivity=0.3, Density=800,
+                     Thickness=0.15, Conductivity=roof_conductivity, Density=800,
                      Specific_Heat=1200, Thermal_Absorptance=0.9,
                      Solar_Absorptance=0.7, Visible_Absorptance=0.7)
+    idf.newidfobject("WINDOWMATERIAL:SIMPLEGLAZINGSYSTEM",
+                     Name="Window Material",
+                     UFactor=window_u_value,
+                     Solar_Heat_Gain_Coefficient=0.5,
+                     Visible_Transmittance=0.5)
 
+    # Constructions
     idf.newidfobject("CONSTRUCTION", Name="Wall Construction", Outside_Layer="Wall Material")
-    idf.newidfobject("CONSTRUCTION", Name="Floor Construction", Outside_Layer="Floor Material")
     idf.newidfobject("CONSTRUCTION", Name="Roof Construction", Outside_Layer="Roof Material")
+    idf.newidfobject("CONSTRUCTION", Name="Window Construction", Outside_Layer="Window Material")
 
-    zone_defs = []
+    # Process zone
+    zone_name = props.get("name", "Zone1").replace(" ", "_")
+    area_sqft = props.get("Total Square Feet Living Area", 1000)
+    area_m2 = area_sqft * 0.092903
+    length = width = math.sqrt(area_m2)
+    height = props.get("height_ft", 10.0) * 0.3048
 
-    for feature in geojson["features"]:
-        props = feature["properties"]
-        zone_name = props.get("name", "UnnamedZone").replace(" ", "_")
-        area_sqft = props.get("area_sqft", 100.0)
-        area_m2 = area_sqft * 0.092903
-        length = width = math.sqrt(area_m2)
-        height = props.get("height_ft", 10.0) * 0.3048
-        conditioned = props.get("conditioned", True)
+    idf.newidfobject("ZONE", Name=zone_name)
 
-        x0, y0 = feature["geometry"]["coordinates"][0][0]
+    # ➡️ Define Floor Construction if not already defined
+    if "Floor Construction" not in [c.Name for c in idf.idfobjects["CONSTRUCTION"]]:
+        # Define a basic concrete floor material and construction
+        idf.newidfobject("MATERIAL", Name="Floor Material", Roughness="MediumSmooth",
+                         Thickness=0.15, Conductivity=1.4, Density=2200,
+                         Specific_Heat=1000, Thermal_Absorptance=0.9,
+                         Solar_Absorptance=0.7, Visible_Absorptance=0.7)
+        idf.newidfobject("CONSTRUCTION", Name="Floor Construction", Outside_Layer="Floor Material")
 
-        zone_defs.append({
-            "name": zone_name, "x0": x0, "y0": y0,
-            "length": length, "width": width,
-            "height": height, "conditioned": conditioned
-        })
+    # ➡️ Create surfaces for the zone
+    surfaces = {
+        "South Wall": [(0, 0, 0), (0, 0, height), (length, 0, height), (length, 0, 0)],
+        "East Wall": [(length, 0, 0), (length, 0, height), (length, width, height), (length, width, 0)],
+        "North Wall": [(length, width, 0), (length, width, height), (0, width, height), (0, width, 0)],
+        "West Wall": [(0, width, 0), (0, width, height), (0, 0, height), (0, 0, 0)],
+        "Floor": [(0, width, 0), (length, width, 0), (length, 0, 0), (0, 0, 0)],
+        "Roof": [(0, 0, height), (length, 0, height), (length, width, height), (0, width, height)]
+    }
 
-        idf.newidfobject("ZONE",
-                         Name=zone_name,
-                         X_Origin=x0,
-                         Y_Origin=y0,
-                         Z_Origin=0)
+    for surf_name, verts in surfaces.items():
+        if "Wall" in surf_name:
+            surface_type = "Wall"
+            construction = "Wall Construction"
+            outside = "Outdoors"
+            sun = "SunExposed"
+            wind = "WindExposed"
+        elif surf_name == "Floor":
+            surface_type = "Floor"
+            construction = "Floor Construction"
+            outside = "Ground"
+            sun = "NoSun"
+            wind = "NoWind"
+        elif surf_name == "Roof":
+            surface_type = "Roof"
+            construction = "Roof Construction"
+            outside = "Outdoors"
+            sun = "SunExposed"
+            wind = "WindExposed"
 
-        # Surfaces
-        surfaces = {
-            "South Wall": [(0, 0, 0), (0, 0, height), (length, 0, height), (length, 0, 0)],
-            "East Wall": [(length, 0, 0), (length, 0, height), (length, width, height), (length, width, 0)],
-            "North Wall": [(length, width, 0), (length, width, height), (0, width, height), (0, width, 0)],
-            "West Wall": [(0, width, 0), (0, width, height), (0, 0, height), (0, 0, 0)],
-            "Floor": [(0, width, 0), (length, width, 0), (length, 0, 0), (0, 0, 0)],
-            "Roof": [(0, 0, height), (length, 0, height), (length, width, height), (0, width, height)]
-        }
+        vertex_dict = {}
+        for i, v in enumerate(verts):
+            vertex_dict[f"Vertex_{i + 1}_Xcoordinate"] = v[0]
+            vertex_dict[f"Vertex_{i + 1}_Ycoordinate"] = v[1]
+            vertex_dict[f"Vertex_{i + 1}_Zcoordinate"] = v[2]
 
-        for surf_name, verts in surfaces.items():
-            surface_type = "Wall" if "Wall" in surf_name else "Roof" if surf_name == "Roof" else "Floor"
-            construction = f"{surface_type} Construction"
-            sun = "NoSun" if surface_type == "Floor" else "SunExposed"
-            wind = "NoWind" if surface_type == "Floor" else "WindExposed"
-            outside = "Ground" if surface_type == "Floor" else "Outdoors"
+        idf.newidfobject("BUILDINGSURFACE:DETAILED",
+                         Name=f"{zone_name}_{surf_name}",
+                         Surface_Type=surface_type,
+                         Construction_Name=construction,
+                         Zone_Name=zone_name,
+                         Outside_Boundary_Condition=outside,
+                         Sun_Exposure=sun,
+                         Wind_Exposure=wind,
+                         Number_of_Vertices=4,
+                         **vertex_dict)
 
-            vertex_dict = {}
-            for i, v in enumerate(verts):
-                vertex_dict[f"Vertex_{i + 1}_Xcoordinate"] = v[0] + x0
-                vertex_dict[f"Vertex_{i + 1}_Ycoordinate"] = v[1] + y0
-                vertex_dict[f"Vertex_{i + 1}_Zcoordinate"] = v[2]
+    # idf.newidfobject("ZONEHVAC:EQUIPMENTCONNECTIONS",
+    #                  Zone_Name=zone_name,
+    #                  Zone_Conditioning_Equipment_List_Name=f"{zone_name}_EquipmentList",
+    #                  Zone_Air_Inlet_Node_or_NodeList_Name=f"{zone_name}_SupplyAirNode",
+    #                  Zone_Air_Exhaust_Node_or_NodeList_Name="",  # optional, empty here
+    #                  Zone_Air_Node_Name=f"{zone_name}_AirNode",
+    #                  Zone_Return_Air_Node_or_NodeList_Name=f"{zone_name}_ReturnAirNode")
+    #
+    # idf.newidfobject("ZONEHVAC:EQUIPMENTLIST",
+    #                  Name=f"{zone_name}_EquipmentList",
+    #                  Load_Distribution_Scheme="SequentialLoad",
+    #                  Zone_Equipment_1_Object_Type="AirTerminal:SingleDuct:Uncontrolled",
+    #                  Zone_Equipment_1_Name=f"{zone_name}_DirectAir",
+    #                  Zone_Equipment_1_Cooling_Sequence=1,
+    #                  Zone_Equipment_1_Heating_or_NoLoad_Sequence=1)
 
-            idf.newidfobject("BUILDINGSURFACE:DETAILED",
-                             Name=f"{zone_name}_{surf_name}",
-                             Surface_Type=surface_type,
-                             Construction_Name=construction,
-                             Zone_Name=zone_name,
-                             Outside_Boundary_Condition=outside,
-                             Sun_Exposure=sun,
-                             Wind_Exposure=wind,
-                             Number_of_Vertices=4,
-                             **vertex_dict)
+    # Thermostat
+    idf.newidfobject("HVACTEMPLATE:THERMOSTAT",
+                     Name=f"{zone_name}_Thermostat",
+                     Heating_Setpoint_Schedule_Name="HeatingSetpoint",
+                     Cooling_Setpoint_Schedule_Name="CoolingSetpoint")
 
-        # Thermostat for conditioned zones
-        if conditioned:
-            idf.newidfobject("HVACTEMPLATE:THERMOSTAT",
-                             Name=f"{zone_name}_Thermostat",
-                             Heating_Setpoint_Schedule_Name="HeatingSetpoint",
-                             Cooling_Setpoint_Schedule_Name="CoolingSetpoint")
+    # ✅ Add internal gains
+    idf.newidfobject("PEOPLE",
+                     Name=f"{zone_name}_People",
+                     Zone_or_ZoneList_or_Space_or_SpaceList_Name=zone_name,
+                     Number_of_People_Schedule_Name="AlwaysOn",
+                     Number_of_People_Calculation_Method="People",
+                     Number_of_People=2,
+                     Activity_Level_Schedule_Name="AlwaysOn")
+    idf.newidfobject("LIGHTS",
+                     Name=f"{zone_name}_Lights",
+                     Zone_or_ZoneList_or_Space_or_SpaceList_Name=zone_name,
+                     Schedule_Name="AlwaysOn",
+                     Design_Level_Calculation_Method="Watts/Area",
+                     Watts_per_Floor_Area=10)
+    idf.newidfobject("ELECTRICEQUIPMENT",
+                     Name=f"{zone_name}_Equip",
+                     Zone_or_ZoneList_or_Space_or_SpaceList_Name=zone_name,
+                     Schedule_Name="AlwaysOn",
+                     Design_Level_Calculation_Method="Watts/Area",
+                     Watts_per_Floor_Area=5)
 
-            # HVAC system
-            idf.newidfobject("HVACTEMPLATE:ZONE:IDEALLOADSAIRSYSTEM",
-                             Zone_Name=zone_name,
-                             Template_Thermostat_Name=f"{zone_name}_Thermostat")
+    # Extract air change rate from props
+    air_change_rate = props.get("air_change_rate", 0.35)
 
-    # Outputs
-    output_vars = [
+    idf.newidfobject("ZONEINFILTRATION:DESIGNFLOWRATE",
+                     Name=f"{zone_name}_Infiltration",
+                     Zone_or_ZoneList_or_Space_or_SpaceList_Name=zone_name,
+                     Schedule_Name="AlwaysOn",
+                     Design_Flow_Rate_Calculation_Method="AirChanges/Hour",
+                     Air_Changes_per_Hour=air_change_rate,
+                     Constant_Term_Coefficient=1,
+                     Temperature_Term_Coefficient=0,
+                     Velocity_Term_Coefficient=0,
+                     Velocity_Squared_Term_Coefficient=0)
+
+    idf.newidfobject("HVACTEMPLATE:ZONE:PTAC",
+                     Zone_Name=zone_name,
+                     Template_Thermostat_Name=f"{zone_name}_Thermostat",
+                     Cooling_Coil_Gross_Rated_Total_Capacity="autosize",
+                     Cooling_Coil_Gross_Rated_Cooling_COP=cooling_cop,
+                     Heating_Coil_Type="Gas",  # or "ElectricResistance" if appropriate
+                     Heating_Coil_Capacity="autosize",
+                     Gas_Heating_Coil_Efficiency=heating_cop)
+
+    # Outputs (unchanged)
+    # Replace OUTPUT:VARIABLE for meters with OUTPUT:METER
+    for var in [
         "Zone Air Temperature",
-        "Zone Mean Air Temperature",
-        "Zone Infiltration Sensible Heat Gain",
-        "Zone Infiltration Air Change Rate",
-        "Zone Ideal Loads Supply Air Total Heating Energy",
-        "Zone Ideal Loads Supply Air Total Cooling Energy",
-        "Zone Ideal Loads Supply Air Total Heating Rate",
-        "Zone Ideal Loads Supply Air Total Cooling Rate"
-    ]
-
-    for var in output_vars:
+        "Heating Coil Gas Energy",
+        "Cooling Coil Electric Energy",
+        "Fan Electric Energy",
+        "HVAC Electric Energy",
+        "Zone/Site Heating:Energy",
+        "Heating Coil Heating Energy",
+        "Zone Infiltration Sensible Heat Loss",
+        "Zone Infiltration Sensible Heat Gain"
+    ]:
         idf.newidfobject("OUTPUT:VARIABLE",
                          Variable_Name=var,
                          Reporting_Frequency="Hourly")
 
+    for meter in ["Electricity:Facility", "Electricity:HVAC", "Gas:Facility"]:
+        idf.newidfobject("OUTPUT:METER",
+                         Key_Name=meter,
+                         Reporting_Frequency="Hourly")
+
+    idf.newidfobject("OUTPUT:VARIABLEDICTIONARY",
+                     Key_Field="IDF")
+
     idf.save(idf_path)
+
+    # Run expandobjects
+
+    cwd = os.getcwd()
+    os.chdir(os.path.dirname(idf_path))
+    subprocess.run(['expandobjects'])
+    os.chdir(cwd)
+
+
+# def generate_idf_from_geojson(geojson: dict, idf_path: str):
+#     idf = IDF(StringIO("Version,25.1;"))
+#
+#     # Simulation metadata (unchanged)
+#     idf.newidfobject("TIMESTEP", Number_of_Timesteps_per_Hour=4)
+#     idf.newidfobject("SITE:LOCATION",
+#                      Name="Site Location",
+#                      Latitude=40.0,
+#                      Longitude=-75.0,
+#                      Time_Zone=-5.0,
+#                      Elevation=200.0)
+#     idf.newidfobject("SIMULATIONCONTROL",
+#                      Do_Zone_Sizing_Calculation="No",
+#                      Do_System_Sizing_Calculation="No",
+#                      Do_Plant_Sizing_Calculation="No",
+#                      Run_Simulation_for_Weather_File_Run_Periods="Yes",
+#                      Run_Simulation_for_Sizing_Periods="No")
+#     today = datetime.today()
+#     idf.newidfobject("RUNPERIOD",
+#                      Name="RunPeriod1",
+#                      Begin_Month=today.month,
+#                      Begin_Day_of_Month=today.day,
+#                      End_Month=today.month,
+#                      End_Day_of_Month=today.day,
+#                      Use_Weather_File_Holidays_and_Special_Days="Yes",
+#                      Use_Weather_File_Daylight_Saving_Period="Yes",
+#                      Apply_Weekend_Holiday_Rule="Yes",
+#                      Use_Weather_File_Rain_Indicators="Yes",
+#                      Use_Weather_File_Snow_Indicators="Yes")
+#
+#     idf.newidfobject("BUILDING",
+#                      Name="GeneratedBuilding",
+#                      North_Axis=0.0,
+#                      Terrain="Suburbs",
+#                      Loads_Convergence_Tolerance_Value=0.04,
+#                      Temperature_Convergence_Tolerance_Value=0.4,
+#                      Solar_Distribution="FullExterior",
+#                      Maximum_Number_of_Warmup_Days=25,
+#                      Minimum_Number_of_Warmup_Days=6)
+#
+#     idf.newidfobject("GLOBALGEOMETRYRULES",
+#                      Starting_Vertex_Position="UpperLeftCorner",
+#                      Vertex_Entry_Direction="CounterClockWise",
+#                      Coordinate_System="Relative")
+#
+#     # Schedule type limits (unchanged)
+#     idf.newidfobject("SCHEDULETYPELIMITS",
+#                      Name="Fraction",
+#                      Lower_Limit_Value=0.0,
+#                      Upper_Limit_Value=1.0,
+#                      Numeric_Type="Continuous",
+#                      Unit_Type="Dimensionless")
+#
+#     idf.newidfobject("SCHEDULETYPELIMITS",
+#                      Name="Temperature",
+#                      Unit_Type="Temperature")
+#
+#     # AlwaysOn schedule
+#     idf.newidfobject("SCHEDULE:COMPACT",
+#                      Name="AlwaysOn",
+#                      Schedule_Type_Limits_Name="Fraction",
+#                      Field_1="Through: 12/31",
+#                      Field_2="For: AllDays",
+#                      Field_3="Until: 24:00, 1")
+#
+#     # Heating and cooling setpoint schedules
+#     idf.newidfobject("SCHEDULE:COMPACT",
+#                      Name="HeatingSetpoint",
+#                      Schedule_Type_Limits_Name="Temperature",
+#                      Field_1="Through: 12/31",
+#                      Field_2="For: AllDays",
+#                      Field_3="Until: 24:00, 20")  # 20°C
+#
+#     idf.newidfobject("SCHEDULE:COMPACT",
+#                      Name="CoolingSetpoint",
+#                      Schedule_Type_Limits_Name="Temperature",
+#                      Field_1="Through: 12/31",
+#                      Field_2="For: AllDays",
+#                      Field_3="Until: 24:00, 24")  # 24°C
+#
+#     # Extract performance parameters from GeoJSON properties
+#     feature = geojson["features"][0]
+#     props = feature["properties"]
+#
+#     air_change_rate = props.get("air_change_rate", 0.35)
+#     hvac_heating_cop = props.get("hvac_heating_cop", 3.0)
+#     hvac_cooling_cop = props.get("hvac_cooling_cop", 3.0)
+#     window_u_value = props.get("window_u_value", 2.0)
+#     wall_r_value = props.get("wall_r_value", 13.0)
+#     roof_r_value = props.get("roof_r_value", 30.0)
+#     hvac_system_type = props.get("hvac_system_type", "Unknown")
+#
+#     # Convert R-values to SI (m²·K/W) for IDF materials
+#     def r_to_si(r_ip):
+#         return r_ip * 0.1761
+#
+#     wall_r_si = r_to_si(wall_r_value)
+#     roof_r_si = r_to_si(roof_r_value)
+#
+#     # Calculate conductivity from R-value (thickness assumed or set constant)
+#     wall_thickness = 0.2  # m
+#     wall_conductivity = wall_thickness / wall_r_si if wall_r_si > 0 else 0.5
+#
+#     roof_thickness = 0.15  # m
+#     roof_conductivity = roof_thickness / roof_r_si if roof_r_si > 0 else 0.3
+#
+#     # Update materials
+#     idf.newidfobject("MATERIAL", Name="Wall Material", Roughness="Rough",
+#                      Thickness=wall_thickness, Conductivity=wall_conductivity, Density=1400,
+#                      Specific_Heat=1000, Thermal_Absorptance=0.9,
+#                      Solar_Absorptance=0.7, Visible_Absorptance=0.7)
+#
+#     idf.newidfobject("MATERIAL", Name="Roof Material", Roughness="Rough",
+#                      Thickness=roof_thickness, Conductivity=roof_conductivity, Density=800,
+#                      Specific_Heat=1200, Thermal_Absorptance=0.9,
+#                      Solar_Absorptance=0.7, Visible_Absorptance=0.7)
+#
+#     idf.newidfobject("MATERIAL", Name="Floor Material", Roughness="Rough",
+#                      Thickness=0.1, Conductivity=1.0, Density=2000,
+#                      Specific_Heat=1000, Thermal_Absorptance=0.9,
+#                      Solar_Absorptance=0.7, Visible_Absorptance=0.7)
+#
+#     # Windows (simple glazing system)
+#     idf.newidfobject("WINDOWMATERIAL:SIMPLEGLAZINGSYSTEM",
+#                      Name="Window Material",
+#                      UFactor=window_u_value,
+#                      Solar_Heat_Gain_Coefficient=0.5,
+#                      Visible_Transmittance=0.5)
+#
+#     # Constructions
+#     idf.newidfobject("CONSTRUCTION", Name="Wall Construction", Outside_Layer="Wall Material")
+#     idf.newidfobject("CONSTRUCTION", Name="Roof Construction", Outside_Layer="Roof Material")
+#     idf.newidfobject("CONSTRUCTION", Name="Floor Construction", Outside_Layer="Floor Material")
+#     idf.newidfobject("CONSTRUCTION", Name="Window Construction", Outside_Layer="Window Material")
+#
+#     # Process zones
+#     for feature in geojson["features"]:
+#         props = feature["properties"]
+#         zone_name = props.get("name", "UnnamedZone").replace(" ", "_")
+#         area_sqft = props.get("Total Square Feet Living Area", 100.0)
+#         area_m2 = area_sqft * 0.092903
+#         length = width = math.sqrt(area_m2)
+#         height = props.get("height_ft", 10.0) * 0.3048
+#         conditioned = props.get("conditioned", True)
+#
+#         x0, y0 = feature["geometry"]["coordinates"][0][0]
+#
+#         idf.newidfobject("ZONE",
+#                          Name=zone_name,
+#                          X_Origin=x0,
+#                          Y_Origin=y0,
+#                          Z_Origin=0)
+#
+#         # Surfaces for each zone
+#         surfaces = {
+#             "South Wall": [(0, 0, 0), (0, 0, height), (length, 0, height), (length, 0, 0)],
+#             "East Wall": [(length, 0, 0), (length, 0, height), (length, width, height), (length, width, 0)],
+#             "North Wall": [(length, width, 0), (length, width, height), (0, width, height), (0, width, 0)],
+#             "West Wall": [(0, width, 0), (0, width, height), (0, 0, height), (0, 0, 0)],
+#             "Floor": [(0, width, 0), (length, width, 0), (length, 0, 0), (0, 0, 0)],
+#             "Roof": [(0, 0, height), (length, 0, height), (length, width, height), (0, width, height)]
+#         }
+#
+#         for surf_name, verts in surfaces.items():
+#             surface_type = "Wall" if "Wall" in surf_name else "Roof" if surf_name == "Roof" else "Floor"
+#             construction = f"{surface_type} Construction"
+#             sun = "NoSun" if surface_type == "Floor" else "SunExposed"
+#             wind = "NoWind" if surface_type == "Floor" else "WindExposed"
+#             outside = "Ground" if surface_type == "Floor" else "Outdoors"
+#
+#             vertex_dict = {}
+#             for i, v in enumerate(verts):
+#                 vertex_dict[f"Vertex_{i + 1}_Xcoordinate"] = v[0] + x0
+#                 vertex_dict[f"Vertex_{i + 1}_Ycoordinate"] = v[1] + y0
+#                 vertex_dict[f"Vertex_{i + 1}_Zcoordinate"] = v[2]
+#
+#             idf.newidfobject("BUILDINGSURFACE:DETAILED",
+#                              Name=f"{zone_name}_{surf_name}",
+#                              Surface_Type=surface_type,
+#                              Construction_Name=construction,
+#                              Zone_Name=zone_name,
+#                              Outside_Boundary_Condition=outside,
+#                              Sun_Exposure=sun,
+#                              Wind_Exposure=wind,
+#                              Number_of_Vertices=4,
+#                              **vertex_dict)
+#
+#         # Thermostat and HVAC (IdealLoads with COP adjustments possible in expanded HVAC definitions later)
+#         if conditioned:
+#             idf.newidfobject("HVACTEMPLATE:THERMOSTAT",
+#                              Name=f"{zone_name}_Thermostat",
+#                              Heating_Setpoint_Schedule_Name="HeatingSetpoint",
+#                              Cooling_Setpoint_Schedule_Name="CoolingSetpoint")
+#
+#             idf.newidfobject("HVACTEMPLATE:ZONE:IDEALLOADSAIRSYSTEM",
+#                              Zone_Name=zone_name,
+#                              Template_Thermostat_Name=f"{zone_name}_Thermostat")
+#
+#     # Outputs (unchanged)
+#     output_vars = [
+#         "Zone Air Temperature",
+#         "Zone Mean Air Temperature",
+#         "Zone Infiltration Sensible Heat Gain",
+#         "Zone Infiltration Air Change Rate",
+#         "Zone Ideal Loads Supply Air Total Heating Energy",
+#         "Zone Ideal Loads Supply Air Total Cooling Energy",
+#         "Zone Ideal Loads Supply Air Total Heating Rate",
+#         "Zone Ideal Loads Supply Air Total Cooling Rate",
+#         "Electricity:Facility",
+#         "Electricity:HVAC",
+#         "Electricity:InteriorLighting",
+#     ]
+#
+#     for var in output_vars:
+#         idf.newidfobject("OUTPUT:VARIABLE",
+#                          Variable_Name=var,
+#                          Reporting_Frequency="Hourly")
+#
+#     idf.save(idf_path)
 
 
 def run_energyplus_simulation(home_dir, weather_path):
@@ -821,10 +1049,8 @@ def run_energyplus_simulation(home_dir, weather_path):
             "-w", abs_weather_path,
             "-d", "simulation_output",
             "-r",
-            "in.idf"
+            "expanded.idf"
         ]
-
-        print(cmd)
 
         subprocess.run(cmd, check=True)
     finally:
@@ -895,27 +1121,25 @@ def extract_results_from_csv(home_dir: str) -> dict:
     }
 
 
-def label_data(results_json, inspection_report, home_dir_name):
+def label_data(results_json, inspection_report, home_dir_name, client, text_weight=.2, energyplus_weight=.8, energyplus_label_method='heuristic'):
     """
     Uses OpenAI API to label a datapoint based on its results.json and inspection report.
     """
 
-    def build_prompt(results_json: dict, inspection_report: str) -> str:
+    def build_text_prompt(inspection_report: str) -> str:
         return f"""
 You are an expert building energy analyst.
 
-Below is structured simulation data for a building, followed by a narrative inspection report.
+Below is a **narrative inspection report** for a building.
 
 Your task is to assign a **confidence score** in the range [0, 1] for the **need** for each of the following retrofits:
 - Insulation upgrade
-- Window upgrade
 - HVAC upgrade
-- Sealing
 
-A value of 0 means "definitely not needed". A value of 1 means "definitely needed". Intermediate values (e.g. 0.33, 0.5, 0.75) indicate uncertainty or partial need. Use your judgment to assign realistic values based solely on the data and report.
-
-### SIMULATION DATA (JSON):
-{json.dumps(results_json, indent=2)}
+### IMPORTANT:
+- A value of 0 means \"definitely not needed\".
+- A value of 1 means \"definitely needed\".
+- Intermediate values (e.g. 0.33, 0.5, 0.75) indicate uncertainty or partial need.
 
 ### INSPECTION REPORT (free text):
 \"\"\"
@@ -925,38 +1149,126 @@ A value of 0 means "definitely not needed". A value of 1 means "definitely neede
 ### RESPONSE FORMAT:
 Return a JSON object like:
 {{
-  "insulation": 0.5,
-  "windows": 0.0,
-  "hvac": 1.0,
-  "sealing": 0.25
+  \"insulation\": 0.5,
+  \"hvac\": 0.5,
 }}
 
 Only include the JSON. No explanation or commentary.
 """
 
-    prompt = build_prompt(results_json, inspection_report)
+    def build_energyplus_prompt(results_json: dict) -> str:
+        return f"""
+You are an expert building energy analyst.
 
-    def safe_chat_response():
+Below are **EnergyPlus simulation results** for a building.
+
+Your task is to assign a **confidence score** in the range [0, 1] for the **need** for each of the following retrofits:
+- Insulation upgrade
+- HVAC upgrade
+
+### IMPORTANT:
+- A value of 0 means \"definitely not needed\".
+- A value of 1 means \"definitely needed\".
+- Intermediate values (e.g. 0.33, 0.5, 0.75) indicate uncertainty or partial need.
+
+### ENERGYPLUS SIMULATION RESULTS (json):
+
+{json.dumps(results_json, indent=2)}
+
+### RESPONSE FORMAT:
+Return a JSON object like:
+{{
+  \"insulation\": 0.5,
+  \"hvac\": 0.5,
+}}
+
+Only include the JSON. No explanation or commentary.
+"""
+
+    def safe_chat_response(prompt):
         while True:
             try:
                 return client.chat.completions.create(
-                    model="gpt-4",
+                    model="gpt-4.1-mini",
                     messages=[{"role": "user", "content": prompt}],
                     temperature=0.2
                 )
             except RateLimitError as e:
                 print("Rate limit hit — sleeping for 2 seconds...")
                 time.sleep(2)
-    response = safe_chat_response()
 
-    content = response.choices[0].message.content
+    def extract_json_from_response(response_text):
+        # Remove triple backticks and optional language hints
+        cleaned = re.sub(r"^```(\w+)?", "", response_text.strip())
+        cleaned = re.sub(r"```$", "", cleaned.strip())
+        return cleaned
+
+    def heuristic_labeler(results):
+
+        # Constants
+        HL_WORST = 6000  # kWh / yr
+        HL_BEST = 25  # kWh / yr
+        HVAC_WORST = 3000  # kWh / yr
+        HVAC_BEST = 25  # kWh / yr
+
+        heating_load_hourly_J = 0.0
+        hvac_hourly_J = 0.0
+
+        for var_name, var_data in results.items():
+            if "Heating Coil Heating Energy" in var_name:
+                heating_load_hourly_J = float(var_data["mean"])
+            elif "Electricity:HVAC" in var_name:
+                hvac_hourly_J = float(var_data["mean"])
+
+        heating_load_annual_kWh = (heating_load_hourly_J * 730 * 12) / 3600000
+        hvac_annual_kWh = (hvac_hourly_J * 730 * 12) / 3600000
+
+        insulation_score = (heating_load_annual_kWh - HL_BEST) / (HL_WORST - HL_BEST)
+        hvac_score = (hvac_annual_kWh - HVAC_BEST) / (HVAC_WORST - HVAC_BEST)
+
+        insulation_score = max(min(insulation_score, 1), 0)
+        hvac_score = max(min(hvac_score, 1), 0)
+
+        return {
+            "insulation": insulation_score,
+            "hvac": hvac_score,
+        }
 
     try:
-        label_path = f"{home_dir_name}/label.json"
-        with open(label_path, "w") as f:
-            json.dump(json.loads(content), f, indent=2)
-    except json.JSONDecodeError:
-        raise ValueError(f"Failed to parse model response:\n{content}")
+        text_prompt = build_text_prompt(inspection_report)
+        energyplus_prompt = build_energyplus_prompt(results_json)
+
+        text_response = safe_chat_response(text_prompt)
+        text_content = extract_json_from_response(text_response.choices[0].message.content)
+        text_data = json.loads(text_content)
+
+        if energyplus_label_method == 'gpt':
+            energyplus_response = safe_chat_response(energyplus_prompt)
+            energyplus_content = extract_json_from_response(energyplus_response.choices[0].message.content)
+            energyplus_data = json.loads(energyplus_content)
+        elif energyplus_label_method == 'heuristic':
+            energyplus_data = heuristic_labeler(results_json)
+        else:
+            raise ValueError(f"Unsupported energyplus label method: {energyplus_label_method}")
+
+        # elementwise sum & normalize to [0, 1]
+
+        result = {
+            "insulation": ((text_data["insulation"] * text_weight) + (energyplus_data["insulation"] * energyplus_weight)) / 2,
+            "hvac": ((text_data["hvac"] * text_weight) + (energyplus_data["hvac"] * energyplus_weight)) / 2,
+        }
+
+        try:
+            if home_dir_name is None:
+                return result
+            label_path = f"{home_dir_name}/label.json"
+            with open(label_path, "w") as f:
+                json.dump(result, f, indent=2)
+        except json.JSONDecodeError:
+            raise ValueError(f"Failed to parse model response:\n{json.dumps(result)}")
+    except json.JSONDecodeError as e:
+        print("⚠️ Failed to parse JSON. Raw content:")
+        raise e
 
 
 def process_results(home_dir_name):
@@ -966,7 +1278,7 @@ def process_results(home_dir_name):
     inspection_note = json.load(open(f'{home_dir_name}/cleaned.geojson', 'r'))["features"][0]["properties"][
         "inspection_note"]
 
-    label_data(results_json, inspection_note, home_dir_name)
+    label_data(results_json, inspection_note, home_dir_name, client)
 
 
 def process_all_results():
@@ -1018,13 +1330,18 @@ if __name__ == "__main__":
         driver.quit()
         delete_folders_without_jpg_or_png()
         print(bold_green(f"({CHECK}) [1/6] NorCo Assessor Data Saved"))
-    else: print(bold_green(f"(—) [1/6] Skipped Scraping of NorCo Assessor Data"))
+    else:
+        print(bold_green(f"(—) [1/6] Skipped Scraping of NorCo Assessor Data"))
+
+    if sys.argv[1] == "--end-after-scrape":
+        exit(0)
 
     print(bold_yellow(f"( ) [2/6] Generate GeoJSONs and Notes"))
     if len(sys.argv) < 2 or sys.argv[1] != "--skip-generate-geojson":
         generate_geojson_and_note_for_all_entries()
         print(bold_green(f"({CHECK}) [2/6] GeoJSONs and Notes Generated"))
-    else: print(bold_green(f"(—) [2/6] Skipped Generating GeoJSONs and Notes"))
+    else:
+        print(bold_green(f"(—) [2/6] Skipped Generating GeoJSONs and Notes"))
 
     print(bold_yellow(f"( ) [3/6] Clean GeoJSONs"))
     clean_gpt_geojson_for_all_entries()

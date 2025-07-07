@@ -30,7 +30,11 @@
   "Basement": "FULL",
   "Exterior Wall Material": "BRICK",
   "Physical Condition": "AV",
-  "photo_urls": [
-    "https://www.ncpub.org/_web/api/document/dHlsZXI6RG9tYWluLkRvY3VtZW50VHlwZT01OTtJZD0xODA0MzM4Ow==/standard?token=RnNBOFBQNFhzakRDS3dzVVFPYm1wVHpMMFhZR2FvVGZSWEFmRkc5SDE0az0="
-  ]
+  "sketch_data": {
+    "Main Building": 1484,
+    "A1 - 11:OFP OPEN FRAME PORCH": 20,
+    "A2 - 33:MA_PT CONC/MAS PATIO": 192,
+    "A3 - 11:OFP OPEN FRAME PORCH": 150,
+    "A4 - 23:MG/BG MASONRY/BRICK GARAGE": 600
+  }
 }

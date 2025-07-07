@@ -30,8 +30,15 @@
   "Basement": "FULL",
   "Exterior Wall Material": "ALUMINUM/VINYL SIDING",
   "Physical Condition": "AV",
-  "photo_urls": [
-    "https://www.ncpub.org/_web/api/document/dHlsZXI6RG9tYWluLkRvY3VtZW50VHlwZT01OTtJZD0zMTE5NDE4Ow==/standard?token=RnNBOFBQNFhzakRDS3dzVVFPYm1wVHpMMFhZR2FvVGZSWEFmRkc5SDE0az0=",
-    "https://www.ncpub.org/_web/api/document/dHlsZXI6RG9tYWluLkRvY3VtZW50VHlwZT01OTtJZD0zMTIwNTY4Ow==/standard?token=RnNBOFBQNFhzakRDS3dzVVFPYm1wVHpMMFhZR2FvVGZSWEFmRkc5SDE0az0="
-  ]
+  "sketch_data": {
+    "Main Building": 1324,
+    "A1 - 50/10:UNFIN BSMT/1S FR ONE STORY FRAME": 42,
+    "A2 - 50/10:UNFIN BSMT/1S FR ONE STORY FRAME": 242,
+    "A3 - 13:FR GR FRAME GARAGE": 462,
+    "A4 - 11:OFP OPEN FRAME PORCH": 108,
+    "A5 - 16:FROVR FRAME OVERHANG": 64,
+    "A6 - 11/11:OFP OPEN FRAME PORCH/OFP OPEN FRAME PORCH": 240,
+    "A7 - 31:WDDCK WOOD DECKS": 160,
+    "VINYL POOL - RP2:PREFABRICATED VINYL POOL": 608
+  }
 }

@@ -30,7 +30,13 @@
   "Basement": "FULL",
   "Exterior Wall Material": "MASONRY/FRAME",
   "Physical Condition": "AV",
-  "photo_urls": [
-    "https://www.ncpub.org/_web/api/document/dHlsZXI6RG9tYWluLkRvY3VtZW50VHlwZT01OTtJZD0xNzk5MzEzOw==/standard?token=RnNBOFBQNFhzakRDS3dzVVFPYm1wVHpMMFhZR2FvVGZSWEFmRkc5SDE0az0="
-  ]
+  "sketch_data": {
+    "Main Building": 1334,
+    "A1 - 11:OFP OPEN FRAME PORCH": 35,
+    "A2 - 50/20:UNFIN BSMT/1SMAS MASONRY": 221,
+    "A3 - 21:OMP OPEN MASONRY PORCH": 117,
+    "A4 - 23:MG/BG MASONRY/BRICK GARAGE": 572,
+    "A5 - 33:MA_PT CONC/MAS PATIO": 720,
+    "VINYL POOL - RP2:PREFABRICATED VINYL POOL": 434
+  }
 }

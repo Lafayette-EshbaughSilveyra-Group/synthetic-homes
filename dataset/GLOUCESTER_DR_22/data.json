@@ -30,7 +30,10 @@
   "Basement": "FULL",
   "Exterior Wall Material": "ALUMINUM/VINYL SIDING",
   "Physical Condition": "AV",
-  "photo_urls": [
-    "https://www.ncpub.org/_web/api/document/dHlsZXI6RG9tYWluLkRvY3VtZW50VHlwZT01OTtJZD0xODAxMTczOw==/standard?token=RnNBOFBQNFhzakRDS3dzVVFPYm1wVHpMMFhZR2FvVGZSWEFmRkc5SDE0az0="
-  ]
+  "sketch_data": {
+    "Main Building": 858,
+    "A1 - 13:FR GR FRAME GARAGE": 528,
+    "A2 - 50/10/17:UNFIN BSMT/1S FR ONE STORY FRAME/1/2FR FRAME HALF-STORY": 312,
+    "A3 - 31:WDDCK WOOD DECKS": 320
+  }
 }

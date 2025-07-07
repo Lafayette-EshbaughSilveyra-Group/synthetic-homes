@@ -30,7 +30,14 @@
   "Basement": "PART",
   "Exterior Wall Material": "ALUMINUM/VINYL SIDING",
   "Physical Condition": "AV",
-  "photo_urls": [
-    "https://www.ncpub.org/_web/api/document/dHlsZXI6RG9tYWluLkRvY3VtZW50VHlwZT01OTtJZD0yMDMyMzgzOw==/standard?token=RnNBOFBQNFhzakRDS3dzVVFPYm1wVHpMMFhZR2FvVGZSWEFmRkc5SDE0az0="
-  ]
+  "sketch_data": {
+    "Main Building": 1544,
+    "A1 - 50/10:UNFIN BSMT/1S FR ONE STORY FRAME": 36,
+    "A2 - 23:MG/BG MASONRY/BRICK GARAGE": 552,
+    "A3 - 13:FR GR FRAME GARAGE": 133,
+    "A4 - 16:FROVR FRAME OVERHANG": 19,
+    "A5 - 11:OFP OPEN FRAME PORCH": 112,
+    "A6 - 12/31:EFP ENCL FRAME PORCH/WDDCK WOOD DECKS": 190,
+    "A7 - 33:MA_PT CONC/MAS PATIO": 296
+  }
 }

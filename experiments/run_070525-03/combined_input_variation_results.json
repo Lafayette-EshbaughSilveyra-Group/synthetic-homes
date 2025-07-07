@@ -1,0 +1,106 @@
+{
+  "hvac_cooling": {
+    "good_text_good_simulation": {
+      "mean_insulation": 0.15724358211345418,
+      "std_insulation": 0.0,
+      "mean_hvac": 0.014359092078132582,
+      "std_hvac": 0.0
+    },
+    "good_text_poor_simulation": {
+      "mean_insulation": 0.15548639678910273,
+      "std_insulation": 0.0,
+      "mean_hvac": 0.06558647084414566,
+      "std_hvac": 0.0
+    },
+    "poor_text_good_simulation": {
+      "mean_insulation": 0.1072435821134542,
+      "std_insulation": 0.0,
+      "mean_hvac": 0.08535909207813258,
+      "std_hvac": 0.002000000000000007
+    },
+    "poor_text_poor_simulation": {
+      "mean_insulation": 0.10548639678910272,
+      "std_insulation": 0.0,
+      "mean_hvac": 0.13658647084414566,
+      "std_hvac": 0.0020000000000000018
+    }
+  },
+  "hvac_heating": {
+    "good_text_good_simulation": {
+      "mean_insulation": 0.1553127018952673,
+      "std_insulation": 0.0,
+      "mean_hvac": 0.020076353205228756,
+      "std_hvac": 0.0
+    },
+    "good_text_poor_simulation": {
+      "mean_insulation": 0.14951063216107857,
+      "std_insulation": 0.0,
+      "mean_hvac": 0.020188523888814196,
+      "std_hvac": 0.0
+    },
+    "poor_text_good_simulation": {
+      "mean_insulation": 0.10531270189526731,
+      "std_insulation": 0.0,
+      "mean_hvac": 0.09107635320522875,
+      "std_hvac": 0.002000000000000007
+    },
+    "poor_text_poor_simulation": {
+      "mean_insulation": 0.09951063216107857,
+      "std_insulation": 0.0,
+      "mean_hvac": 0.09018852388881418,
+      "std_hvac": 0.0
+    }
+  },
+  "insulation_roof_r": {
+    "good_text_good_simulation": {
+      "mean_insulation": 0.0750985151093259,
+      "std_insulation": 0.0,
+      "mean_hvac": 0.06753457651869282,
+      "std_hvac": 0.0
+    },
+    "good_text_poor_simulation": {
+      "mean_insulation": 0.21182257225026505,
+      "std_insulation": 2.7755575615628914e-17,
+      "mean_hvac": 0.08377354404717088,
+      "std_hvac": 0.0
+    },
+    "poor_text_good_simulation": {
+      "mean_insulation": 0.1750985151093259,
+      "std_insulation": 0.0,
+      "mean_hvac": 0.025534576518692814,
+      "std_hvac": 0.009797958971132713
+    },
+    "poor_text_poor_simulation": {
+      "mean_insulation": 0.311822572250265,
+      "std_insulation": 0.0,
+      "mean_hvac": 0.037773544047170884,
+      "std_hvac": 0.008
+    }
+  },
+  "insulation_wall_r": {
+    "good_text_good_simulation": {
+      "mean_insulation": 0.01068187951795444,
+      "std_insulation": 0.0,
+      "mean_hvac": 0.06294378887749767,
+      "std_hvac": 0.0
+    },
+    "good_text_poor_simulation": {
+      "mean_insulation": 0.3985629595910926,
+      "std_insulation": 0.0,
+      "mean_hvac": 0.09379613019749768,
+      "std_hvac": 0.0
+    },
+    "poor_text_good_simulation": {
+      "mean_insulation": 0.11068187951795445,
+      "std_insulation": 1.3877787807814457e-17,
+      "mean_hvac": 0.02094378887749767,
+      "std_hvac": 0.009797958971132715
+    },
+    "poor_text_poor_simulation": {
+      "mean_insulation": 0.49856295959109265,
+      "std_insulation": 0.0,
+      "mean_hvac": 0.04779613019749768,
+      "std_hvac": 0.008
+    }
+  }
+}

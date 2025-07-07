@@ -30,9 +30,12 @@
   "Basement": "FULL",
   "Exterior Wall Material": "FRAME",
   "Physical Condition": "AV",
-  "photo_urls": [
-    "https://www.ncpub.org/_web/api/document/dHlsZXI6RG9tYWluLkRvY3VtZW50VHlwZT01OTtJZD0yNjUxNzY4Ow==/standard?token=RnNBOFBQNFhzakRDS3dzVVFPYm1wVHpMMFhZR2FvVGZSWEFmRkc5SDE0az0=",
-    "https://www.ncpub.org/_web/api/document/dHlsZXI6RG9tYWluLkRvY3VtZW50VHlwZT01OTtJZD0yNjUxNzUzOw==/standard?token=RnNBOFBQNFhzakRDS3dzVVFPYm1wVHpMMFhZR2FvVGZSWEFmRkc5SDE0az0=",
-    "https://www.ncpub.org/_web/api/document/dHlsZXI6RG9tYWluLkRvY3VtZW50VHlwZT01OTtJZD0xODA1ODA4Ow==/standard?token=RnNBOFBQNFhzakRDS3dzVVFPYm1wVHpMMFhZR2FvVGZSWEFmRkc5SDE0az0="
-  ]
+  "sketch_data": {
+    "Main Building": 1144,
+    "A1 - 11:OFP OPEN FRAME PORCH": 135,
+    "A2 - 33:MA_PT CONC/MAS PATIO": 528,
+    "A3 - 50:UNFIN BSMT": 312,
+    "A4 - 16:FROVR FRAME OVERHANG": 88,
+    "DET GARAGE - RG1:FRAME OR CB DETACHED GARAGE": 720
+  }
 }

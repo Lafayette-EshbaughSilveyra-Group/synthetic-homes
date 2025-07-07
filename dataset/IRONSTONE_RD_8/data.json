@@ -30,7 +30,11 @@
   "Basement": "FULL",
   "Exterior Wall Material": "ALUMINUM/VINYL SIDING",
   "Physical Condition": "GD",
-  "photo_urls": [
-    "https://www.ncpub.org/_web/api/document/dHlsZXI6RG9tYWluLkRvY3VtZW50VHlwZT01OTtJZD0xODA1NDQ4Ow==/standard?token=RnNBOFBQNFhzakRDS3dzVVFPYm1wVHpMMFhZR2FvVGZSWEFmRkc5SDE0az0="
-  ]
+  "sketch_data": {
+    "Main Building": 1428,
+    "A1 - 16:FROVR FRAME OVERHANG": 102,
+    "A2 - 12:EFP ENCL FRAME PORCH": 352,
+    "A3 - 50:UNFIN BSMT": 336,
+    "A4 - 11:OFP OPEN FRAME PORCH": 140
+  }
 }

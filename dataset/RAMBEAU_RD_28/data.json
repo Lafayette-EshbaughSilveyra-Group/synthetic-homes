@@ -30,7 +30,11 @@
   "Basement": "FULL",
   "Exterior Wall Material": "ALUMINUM/VINYL SIDING",
   "Physical Condition": "AV",
-  "photo_urls": [
-    "https://www.ncpub.org/_web/api/document/dHlsZXI6RG9tYWluLkRvY3VtZW50VHlwZT01OTtJZD0xODA1OTg4Ow==/standard?token=RnNBOFBQNFhzakRDS3dzVVFPYm1wVHpMMFhZR2FvVGZSWEFmRkc5SDE0az0="
-  ]
+  "sketch_data": {
+    "Main Building": 837,
+    "A1 - 16:FROVR FRAME OVERHANG": 62,
+    "A2 - 13:FR GR FRAME GARAGE": 484,
+    "A3 - 10:1S FR ONE STORY FRAME": 220,
+    "A4 - 10:1S FR ONE STORY FRAME": 368
+  }
 }
