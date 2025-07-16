@@ -62,11 +62,6 @@ Example:
 python main.py --mode occlusion
 ```
 
-Optional flags for pipeline mode:
-- `--skip-scrape`
-- `--skip-geometry`
-- `--end-after-scrape`
-
 ---
 
 ## Requirements
