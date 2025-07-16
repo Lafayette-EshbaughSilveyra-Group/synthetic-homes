@@ -9,7 +9,7 @@ from openai import OpenAI
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.append(parent_dir)
 
-from build_dataset import label_data
+from main import label_data
 
 RUNS_PER_SAMPLE = 5  # number of repeated runs per text sample
 

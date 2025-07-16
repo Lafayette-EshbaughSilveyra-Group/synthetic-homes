@@ -8,7 +8,7 @@ import pandas as pd
 import numpy as np
 from eppy.modeleditor import IDF
 
-from build_dataset import generate_idf_from_geojson
+from main import generate_idf_from_geojson
 
 # ✅ Set IDD path
 IDF.setiddname("/Applications/EnergyPlus-25-1-0/Energy+.idd")
