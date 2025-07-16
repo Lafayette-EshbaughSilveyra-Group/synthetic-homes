@@ -1,7 +1,7 @@
 import json
 import numpy as np
 from pipeline.postprocessing import label_data
-from constants import HVAC_TEXT_SAMPLES, INSULATION_TEXT_SAMPLES
+from experiments.constants import HVAC_TEXT_SAMPLES, INSULATION_TEXT_SAMPLES
 
 
 def run(client, runs_per_sample=5):
