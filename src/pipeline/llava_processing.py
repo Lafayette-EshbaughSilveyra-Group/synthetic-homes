@@ -14,7 +14,7 @@ from transformers import pipeline
 from PIL import Image
 
 # Initialize LLaVA pipeline globally
-llava_pipeline = pipeline("image-to-text", model="llava-hf/llava-1.5-7b-hf", device_map="auto", trust_remote_code=True)
+llava_pipeline = pipeline("image-text-to-text", model="llava-hf/llava-1.5-7b-hf", device_map="auto", trust_remote_code=True)
 
 
 def run_llava(image_path: str, prompt: str) -> str:
@@ -29,8 +29,12 @@ def run_llava(image_path: str, prompt: str) -> str:
         str: LLaVA model's descriptive output.
     """
     image = Image.open(image_path).convert("RGB")
-    result = llava_pipeline(image, prompt=prompt)
-    return result[0]['generated_text']
+    formatted_prompt = f"<image>\nUSER: {prompt}\nASSISTANT:"
+    result = llava_pipeline({
+        "images": [image],
+        "text": formatted_prompt
+    })
+    return result[0]['generated_text'].split("ASSISTANT:")[-1].strip()
 
 def describe_exterior(image_path: str) -> str:
     """
