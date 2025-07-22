@@ -16,18 +16,19 @@ import experiments.plot_results as plot_results
 from experiments.occlusion import run_occlusions
 
 
-def run_pipeline(client):
+def run_pipeline(client, scrape=True):
     OUTPUT_DIR = Path(__file__).resolve().parent.parent / "dataset"
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
-    STREETS = ["IRONSTONE RD", "IRONSTONE CT", "STANBRIDGE CT", "HIGHBRIDGE CT", "TUDOR CT", "SUTTON PL", "REGAL RD",
-               "GRAMERCY PL", "MARGATE RD", "RAMBEAU RD", "CANTERBURY RD", "GLOUCESTER DR", "NIJARO RD"]
+    if scrape:
+        STREETS = ["IRONSTONE RD", "IRONSTONE CT", "STANBRIDGE CT", "HIGHBRIDGE CT", "TUDOR CT", "SUTTON PL", "REGAL RD",
+                   "GRAMERCY PL", "MARGATE RD", "RAMBEAU RD", "CANTERBURY RD", "GLOUCESTER DR", "NIJARO RD"]
 
-    driver = init_driver(headless=True)
-    for street in STREETS:
-        scrape_all_records_on_street(driver, street, str(OUTPUT_DIR))
-    driver.quit()
-    delete_folders_without_jpg_or_png()
+        driver = init_driver(headless=True)
+        for street in STREETS:
+            scrape_all_records_on_street(driver, street, str(OUTPUT_DIR))
+        driver.quit()
+        delete_folders_without_jpg_or_png()
 
     run_generation_for_dataset(str(OUTPUT_DIR), client)
     clean_gpt_geojson_for_all_entries(str(OUTPUT_DIR))
@@ -45,12 +46,14 @@ if __name__ == "__main__":
     client = OpenAI(api_key=api_key)
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--mode", choices=["pipeline", "experiments", "occlusion"], default="pipeline",
+    parser.add_argument("--mode", choices=["pipeline", "pipeline-no-scrape", "experiments", "occlusion"], default="pipeline",
                         help="Run full pipeline, experiments, or occlusion tests.")
     args = parser.parse_args()
 
     if args.mode == "pipeline":
         run_pipeline(client)
+    elif args.mode == "pipeline-no-scrape":
+        run_pipeline(client, scrape=False)
     elif args.mode == "experiments":
         run_experiments(client)
         plot_results.main(RESULTS_DIR)
