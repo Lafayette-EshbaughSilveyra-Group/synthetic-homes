@@ -23,7 +23,7 @@ def run_pipeline(client):
     STREETS = ["IRONSTONE RD", "IRONSTONE CT", "STANBRIDGE CT", "HIGHBRIDGE CT", "TUDOR CT", "SUTTON PL", "REGAL RD",
                "GRAMERCY PL", "MARGATE RD", "RAMBEAU RD", "CANTERBURY RD", "GLOUCESTER DR", "NIJARO RD"]
 
-    driver = init_driver(headless=False)
+    driver = init_driver(headless=True)
     for street in STREETS:
         scrape_all_records_on_street(driver, street, str(OUTPUT_DIR))
     driver.quit()

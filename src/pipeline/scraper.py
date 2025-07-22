@@ -21,6 +21,7 @@ Outputs (per property):
 """
 
 import os
+import tempfile
 import time
 import json
 import shutil
@@ -48,6 +49,14 @@ def init_driver(headless: bool = False) -> WebDriver:
     options = Options()
     if headless:
         options.add_argument("--headless=new")
+        options.add_argument("--disable-gpu")
+        options.add_argument("--no-sandbox")
+        options.add_argument("--disable-dev-shm-usage")
+
+    # Force Chrome to use a temp profile to avoid profile lock conflicts
+    user_data_dir = tempfile.mkdtemp()
+    options.add_argument(f"--user-data-dir={user_data_dir}")
+
     return webdriver.Chrome(options=options)
 
 
