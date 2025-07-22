@@ -14,7 +14,7 @@ from transformers import pipeline
 from PIL import Image
 
 # Initialize LLaVA pipeline globally
-llava_pipeline = pipeline("image-to-text", model="llava-hf/llava-1.5-7b-hf", device_map="auto")
+llava_pipeline = pipeline("image-to-text", model="llava-hf/llava-1.5-7b-hf", device_map="auto", trust_remote_code=True)
 
 
 def run_llava(image_path: str, prompt: str) -> str:
