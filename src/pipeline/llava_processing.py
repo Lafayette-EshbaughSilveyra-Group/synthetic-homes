@@ -29,12 +29,8 @@ def run_llava(image_path: str, prompt: str) -> str:
         str: LLaVA model's descriptive output.
     """
     image = Image.open(image_path).convert("RGB")
-    result = llava_pipeline({
-        "image": image,
-        "prompt": prompt
-    })
+    result = llava_pipeline(image, prompt=prompt)
     return result[0]['generated_text']
-
 
 def describe_exterior(image_path: str) -> str:
     """
