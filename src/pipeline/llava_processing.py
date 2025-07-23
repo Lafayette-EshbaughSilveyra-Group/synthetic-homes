@@ -8,8 +8,9 @@ Responsibilities:
 - Describe floorplans and room dimensions from sketches.
 - Outputs descriptive text to feed into geometry_generation.py.
 """
+import gc
 
-
+import torch.cuda
 from transformers import pipeline
 from PIL import Image
 
@@ -34,7 +35,13 @@ def run_llava(image_path: str, prompt: str) -> str:
         "images": [image],
         "text": formatted_prompt
     })
+
+    del image
+    torch.cuda.empty_cache()
+    gc.collect()
+
     return result[0]['generated_text'].split("ASSISTANT:")[-1].strip()
+
 
 def describe_exterior(image_path: str) -> str:
     """
