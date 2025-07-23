@@ -40,6 +40,9 @@ def run_llava(image_path: str, prompt: str) -> str:
     torch.cuda.empty_cache()
     gc.collect()
 
+    print(f"[INFO] GPU Allocated: {torch.cuda.memory_allocated() / 1e6:2f} MB")
+    print(f"[INFO] GPU Reserved: {torch.cuda.memory_reserved() / 1e6:2f} MB")
+
     return result[0]['generated_text'].split("ASSISTANT:")[-1].strip()
 
 
