@@ -42,10 +42,12 @@ def run_pipeline(client, scrape=True):
 
 if __name__ == "__main__":
     load_dotenv()
+    print("[SETUP] Initializing OpenAI")
     api_key = os.getenv("OPENAI_API_KEY")
     if not api_key:
         raise EnvironmentError("OPENAI_API_KEY not found in .env file")
     client = OpenAI(api_key=api_key)
+    print("[SETUP] Initialized OpenAI")
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--mode", choices=["pipeline", "pipeline-no-scrape", "experiments", "occlusion"], default="pipeline",
