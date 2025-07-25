@@ -25,7 +25,7 @@ model = LlavaForConditionalGeneration.from_pretrained(
     MODEL_NAME,
     torch_dtype=torch.float16 if DEVICE == "cuda" else torch.float32,
     quantization_config=bnb_config,
-    device_map={"": 0}
+    device_map="auto"
 )
 model.eval()
 processor = AutoProcessor.from_pretrained(MODEL_NAME)

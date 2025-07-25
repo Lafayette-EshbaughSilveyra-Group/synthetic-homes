@@ -28,7 +28,7 @@ model_id = "llava-hf/llava-1.5-7b-hf"
 processor = AutoProcessor.from_pretrained(model_id)
 model = LlavaForConditionalGeneration.from_pretrained(
     model_id,
-    device_map={"": 0},
+    device_map="auto",
    quantization_config=bnb_config,
     torch_dtype=torch.float16,
     trust_remote_code=True
