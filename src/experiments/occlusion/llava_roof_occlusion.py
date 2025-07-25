@@ -7,7 +7,7 @@ import numpy as np
 from pathlib import Path
 
 
-MODEL_NAME = "llava-hf/llava-1.5-7b-hf"
+MODEL_NAME = "llava-hf/llava-1.5-3b-hf"
 PROMPT = "USER: <image>\nDescribe the status roof. Is it in good condition? Why or why not? ASSISTANT:"
 GRID_SIZE = 16
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
@@ -17,10 +17,10 @@ OCCLUSION_COLOR = (127, 127, 127)
 model = LlavaForConditionalGeneration.from_pretrained(
     MODEL_NAME,
     torch_dtype=torch.float16 if DEVICE == "cuda" else torch.float32,
-    device_map="auto"
+    device_map={"": 0}
 )
 processor = AutoProcessor.from_pretrained(MODEL_NAME)
-embedder = SentenceTransformer('all-MiniLM-L6-v2')
+embedder = SentenceTransformer('all-MiniLM-L6-v2', device=DEVICE)
 
 
 def run_inference(image, text_prompt):

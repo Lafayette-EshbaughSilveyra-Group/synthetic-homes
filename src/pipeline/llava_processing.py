@@ -15,7 +15,13 @@ from transformers import pipeline
 from PIL import Image
 
 # Initialize LLaVA pipeline globally
-llava_pipeline = pipeline("image-text-to-text", model="llava-hf/llava-1.5-7b-hf", device_map="auto", trust_remote_code=True)
+llava_pipeline = pipeline(
+    "image-text-to-text",
+    model="llava-hf/llava-1.5-3b-hf",
+    device_map={"": 0},
+    torch_dtype=torch.float16,
+    trust_remote_code=True
+)
 
 
 def run_llava(image_path: str, prompt: str) -> str:
@@ -40,8 +46,9 @@ def run_llava(image_path: str, prompt: str) -> str:
     torch.cuda.empty_cache()
     gc.collect()
 
-    print(f"[INFO] GPU Allocated: {torch.cuda.memory_allocated() / 1e6:2f} MB")
-    print(f"[INFO] GPU Reserved: {torch.cuda.memory_reserved() / 1e6:2f} MB")
+    if torch.cuda.is_available():
+        print(f"[INFO] GPU Allocated: {torch.cuda.memory_allocated() / 1e6:2f} MB")
+        print(f"[INFO] GPU Reserved: {torch.cuda.memory_reserved() / 1e6:2f} MB")
 
     return result[0]['generated_text'].split("ASSISTANT:")[-1].strip()
 
