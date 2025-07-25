@@ -11,14 +11,17 @@ Responsibilities:
 import gc
 
 import torch.cuda
-from transformers import pipeline
+from transformers import AutoProcessor, LlavaForConditionalGeneration
 from PIL import Image
 
 # Initialize LLaVA pipeline globally
-llava_pipeline = pipeline(
-    "image-text-to-text",
-    model="llava-hf/llava-1.5-3b-hf",
+model_id = "llava-hf/llava-1.5-7b-hf"
+
+processor = AutoProcessor.from_pretrained(model_id)
+model = LlavaForConditionalGeneration.from_pretrained(
+    model_id,
     device_map={"": 0},
+    load_in_8bit=True,
     torch_dtype=torch.float16,
     trust_remote_code=True
 )
@@ -37,10 +40,10 @@ def run_llava(image_path: str, prompt: str) -> str:
     """
     image = Image.open(image_path).convert("RGB")
     formatted_prompt = f"<image>\nUSER: {prompt}\nASSISTANT:"
-    result = llava_pipeline({
-        "images": [image],
-        "text": formatted_prompt
-    })
+    inputs = processor(formatted_prompt, image, return_tensors="pt").to("cuda")
+    output_ids = model.generate(**inputs, max_new_tokens=200)
+    raw_result = processor.batch_decode(output_ids, skip_special_tokens=True)[0]
+    result = raw_result.split("ASSISTANT:")[-1].strip()
 
     del image
     torch.cuda.empty_cache()
@@ -50,7 +53,7 @@ def run_llava(image_path: str, prompt: str) -> str:
         print(f"[INFO] GPU Allocated: {torch.cuda.memory_allocated() / 1e6:2f} MB")
         print(f"[INFO] GPU Reserved: {torch.cuda.memory_reserved() / 1e6:2f} MB")
 
-    return result[0]['generated_text'].split("ASSISTANT:")[-1].strip()
+    return result
 
 
 def describe_exterior(image_path: str) -> str:
