@@ -49,7 +49,7 @@ def run_llava(image_path: str, prompt: str) -> str:
     """
     image = Image.open(image_path).convert("RGB")
     formatted_prompt = f"<image>\nUSER: {prompt}\nASSISTANT:"
-    inputs = processor(formatted_prompt, image, return_tensors="pt").to("cuda")
+    inputs = processor(formatted_prompt, image, return_tensors="pt").to(model.device)
     output_ids = model.generate(**inputs, max_new_tokens=200)
     raw_result = processor.batch_decode(output_ids, skip_special_tokens=True)[0]
     result = raw_result.split("ASSISTANT:")[-1].strip()
