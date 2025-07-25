@@ -13,6 +13,14 @@ import gc
 import torch.cuda
 from transformers import AutoProcessor, LlavaForConditionalGeneration
 from PIL import Image
+from transformers import BitsAndBytesConfig
+
+bnb_config = BitsAndBytesConfig(
+    load_in_4bit=True,
+    bnb_4bit_compute_dtype=torch.float16,
+    bnb_4bit_use_double_quant=True,
+    bnb_4bit_quant_type="nf4",
+)
 
 # Initialize LLaVA pipeline globally
 model_id = "llava-hf/llava-1.5-7b-hf"
@@ -21,10 +29,11 @@ processor = AutoProcessor.from_pretrained(model_id)
 model = LlavaForConditionalGeneration.from_pretrained(
     model_id,
     device_map={"": 0},
-    load_in_8bit=True,
+   quantization_config=bnb_config,
     torch_dtype=torch.float16,
     trust_remote_code=True
 )
+model.eval()
 
 
 def run_llava(image_path: str, prompt: str) -> str:

@@ -1,11 +1,18 @@
 import torch
-from transformers import AutoProcessor, LlavaForConditionalGeneration
+from transformers import AutoProcessor, LlavaForConditionalGeneration, BitsAndBytesConfig
 from sentence_transformers import SentenceTransformer, util
 from PIL import Image, ImageDraw
 import matplotlib.pyplot as plt
 import numpy as np
 from pathlib import Path
 
+
+bnb_config = BitsAndBytesConfig(
+    load_in_4bit=True,
+    bnb_4bit_compute_dtype=torch.float16,
+    bnb_4bit_use_double_quant=True,
+    bnb_4bit_quant_type="nf4",
+)
 
 MODEL_NAME = "llava-hf/llava-1.5-7b-hf"
 PROMPT = "USER: <image>\nDescribe the status roof. Is it in good condition? Why or why not? ASSISTANT:"
@@ -17,9 +24,10 @@ OCCLUSION_COLOR = (127, 127, 127)
 model = LlavaForConditionalGeneration.from_pretrained(
     MODEL_NAME,
     torch_dtype=torch.float16 if DEVICE == "cuda" else torch.float32,
-    load_in_8bit=True,
+    quantization_config=bnb_config,
     device_map={"": 0}
 )
+model.eval()
 processor = AutoProcessor.from_pretrained(MODEL_NAME)
 embedder = SentenceTransformer('all-MiniLM-L6-v2', device="cpu")
 
