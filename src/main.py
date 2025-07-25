@@ -17,13 +17,15 @@ from experiments.occlusion import run_occlusions
 
 
 def run_pipeline(client, scrape=True):
+    print("[PIPELINE] Beginning pipeline...")
     OUTPUT_DIR = Path(__file__).resolve().parent.parent / "dataset"
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
     if scrape:
-        STREETS = ["IRONSTONE RD", "IRONSTONE CT", "STANBRIDGE CT", "HIGHBRIDGE CT", "TUDOR CT", "SUTTON PL", "REGAL RD",
-                   "GRAMERCY PL", "MARGATE RD", "RAMBEAU RD", "CANTERBURY RD", "GLOUCESTER DR", "NIJARO RD"]
+        # STREETS = ["IRONSTONE RD", "IRONSTONE CT", "STANBRIDGE CT", "HIGHBRIDGE CT", "TUDOR CT", "SUTTON PL", "REGAL RD",
+        #            "GRAMERCY PL", "MARGATE RD", "RAMBEAU RD", "CANTERBURY RD", "GLOUCESTER DR", "NIJARO RD"]
 
+        STREETS = ["STANBRIDGE CT"]
         driver = init_driver(headless=True)
         for street in STREETS:
             scrape_all_records_on_street(driver, street, str(OUTPUT_DIR))
@@ -49,6 +51,8 @@ if __name__ == "__main__":
     parser.add_argument("--mode", choices=["pipeline", "pipeline-no-scrape", "experiments", "occlusion"], default="pipeline",
                         help="Run full pipeline, experiments, or occlusion tests.")
     args = parser.parse_args()
+
+    print(f"[MODE] Running Mode: {args.mode}")
 
     if args.mode == "pipeline":
         run_pipeline(client)
