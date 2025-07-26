@@ -58,7 +58,7 @@ def rate_roof_condition(image_path, client):
 
     image_base64 = encode_image(image_path)
     prompt = """
-You are a certified home inspector. Rate the condition of the roof in the provided photo from 0 (extremely poor condition) to 1 (excellent condition). Output only a single number between 0 and 1.
+You are a certified home inspector. Describe the status roof. Is it in good condition? Why or why not?.
 """
     try:
         response = client.chat.completions.create(
@@ -79,17 +79,17 @@ You are a certified home inspector. Rate the condition of the roof in the provid
         return None
 
     reply = response.choices[0].message.content.strip()
-    try:
-        rating = float(reply)
-        return max(0.0, min(1.0, rating))
-    except ValueError:
-        print("Invalid rating returned:", reply)
-        return None
+    return reply
 
 
 def occlusion_test_roof(image_path, client, patch_size=PATCH_SIZE, stride=STRIDE):
-    baseline_rating = rate_roof_condition(image_path, client)
-    print(f"Baseline roof rating: {baseline_rating}")
+    # Import sentence-transformers utilities
+    from sentence_transformers import SentenceTransformer, util
+    embedder = SentenceTransformer('all-MiniLM-L6-v2')
+
+    baseline_text = rate_roof_condition(image_path, client)
+    baseline_embedding = embedder.encode(baseline_text, convert_to_tensor=True)
+    print(f"Baseline roof rating: {baseline_text}")
 
     occlusion_results = []
     occlusions = generate_occluded_images(image_path, patch_size, stride)
@@ -97,27 +97,34 @@ def occlusion_test_roof(image_path, client, patch_size=PATCH_SIZE, stride=STRIDE
     for (x, y), occ_img in occlusions:
         with NamedTemporaryFile(suffix=".jpg", delete=False) as tmp:
             occ_img.save(tmp.name)
-            rating = rate_roof_condition(tmp.name, client)
+            response_text = rate_roof_condition(tmp.name, client)
             os.unlink(tmp.name)
 
-            if rating is not None and baseline_rating is not None:
-                diff = abs(rating - baseline_rating)
+            if response_text is not None and baseline_text is not None:
+                response_embedding = embedder.encode(response_text, convert_to_tensor=True)
+                cosine_sim = util.cos_sim(baseline_embedding, response_embedding).item()
+                diff = 1 - cosine_sim
                 occlusion_results.append({
                     "patch_x": x,
                     "patch_y": y,
-                    "rating": rating,
+                    "rating": response_text,
                     "diff_from_baseline": diff
                 })
-                print(f"Patch ({x},{y}) | Rating: {rating:.3f} | Diff: {diff:.3f}")
+                print(f"Patch ({x},{y}) | Diff: {diff:.3f}")
             else:
                 print(f"Skipping patch ({x},{y}) due to invalid rating.")
 
-    return baseline_rating, occlusion_results
+    return baseline_text, occlusion_results
 
 
 def reverse_occlusion_test_roof(image_path, client, patch_size=PATCH_SIZE, stride=STRIDE):
-    baseline_rating = rate_roof_condition(image_path, client)
-    print(f"Baseline roof rating (reverse occlusion): {baseline_rating}")
+    # Import sentence-transformers utilities
+    from sentence_transformers import SentenceTransformer, util
+    embedder = SentenceTransformer('all-MiniLM-L6-v2')
+
+    baseline_text = rate_roof_condition(image_path, client)
+    baseline_embedding = embedder.encode(baseline_text, convert_to_tensor=True)
+    print(f"Baseline roof rating (reverse occlusion): {baseline_text}")
 
     occlusion_results = []
     reverse_occlusions = generate_reverse_occluded_images(image_path, patch_size, stride)
@@ -125,22 +132,24 @@ def reverse_occlusion_test_roof(image_path, client, patch_size=PATCH_SIZE, strid
     for (x, y), rev_occ_img in reverse_occlusions:
         with NamedTemporaryFile(suffix=".jpg", delete=False) as tmp:
             rev_occ_img.save(tmp.name)
-            rating = rate_roof_condition(tmp.name, client)
+            response_text = rate_roof_condition(tmp.name, client)
             os.unlink(tmp.name)
 
-            if rating is not None and baseline_rating is not None:
-                diff = abs(rating - baseline_rating)
+            if response_text is not None and baseline_text is not None:
+                response_embedding = embedder.encode(response_text, convert_to_tensor=True)
+                cosine_sim = util.cos_sim(baseline_embedding, response_embedding).item()
+                diff = 1 - cosine_sim
                 occlusion_results.append({
                     "patch_x": x,
                     "patch_y": y,
-                    "rating": rating,
+                    "rating": response_text,
                     "diff_from_baseline": diff
                 })
-                print(f"Patch ({x},{y}) | Rating: {rating:.3f} | Diff: {diff:.3f}")
+                print(f"Patch ({x},{y}) | Diff: {diff:.3f}")
             else:
                 print(f"Skipping patch ({x},{y}) due to invalid rating.")
 
-    return baseline_rating, occlusion_results
+    return baseline_text, occlusion_results
 
 
 def plot_occlusion_heatmap(image_path, occlusion_results, patch_size, output_path=None):

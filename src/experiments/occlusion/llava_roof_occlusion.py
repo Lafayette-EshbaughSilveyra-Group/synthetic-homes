@@ -16,7 +16,7 @@ bnb_config = BitsAndBytesConfig(
 )
 
 MODEL_NAME = "llava-hf/llava-1.5-7b-hf"
-PROMPT = "USER: <image>\nDescribe the status roof. Is it in good condition? Why or why not? ASSISTANT:"
+PROMPT = "USER: <image>\nYou are a certified home inspector. Describe the status roof. Is it in good condition? Why or why not? ASSISTANT:"
 GRID_SIZE = 16
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 OCCLUSION_COLOR = (127, 127, 127)
