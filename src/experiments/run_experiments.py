@@ -9,7 +9,7 @@ import experiments.plot_results as plot_results
 import experiments.text_variation as text_var
 from experiments import generate_energyplus_experiment_data
 
-from . import config
+import config
 
 # Create unique results directory for each run
 project_root = Path(__file__).resolve().parents[2]
