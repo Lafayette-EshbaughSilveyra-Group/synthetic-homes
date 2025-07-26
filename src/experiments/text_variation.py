@@ -15,7 +15,9 @@ def run(client, runs_per_sample=5):
         Returns: results dictionary with identifiers, text samples, and mean/std output values
         """
 
-    dataset = json.load(open('energyplus_data/experimental_set_summary_stats.json', 'r'))
+    from pathlib import Path
+    summary_path = Path(__file__).resolve().parents[2] / "experimental_energyplus_simulations" / "summary_stats.json"
+    dataset = json.load(open(summary_path, 'r'))
     example = next(iter(dataset.values()))
 
     results = {

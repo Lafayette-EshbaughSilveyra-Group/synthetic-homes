@@ -28,41 +28,27 @@ _Figure 1_: Flow of data through the dataset generation pipeline.
 
 ---
 
-## Outputs
-
-| $X$ (Input Data) | $Y$ (Ground Truth) |
-|------------------|--------------------|
-| `dataset/*/results.json` — EnergyPlus simulation results | `dataset/*/label.json` — Data labels $\in \mathbb{R}^2$ |
-| `dataset/*/cleaned.geojson["features"][0]["inspection_note"]` — synthetically generated inspection note | |
-
-> **Note**: All outputs are compiled into `final_dataset.jsonl` and `final_dataset_summary.csv` for the entire dataset.
-
----
-
-## Running the Project
-Ensure you have your `.env` file set up with your `OPENAI_API_KEY`.
-
-### Install dependencies:
+## Install dependencies:
 ```bash
 pip install -r requirements.txt
 ```
 
-### Run the pipeline or experiments:
-```bash
-python main.py --mode pipeline
+## Setup environment variables
+Copy `.env.example` to `.env` and add your OpenAI API key:
+```env
+OPENAI_API_KEY=your-api-key-here
 ```
 
-**Available modes**:
-- `pipeline`: Full data generation pipeline
-- `experiments`: Run energy labeling experiments
-- `occlusion`: Run occlusion experiments (HVAC, Roof, LLaVA)
-
-Example:
+### Run with interactive script (recommended)
 ```bash
-python main.py --mode occlusion
+chmod +x run.sh    # Only once after cloning
+./run.sh           # Choose from pipeline, experiments, occlusion
 ```
 
----
+Or, run manually:
+```bash
+python -m src.main --mode pipeline
+```
 
 ## Requirements
 - Python 3.x
@@ -71,3 +57,13 @@ python main.py --mode occlusion
 - OpenAI API key
 
 ---
+
+## Outputs
+
+| $X$ (Input Data) | $Y$ (Ground Truth) |
+|------------------|--------------------|
+| `dataset/*/results.json` — EnergyPlus simulation results | `dataset/*/label.json` — Data labels $\in \mathbb{R}^2$ |
+| `dataset/*/cleaned.geojson["features"][0]["inspection_note"]` — synthetically generated inspection note | |
+| `results/final_dataset.jsonl` — all inputs and outputs | `results/final_dataset_summary.csv` — summary statistics |
+
+> **Note**: All outputs are compiled into `final_dataset.jsonl` and `final_dataset_summary.csv` inside the `results/` directory for the entire dataset.

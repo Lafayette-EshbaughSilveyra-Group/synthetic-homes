@@ -22,7 +22,8 @@ def run(client, runs_per_sample=5):
         "Doors are wood-core with standard weather stripping."
     )
 
-    dataset_path = 'energyplus_data/experimental_set_summary_stats.json'
+    from pathlib import Path
+    dataset_path = Path(__file__).resolve().parents[2] / "experimental_energyplus_simulations" / "summary_stats.json"
     dataset = json.load(open(dataset_path, 'r'))
 
     example_name_map = {

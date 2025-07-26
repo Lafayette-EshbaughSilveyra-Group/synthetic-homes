@@ -7,7 +7,7 @@ import time
 from openai import RateLimitError
 from typing import Any
 
-from .. import config
+from . import config
 
 
 def extract_results_from_csv(home_dir: str) -> dict:

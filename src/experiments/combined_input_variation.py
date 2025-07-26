@@ -16,7 +16,9 @@ def run(client, runs_per_sample=5):
         Dictionary summarizing mean/std results for each experimental condition.
     """
 
-    dataset = json.load(open('energyplus_data/experimental_set_summary_stats.json', 'r'))
+    from pathlib import Path
+    summary_path = Path(__file__).resolve().parents[2] / "experimental_energyplus_simulations" / "summary_stats.json"
+    dataset = json.load(open(summary_path, 'r'))
 
     experimental_groups = [
         [

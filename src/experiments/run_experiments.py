@@ -9,10 +9,12 @@ import experiments.plot_results as plot_results
 import experiments.text_variation as text_var
 from experiments import generate_energyplus_experiment_data
 
-from .. import config
+from . import config
 
 # Create unique results directory for each run
-base_results_dir = Path(__file__).parent / config.BASE_RESULTS_DIR
+project_root = Path(__file__).resolve().parents[2]
+
+base_results_dir = project_root / config.BASE_RESULTS_DIR
 base_results_dir.mkdir(exist_ok=True)
 
 today_str = datetime.now().strftime("%m%d%y")
