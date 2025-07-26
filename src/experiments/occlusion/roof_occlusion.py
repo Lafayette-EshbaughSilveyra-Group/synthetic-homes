@@ -1,3 +1,4 @@
+from config import BASE_RESULTS_DIR
 import numpy as np
 from PIL import Image
 import matplotlib.pyplot as plt
@@ -142,10 +143,10 @@ def main():
 
     client = OpenAI(api_key=api_key)
 
-    output_dir = Path(__file__).parent / "results"
+    output_dir = Path(__file__).resolve().parents[3] / BASE_RESULTS_DIR / "occlusion" / "gpt-4"
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    image_dir = Path(__file__).resolve().parents[2] / "assets" / "roof_examples"
+    image_dir = Path(__file__).resolve().parents[3] / "assets" / "roof_examples"
     good_image = image_dir / "good_roof.jpg"
     baseline_good, results_good = occlusion_test_roof(good_image, client)
     plot_occlusion_heatmap(

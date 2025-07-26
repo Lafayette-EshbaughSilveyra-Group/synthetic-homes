@@ -1,4 +1,5 @@
 import torch
+from config import BASE_RESULTS_DIR
 from transformers import AutoProcessor, LlavaForConditionalGeneration, BitsAndBytesConfig
 from sentence_transformers import SentenceTransformer, util
 from PIL import Image, ImageDraw
@@ -137,22 +138,22 @@ def run_reverse_occlusion_test_with_heatmap(image_path, heatmap_filename):
 
 
 def main():
-    output_dir = Path(__file__).parent / "results"
+    output_dir = Path(__file__).resolve().parents[3] / BASE_RESULTS_DIR / "occlusion" / "llava"
     output_dir.mkdir(parents=True, exist_ok=True)
 
     run_occlusion_test_with_heatmap(
-        Path(__file__).resolve().parents[2] / "assets" / "roof_examples" / "good_roof.jpg",
+        Path(__file__).resolve().parents[3] / "assets" / "roof_examples" / "good_roof.jpg",
         output_dir / "good_roof_occlusion_heatmap.png"
     )
     run_occlusion_test_with_heatmap(
-        Path(__file__).resolve().parents[2] / "assets" / "roof_examples" / "bad_roof.jpg",
+        Path(__file__).resolve().parents[3] / "assets" / "roof_examples" / "bad_roof.jpg",
         output_dir / "bad_roof_occlusion_heatmap.png"
     )
     run_reverse_occlusion_test_with_heatmap(
-        Path(__file__).resolve().parents[2] / "assets" / "roof_examples" / "good_roof.jpg",
+        Path(__file__).resolve().parents[3] / "assets" / "roof_examples" / "good_roof.jpg",
         output_dir / "good_roof_reverse_occlusion_heatmap.png"
     )
     run_reverse_occlusion_test_with_heatmap(
-        Path(__file__).resolve().parents[2] / "assets" / "roof_examples" / "bad_roof.jpg",
+        Path(__file__).resolve().parents[3] / "assets" / "roof_examples" / "bad_roof.jpg",
         output_dir / "bad_roof_reverse_occlusion_heatmap.png"
     )
