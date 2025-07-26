@@ -34,6 +34,23 @@ def generate_occluded_images(image_path, patch_size, stride):
     return occluded_images
 
 
+def generate_reverse_occluded_images(image_path, patch_size, stride):
+    img = Image.open(image_path).convert('RGB')
+    img_np = np.array(img)
+    H, W, C = img_np.shape
+    reverse_occluded_images = []
+
+    base_img = np.zeros_like(img_np)
+
+    for y in range(0, H - patch_size[1] + 1, stride[1]):
+        for x in range(0, W - patch_size[0] + 1, stride[0]):
+            reverse_occluded = base_img.copy()
+            reverse_occluded[y:y + patch_size[1], x:x + patch_size[0], :] = img_np[y:y + patch_size[1], x:x + patch_size[0], :]
+            rev_occ_img = Image.fromarray(reverse_occluded)
+            reverse_occluded_images.append(((x, y), rev_occ_img))
+    return reverse_occluded_images
+
+
 def rate_roof_condition(image_path, client):
     if not os.path.exists(image_path) or os.path.getsize(image_path) == 0:
         print("Skipping invalid or empty image:", image_path)
@@ -80,6 +97,34 @@ def occlusion_test_roof(image_path, client, patch_size=PATCH_SIZE, stride=STRIDE
     for (x, y), occ_img in occlusions:
         with NamedTemporaryFile(suffix=".jpg", delete=False) as tmp:
             occ_img.save(tmp.name)
+            rating = rate_roof_condition(tmp.name, client)
+            os.unlink(tmp.name)
+
+            if rating is not None and baseline_rating is not None:
+                diff = abs(rating - baseline_rating)
+                occlusion_results.append({
+                    "patch_x": x,
+                    "patch_y": y,
+                    "rating": rating,
+                    "diff_from_baseline": diff
+                })
+                print(f"Patch ({x},{y}) | Rating: {rating:.3f} | Diff: {diff:.3f}")
+            else:
+                print(f"Skipping patch ({x},{y}) due to invalid rating.")
+
+    return baseline_rating, occlusion_results
+
+
+def reverse_occlusion_test_roof(image_path, client, patch_size=PATCH_SIZE, stride=STRIDE):
+    baseline_rating = rate_roof_condition(image_path, client)
+    print(f"Baseline roof rating (reverse occlusion): {baseline_rating}")
+
+    occlusion_results = []
+    reverse_occlusions = generate_reverse_occluded_images(image_path, patch_size, stride)
+
+    for (x, y), rev_occ_img in reverse_occlusions:
+        with NamedTemporaryFile(suffix=".jpg", delete=False) as tmp:
+            rev_occ_img.save(tmp.name)
             rating = rate_roof_condition(tmp.name, client)
             os.unlink(tmp.name)
 
@@ -153,7 +198,7 @@ def main():
         good_image,
         results_good,
         PATCH_SIZE,
-        output_path=output_dir / "good_roof_heatmap.png"
+        output_path=output_dir / "good_roof_heatmap_gpt.png"
     )
 
     broken_image = image_dir / "bad_roof.jpg"
@@ -162,5 +207,21 @@ def main():
         broken_image,
         results_broken,
         PATCH_SIZE,
-        output_path=output_dir / "bad_roof_heatmap.png"
+        output_path=output_dir / "bad_roof_heatmap_gpt.png"
+    )
+
+    reverse_baseline_good, reverse_results_good = reverse_occlusion_test_roof(good_image, client)
+    plot_occlusion_heatmap(
+        good_image,
+        reverse_results_good,
+        PATCH_SIZE,
+        output_path=output_dir / "good_roof_reverse_heatmap_gpt.png"
+    )
+
+    reverse_baseline_broken, reverse_results_broken = reverse_occlusion_test_roof(broken_image, client)
+    plot_occlusion_heatmap(
+        broken_image,
+        reverse_results_broken,
+        PATCH_SIZE,
+        output_path=output_dir / "bad_roof_reverse_heatmap_gpt.png"
     )

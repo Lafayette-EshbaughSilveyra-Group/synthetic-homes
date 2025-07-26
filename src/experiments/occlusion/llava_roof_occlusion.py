@@ -143,17 +143,17 @@ def main():
 
     run_occlusion_test_with_heatmap(
         Path(__file__).resolve().parents[3] / "assets" / "roof_examples" / "good_roof.jpg",
-        output_dir / "good_roof_occlusion_heatmap.png"
+        output_dir / "good_roof_occlusion_heatmap_llava.png"
     )
     run_occlusion_test_with_heatmap(
         Path(__file__).resolve().parents[3] / "assets" / "roof_examples" / "bad_roof.jpg",
-        output_dir / "bad_roof_occlusion_heatmap.png"
+        output_dir / "bad_roof_occlusion_heatmap_llava.png"
     )
     run_reverse_occlusion_test_with_heatmap(
         Path(__file__).resolve().parents[3] / "assets" / "roof_examples" / "good_roof.jpg",
-        output_dir / "good_roof_reverse_occlusion_heatmap.png"
+        output_dir / "good_roof_reverse_occlusion_heatmap_llava.png"
     )
     run_reverse_occlusion_test_with_heatmap(
         Path(__file__).resolve().parents[3] / "assets" / "roof_examples" / "bad_roof.jpg",
-        output_dir / "bad_roof_reverse_occlusion_heatmap.png"
+        output_dir / "bad_roof_reverse_occlusion_heatmap_llava.png"
     )
