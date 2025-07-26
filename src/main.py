@@ -15,7 +15,7 @@ from experiments.run_experiments import RESULTS_DIR, main as run_experiments
 import experiments.plot_results as plot_results
 from experiments.occlusion import run_occlusions
 
-from . import config
+import config
 
 
 def run_pipeline(client, scrape=True):
