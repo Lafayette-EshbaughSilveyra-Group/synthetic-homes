@@ -1,5 +1,3 @@
-
-
 import numpy as np
 from PIL import Image
 import matplotlib.pyplot as plt
@@ -147,7 +145,8 @@ def main():
     output_dir = Path(__file__).parent / "results"
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    good_image = "good_roof.jpg"
+    image_dir = Path(__file__).resolve().parents[2] / "assets" / "roof_examples"
+    good_image = image_dir / "good_roof.jpg"
     baseline_good, results_good = occlusion_test_roof(good_image, client)
     plot_occlusion_heatmap(
         good_image,
@@ -156,7 +155,7 @@ def main():
         output_path=output_dir / "good_roof_heatmap.png"
     )
 
-    broken_image = "bad_roof.jpg"
+    broken_image = image_dir / "bad_roof.jpg"
     baseline_broken, results_broken = occlusion_test_roof(broken_image, client)
     plot_occlusion_heatmap(
         broken_image,
