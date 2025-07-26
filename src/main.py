@@ -15,26 +15,25 @@ from experiments.run_experiments import RESULTS_DIR, main as run_experiments
 import experiments.plot_results as plot_results
 from experiments.occlusion import run_occlusions
 
+from . import config
+
 
 def run_pipeline(client, scrape=True):
     print("[PIPELINE] Beginning pipeline...")
-    OUTPUT_DIR = Path(__file__).resolve().parent.parent / "dataset"
+    OUTPUT_DIR = Path(__file__).resolve().parent.parent / config.OUTPUT_DIR
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
     if scrape:
-        # STREETS = ["IRONSTONE RD", "IRONSTONE CT", "STANBRIDGE CT", "HIGHBRIDGE CT", "TUDOR CT", "SUTTON PL", "REGAL RD",
-        #            "GRAMERCY PL", "MARGATE RD", "RAMBEAU RD", "CANTERBURY RD", "GLOUCESTER DR", "NIJARO RD"]
 
-        STREETS = ["STANBRIDGE CT"]
         driver = init_driver(headless=True)
-        for street in STREETS:
+        for street in config.STREETS:
             scrape_all_records_on_street(driver, street, str(OUTPUT_DIR))
         driver.quit()
         delete_folders_without_jpg_or_png()
 
     run_generation_for_dataset(str(OUTPUT_DIR), client)
     clean_gpt_geojson_for_all_entries(str(OUTPUT_DIR))
-    transform_dataset(dataset_folder=str(OUTPUT_DIR), weather_station='KABE')
+    transform_dataset(dataset_folder=str(OUTPUT_DIR), weather_station=config.WEATHER_STATION)
     simulate_all_homes(str(OUTPUT_DIR))
     run_postprocessing_for_dataset(str(OUTPUT_DIR), client)
     merge_dataset(str(OUTPUT_DIR))

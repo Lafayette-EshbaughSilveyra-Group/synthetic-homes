@@ -140,7 +140,7 @@ def main():
     output_dir = Path(__file__).parent / "results"
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    run_occlusion_test_with_heatmap("good_roof.jpg", output_dir / "good_roof_occlusion_heatmap.png")
-    run_occlusion_test_with_heatmap("bad_roof.jpg", output_dir / "bad_roof_occlusion_heatmap.png")
-    run_reverse_occlusion_test_with_heatmap("good_roof.jpg", output_dir / "good_roof_reverse_occlusion_heatmap.png")
-    run_reverse_occlusion_test_with_heatmap("bad_roof.jpg", output_dir / "bad_roof_reverse_occlusion_heatmap.png")
+    run_occlusion_test_with_heatmap(Path(__file__).parent / "good_roof.jpg", output_dir / "good_roof_occlusion_heatmap.png")
+    run_occlusion_test_with_heatmap(Path(__file__).parent / "bad_roof.jpg", output_dir / "bad_roof_occlusion_heatmap.png")
+    run_reverse_occlusion_test_with_heatmap(Path(__file__).parent / "good_roof.jpg", output_dir / "good_roof_reverse_occlusion_heatmap.png")
+    run_reverse_occlusion_test_with_heatmap(Path(__file__).parent / "bad_roof.jpg", output_dir / "bad_roof_reverse_occlusion_heatmap.png")

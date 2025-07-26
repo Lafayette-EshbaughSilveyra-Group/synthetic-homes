@@ -7,9 +7,12 @@ import experiments.combined_input_variation as combined_var
 import experiments.energyplus_variation as eplus_var
 import experiments.plot_results as plot_results
 import experiments.text_variation as text_var
+from experiments import generate_energyplus_experiment_data
+
+from .. import config
 
 # Create unique results directory for each run
-base_results_dir = Path(__file__).parent / "results"
+base_results_dir = Path(__file__).parent / config.BASE_RESULTS_DIR
 base_results_dir.mkdir(exist_ok=True)
 
 today_str = datetime.now().strftime("%m%d%y")
@@ -36,6 +39,10 @@ def main(client):
     args = parser.parse_args()
 
     if args.experiment:
+
+        # Generate experimental data
+        generate_energyplus_experiment_data.main()
+
         if args.experiment == "all":
             for name, exp_func in EXPERIMENTS.items():
                 save_results(exp_func(client), name)

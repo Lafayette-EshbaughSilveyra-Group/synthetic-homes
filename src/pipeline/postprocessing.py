@@ -5,12 +5,9 @@ import pandas as pd
 import re
 import time
 from openai import RateLimitError
-from typing import Any, Dict
+from typing import Any
 
-HL_WORST = 6000  # kWh / yr
-HL_BEST = 25  # kWh / yr
-HVAC_WORST = 3000  # kWh / yr
-HVAC_BEST = 25  # kWh / yr
+from .. import config
 
 
 def extract_results_from_csv(home_dir: str) -> dict:
@@ -141,8 +138,8 @@ Only include the JSON. No explanation or commentary.
         heating_load_annual_kWh = (heating_load_hourly_J * 730 * 12) / 3600000
         hvac_annual_kWh = (hvac_hourly_J * 730 * 12) / 3600000
 
-        insulation_score = (heating_load_annual_kWh - HL_BEST) / (HL_WORST - HL_BEST)
-        hvac_score = (hvac_annual_kWh - HVAC_BEST) / (HVAC_WORST - HVAC_BEST)
+        insulation_score = (heating_load_annual_kWh - config.HL_BEST) / (config.HL_WORST - config.HL_BEST)
+        hvac_score = (hvac_annual_kWh - config.HVAC_BEST) / (config.HVAC_WORST - config.HVAC_BEST)
 
         insulation_score = max(min(insulation_score, 1), 0)
         hvac_score = max(min(hvac_score, 1), 0)

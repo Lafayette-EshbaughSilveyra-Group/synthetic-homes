@@ -4,6 +4,7 @@ from . import combined_input_variation
 from . import plot_results
 from . import run_experiments
 from . import constants
+from . import generate_energyplus_experiment_data
 
 __all__ = [
     "text_variation",
@@ -11,5 +12,6 @@ __all__ = [
     "combined_input_variation",
     "plot_results",
     "run_experiments",
-    "constants"
+    "constants",
+    "generate_energyplus_experiment_data"
 ]

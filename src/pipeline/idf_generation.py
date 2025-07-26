@@ -25,6 +25,8 @@ from io import StringIO
 from typing import Dict, Any
 from eppy.modeleditor import IDF
 
+from .. import config
+
 
 def run_expandobjects(idf_dir: str) -> None:
     """
@@ -182,11 +184,11 @@ def generate_idf_from_geojson(geojson: Dict[str, Any], idf_path: str) -> None:
     feature = geojson["features"][0]
     props = feature["properties"]
 
-    wall_r_value = props.get("wall_r_value", 13.0)
-    roof_r_value = props.get("roof_r_value", 30.0)
-    window_u_value = props.get("window_u_value", 2.0)
-    heating_cop = props.get("hvac_heating_cop", 0.8)
-    cooling_cop = props.get("hvac_cooling_cop", 3.0)
+    wall_r_value = props.get("wall_r_value", config.DEFAULT_WALL_R_VALUE)
+    roof_r_value = props.get("roof_r_value", config.DEFAULT_ROOF_R_VALUE)
+    window_u_value = props.get("window_u_value", config.DEFAULT_WINDOW_U_VALUE)
+    heating_cop = props.get("hvac_heating_cop", config.DEFAULT_HEATING_COP)
+    cooling_cop = props.get("hvac_cooling_cop", config.DEFAULT_COOLING_COP)
 
     # Convert R-values to SI and compute conductivity
     def r_to_si(r_ip):
