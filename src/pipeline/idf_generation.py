@@ -25,7 +25,7 @@ from io import StringIO
 from typing import Dict, Any
 from eppy.modeleditor import IDF
 
-from . import config
+import config
 
 
 def run_expandobjects(idf_dir: str) -> None:
