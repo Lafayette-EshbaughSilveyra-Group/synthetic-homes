@@ -250,5 +250,14 @@ def clean_gpt_geojson_for_all_entries(dataset_dir: str = 'dataset') -> None:
     """
     home_folders = glob.glob(os.path.join(dataset_dir, '*'))
     for home_folder in home_folders:
-        result = clean_gpt_geojson(json.load(open(os.path.join(home_folder, "preprocessed.json"))))
-        json.dump(result, open(os.path.join(home_folder, "cleaned.geojson"), "w", encoding='utf-8'), indent=2)
+        for attempt in range(5):
+            try:
+                result = clean_gpt_geojson(json.load(open(os.path.join(home_folder, "preprocessed.json"))))
+                json.dump(result, open(os.path.join(home_folder, "cleaned.geojson"), "w", encoding='utf-8'), indent=2)
+                break
+            except Exception as e:
+                if attempt == 4:
+                    print(f"[CLEANING FAILED] {home_folder} [WILL BE DELETED]: {e}")
+                    shutil.rmtree(home_folder, ignore_errors=True)
+                else:
+                    print(f"[RETRY {attempt + 1}/5] {home_folder} failed: {e}")
