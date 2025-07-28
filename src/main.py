@@ -2,6 +2,8 @@ import argparse
 from pathlib import Path
 from dotenv import load_dotenv
 import os
+
+from eppy.modeleditor import IDF
 from openai import OpenAI
 
 from pipeline.scraper import scrape_all_records_on_street, delete_folders_without_jpg_or_png, init_driver
@@ -33,6 +35,9 @@ def run_pipeline(client, scrape=True):
 
     run_generation_for_dataset(str(OUTPUT_DIR), client)
     clean_gpt_geojson_for_all_entries(str(OUTPUT_DIR))
+
+    IDF.setiddname(config.IDD_FILE_PATH)
+
     transform_dataset(dataset_folder=str(OUTPUT_DIR), weather_station=config.WEATHER_STATION)
     simulate_all_homes(str(OUTPUT_DIR))
     run_postprocessing_for_dataset(str(OUTPUT_DIR), client)

@@ -201,36 +201,50 @@ def main():
     output_dir.mkdir(parents=True, exist_ok=True)
 
     image_dir = Path(__file__).resolve().parents[3] / "assets" / "roof_examples"
-    good_image = image_dir / "good_roof.jpg"
-    baseline_good, results_good = occlusion_test_roof(good_image, client)
-    plot_occlusion_heatmap(
-        good_image,
-        results_good,
-        PATCH_SIZE,
-        output_path=output_dir / "good_roof_heatmap_gpt.png"
-    )
 
-    broken_image = image_dir / "bad_roof.jpg"
-    baseline_broken, results_broken = occlusion_test_roof(broken_image, client)
-    plot_occlusion_heatmap(
-        broken_image,
-        results_broken,
-        PATCH_SIZE,
-        output_path=output_dir / "bad_roof_heatmap_gpt.png"
-    )
+    for i in range(1, 11):
 
-    reverse_baseline_good, reverse_results_good = reverse_occlusion_test_roof(good_image, client)
-    plot_occlusion_heatmap(
-        good_image,
-        reverse_results_good,
-        PATCH_SIZE,
-        output_path=output_dir / "good_roof_reverse_heatmap_gpt.png"
-    )
+        print(f"IMAGE {i}")
 
-    reverse_baseline_broken, reverse_results_broken = reverse_occlusion_test_roof(broken_image, client)
-    plot_occlusion_heatmap(
-        broken_image,
-        reverse_results_broken,
-        PATCH_SIZE,
-        output_path=output_dir / "bad_roof_reverse_heatmap_gpt.png"
-    )
+        good_image = image_dir / f"good_roof_{i}.jpg"
+        bad_image = image_dir / f"bad_roof_{i}.jpg"
+
+        print("GOOD")
+
+        baseline_good, results_good = occlusion_test_roof(good_image, client)
+        plot_occlusion_heatmap(
+            good_image,
+            results_good,
+            PATCH_SIZE,
+            output_path=output_dir / f"good_roof_{i}_heatmap_gpt.png"
+        )
+
+        print("GOOD REVERSE")
+
+        reverse_baseline_good, reverse_results_good = reverse_occlusion_test_roof(good_image, client)
+        plot_occlusion_heatmap(
+            good_image,
+            reverse_results_good,
+            PATCH_SIZE,
+            output_path=output_dir / f"good_roof_{i}_reverse_heatmap_gpt.png"
+        )
+
+        print("BAD")
+
+        baseline_bad, results_bad = occlusion_test_roof(bad_image, client)
+        plot_occlusion_heatmap(
+            bad_image,
+            results_bad,
+            PATCH_SIZE,
+            output_path=output_dir / f"bad_roof_{i}_heatmap_gpt.png"
+        )
+
+        print("BAD REVERSE")
+
+        reverse_baseline_bad, reverse_results_bad = reverse_occlusion_test_roof(good_image, client)
+        plot_occlusion_heatmap(
+            bad_image,
+            reverse_results_bad,
+            PATCH_SIZE,
+            output_path=output_dir / f"bad_roof_{i}_reverse_heatmap_gpt.png"
+        )

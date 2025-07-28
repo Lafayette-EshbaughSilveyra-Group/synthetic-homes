@@ -37,7 +37,7 @@ def run_expandobjects(idf_dir: str) -> None:
     """
     cwd = os.getcwd()
     os.chdir(idf_dir)
-    subprocess.run(['expandobjects'])
+    subprocess.run(['ExpandObjects'])
     os.chdir(cwd)
 
 

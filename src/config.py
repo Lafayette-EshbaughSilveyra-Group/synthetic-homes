@@ -15,6 +15,8 @@ BASE_RESULTS_DIR = "results"
 # For example, KABE.epw, KABE.stat, and KABE.ddy are located in weather/.
 WEATHER_STATION = "KABE"  # Allentown/Bethlehem/Easton Airport
 
+IDD_FILE_PATH = "/usr/local/EnergyPlus-25-1-0/Energy+.idd"
+
 # Model parameters
 DEFAULT_WALL_R_VALUE = 13.0
 DEFAULT_ROOF_R_VALUE = 30.0

@@ -138,22 +138,38 @@ def run_reverse_occlusion_test_with_heatmap(image_path, heatmap_filename):
 
 
 def main():
+    print("LLaVA")
     output_dir = Path(__file__).resolve().parents[3] / BASE_RESULTS_DIR / "experimental" / "occlusion" / "llava"
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    run_occlusion_test_with_heatmap(
-        Path(__file__).resolve().parents[3] / "assets" / "roof_examples" / "good_roof.jpg",
-        output_dir / "good_roof_occlusion_heatmap_llava.png"
-    )
-    run_occlusion_test_with_heatmap(
-        Path(__file__).resolve().parents[3] / "assets" / "roof_examples" / "bad_roof.jpg",
-        output_dir / "bad_roof_occlusion_heatmap_llava.png"
-    )
-    run_reverse_occlusion_test_with_heatmap(
-        Path(__file__).resolve().parents[3] / "assets" / "roof_examples" / "good_roof.jpg",
-        output_dir / "good_roof_reverse_occlusion_heatmap_llava.png"
-    )
-    run_reverse_occlusion_test_with_heatmap(
-        Path(__file__).resolve().parents[3] / "assets" / "roof_examples" / "bad_roof.jpg",
-        output_dir / "bad_roof_reverse_occlusion_heatmap_llava.png"
-    )
+    for i in range(1, 11):
+
+        print(f"IMAGE {i}")
+
+        print("GOOD")
+
+        run_occlusion_test_with_heatmap(
+            Path(__file__).resolve().parents[3] / "assets" / "roof_examples" / f"good_roof_{i}.jpg",
+            output_dir / f"good_roof_{i}_occlusion_heatmap_llava.png"
+        )
+
+        print("BAD")
+
+        run_occlusion_test_with_heatmap(
+            Path(__file__).resolve().parents[3] / "assets" / "roof_examples" / f"bad_roof_{i}.jpg",
+            output_dir / f"bad_roof_{i}_occlusion_heatmap_llava.png"
+        )
+
+        print("GOOD REVERSE")
+
+        run_reverse_occlusion_test_with_heatmap(
+            Path(__file__).resolve().parents[3] / "assets" / "roof_examples" / f"good_roof_{i}.jpg",
+            output_dir / f"good_roof_{i}_reverse_occlusion_heatmap_llava.png"
+        )
+
+        print("BAD REVERSE")
+
+        run_reverse_occlusion_test_with_heatmap(
+            Path(__file__).resolve().parents[3] / "assets" / "roof_examples" / f"bad_roof_{i}.jpg",
+            output_dir / f"bad_roof_{i}_reverse_occlusion_heatmap_llava.png"
+        )
