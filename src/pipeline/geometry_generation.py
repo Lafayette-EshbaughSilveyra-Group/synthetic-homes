@@ -196,6 +196,10 @@ def clean_gpt_geojson(gpt_output: Dict[str, Any]) -> Dict[str, Any]:
     begin_date_str = begin_date.strftime('%Y-%m-%dT00:00:00Z')
     end_date_str = end_date.strftime('%Y-%m-%dT00:00:00Z')
 
+    feature = gpt_output.get("geojson", {}).get("features", [{}])[0]
+    props = feature.get("properties", {})
+    geom = feature.get("geometry", {})
+
     full_geojson = {
         "type": "FeatureCollection",
         "mappers": [],
@@ -228,12 +232,12 @@ def clean_gpt_geojson(gpt_output: Dict[str, Any]) -> Dict[str, Any]:
                     "name": "Generated Home",
                     "type": "Building",
                     "building_type": "Single family",
-                    "floor_area": safe_int(gpt_output["geojson"]["properties"].get("Total Square Feet Living Area")),
-                    "number_of_stories": safe_int(gpt_output["geojson"]["properties"].get("Number of Stories")),
-                    "inspection_note": gpt_output["inspection_note"],
-                    **gpt_output["geojson"]["properties"]
+                    "floor_area": safe_int(props.get("Total Square Feet Living Area")),
+                    "number_of_stories": safe_int(props.get("Number of Stories")),
+                    "inspection_note": gpt_output.get("inspection_note", ""),
+                    **props
                 },
-                "geometry": gpt_output["geojson"]["geometry"]
+                "geometry": geom
             }
         ]
     }
