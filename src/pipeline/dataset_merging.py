@@ -21,9 +21,11 @@ import glob
 import json
 import pandas as pd
 
+from config import BASE_RESULTS_DIR
 
-JSONL_OUTPUT = "final_dataset.jsonl"
-CSV_OUTPUT = "final_dataset_summary.csv"
+
+JSONL_OUTPUT = f"../{BASE_RESULTS_DIR}/final_dataset.jsonl"
+CSV_OUTPUT = f"../{BASE_RESULTS_DIR}/final_dataset_summary.csv"
 
 
 def merge_dataset(dataset_dir: str = "dataset") -> None:

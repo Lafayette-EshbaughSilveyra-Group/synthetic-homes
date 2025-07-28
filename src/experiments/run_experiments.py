@@ -20,7 +20,7 @@ base_results_dir.mkdir(exist_ok=True)
 today_str = datetime.now().strftime("%m%d%y")
 existing_runs = [p for p in base_results_dir.iterdir() if p.is_dir() and p.name.startswith(today_str)]
 run_number = len(existing_runs) + 1
-RESULTS_DIR = base_results_dir / f"{today_str}-{run_number}"
+RESULTS_DIR = base_results_dir / "experimental" / f"{today_str}-{run_number}"
 RESULTS_DIR.mkdir(exist_ok=True)
 
 EXPERIMENTS = {

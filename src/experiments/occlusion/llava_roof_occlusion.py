@@ -138,7 +138,7 @@ def run_reverse_occlusion_test_with_heatmap(image_path, heatmap_filename):
 
 
 def main():
-    output_dir = Path(__file__).resolve().parents[3] / BASE_RESULTS_DIR / "occlusion" / "llava"
+    output_dir = Path(__file__).resolve().parents[3] / BASE_RESULTS_DIR / "experimental" / "occlusion" / "llava"
     output_dir.mkdir(parents=True, exist_ok=True)
 
     run_occlusion_test_with_heatmap(

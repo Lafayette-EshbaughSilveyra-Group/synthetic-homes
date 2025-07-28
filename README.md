@@ -67,3 +67,22 @@ python -m src.main --mode pipeline
 | `results/final_dataset.jsonl` — all inputs and outputs | `results/final_dataset_summary.csv` — summary statistics |
 
 > **Note**: All outputs are compiled into `final_dataset.jsonl` and `final_dataset_summary.csv` inside the `results/` directory for the entire dataset.
+
+
+## Experiments
+
+### Occlusion & Reverse Occlusion
+
+Occlusion and reverse occlusion tests are used to evaluate how models process images. Specifically, occlusion measures _necessity_—how important a region of an image is to produce the output—by masking each region of the input and comparing the model's output on this masked image to the output from the unmodified image. This produces a heatmap.
+
+Reverse occlusion (sometimes referred to as inclusion) measures _sufficiency_—if a feature or subset of the input alone leads the model to make the same prediction, then that feature is sufficient for the model’s decision. This testing is performed by masking everything except a given portion of the image and comparing to a baseline, like the above.
+
+### Ablation
+
+In ablation testing, we try to determine importance of each modality that is passed into the model. This is important as the embedders for each type of modality are unique and they need to be balanced with respect to each other. As such, we:
+
+1. Test only text input sensitivity (constant simulation input)
+2. Test only simulation input sensitivity (constant text input)
+3. Test both inputs together, in a bad/bad, good/bad, bad/good, good/good arrangement.
+
+More details can be found in `experiments.md`.

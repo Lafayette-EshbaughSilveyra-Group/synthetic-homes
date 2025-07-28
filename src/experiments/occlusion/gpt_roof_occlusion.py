@@ -197,7 +197,7 @@ def main():
 
     client = OpenAI(api_key=api_key)
 
-    output_dir = Path(__file__).resolve().parents[3] / BASE_RESULTS_DIR / "occlusion" / "gpt-4.1"
+    output_dir = Path(__file__).resolve().parents[3] / BASE_RESULTS_DIR / "experimental" / "occlusion" / "gpt-4.1"
     output_dir.mkdir(parents=True, exist_ok=True)
 
     image_dir = Path(__file__).resolve().parents[3] / "assets" / "roof_examples"
