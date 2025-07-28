@@ -1,5 +1,6 @@
 import argparse
 import json
+import os
 from datetime import datetime
 from pathlib import Path
 
@@ -21,6 +22,8 @@ today_str = datetime.now().strftime("%m%d%y")
 existing_runs = [p for p in base_results_dir.iterdir() if p.is_dir() and p.name.startswith(today_str)]
 run_number = len(existing_runs) + 1
 RESULTS_DIR = base_results_dir / "experimental" / f"{today_str}-{run_number}"
+os.makedirs(base_results_dir, exist_ok=True)
+os.makedirs(base_results_dir / "experimental", exist_ok=True)
 RESULTS_DIR.mkdir(exist_ok=True)
 
 EXPERIMENTS = {
