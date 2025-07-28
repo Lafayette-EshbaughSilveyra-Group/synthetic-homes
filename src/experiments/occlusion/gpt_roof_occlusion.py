@@ -154,32 +154,29 @@ def reverse_occlusion_test_roof(image_path, client, patch_size=PATCH_SIZE, strid
 
 def plot_occlusion_heatmap(image_path, occlusion_results, patch_size, output_path=None):
     img = Image.open(image_path).convert('RGB')
-    plt.figure(figsize=(8, 8))
-    plt.imshow(img)
+    img_width, img_height = img.size
 
-    ax = plt.gca()
-
-    diffs = [r["diff_from_baseline"] for r in occlusion_results]
-    max_diff = max(diffs) if diffs else 1e-6
-    min_diff = min(diffs) if diffs else 0
+    grid_rows = img_height // patch_size[1]
+    grid_cols = img_width // patch_size[0]
+    heatmap = np.zeros((grid_rows, grid_cols))
 
     for r in occlusion_results:
         x = r["patch_x"]
         y = r["patch_y"]
-        diff = r["diff_from_baseline"]
-        norm_diff = (diff - min_diff) / (max_diff - min_diff + 1e-8)
+        i = y // patch_size[1]
+        j = x // patch_size[0]
+        heatmap[i, j] = r["diff_from_baseline"]
 
-        rect = plt.Rectangle(
-            (x, y),
-            patch_size[0],
-            patch_size[1],
-            color=(1, 0, 0, norm_diff),
-            linewidth=1
-        )
-        ax.add_patch(rect)
+    fig, ax = plt.subplots(figsize=(8, 8))
+    ax.imshow(img)
 
-    plt.title("Roof Rating Occlusion Sensitivity Heatmap")
-    plt.axis('off')
+    # Resize heatmap to match image resolution
+    heatmap_resized = np.kron(heatmap, np.ones((patch_size[1], patch_size[0])))
+    ax.imshow(heatmap_resized, cmap='hot', alpha=0.5, interpolation='nearest')
+
+    ax.set_title("Occlusion Sensitivity Heatmap (1 - Cosine Similarity)")
+    ax.axis('off')
+    plt.colorbar(plt.cm.ScalarMappable(cmap='hot'), ax=ax, label='Semantic Difference')
 
     if output_path:
         plt.savefig(output_path, bbox_inches='tight', dpi=300)
