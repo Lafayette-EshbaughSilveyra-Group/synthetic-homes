@@ -10,42 +10,46 @@ from pathlib import Path
 from openai import OpenAI
 
 
-PATCH_SIZE = (50, 50)
-STRIDE = (50, 50)
-
-
 def encode_image(image_path):
     with open(image_path, "rb") as f:
         return base64.b64encode(f.read()).decode()
 
 
-def generate_occluded_images(image_path, patch_size, stride):
+def generate_occluded_images(image_path, num_rows, num_cols):
     img = Image.open(image_path).convert('RGB')
     img_np = np.array(img)
     H, W, C = img_np.shape
+    patch_h = H // num_rows
+    patch_w = W // num_cols
     occluded_images = []
 
-    for y in range(0, H - patch_size[1] + 1, stride[1]):
-        for x in range(0, W - patch_size[0] + 1, stride[0]):
+    for i in range(num_rows):
+        for j in range(num_cols):
+            y = i * patch_h
+            x = j * patch_w
             occluded = img_np.copy()
-            occluded[y:y + patch_size[1], x:x + patch_size[0], :] = 0
+            occluded[y:y + patch_h, x:x + patch_w, :] = 0
             occ_img = Image.fromarray(occluded)
             occluded_images.append(((x, y), occ_img))
     return occluded_images
 
 
-def generate_reverse_occluded_images(image_path, patch_size, stride):
+def generate_reverse_occluded_images(image_path, num_rows, num_cols):
     img = Image.open(image_path).convert('RGB')
     img_np = np.array(img)
     H, W, C = img_np.shape
+    patch_h = H // num_rows
+    patch_w = W // num_cols
     reverse_occluded_images = []
 
     base_img = np.zeros_like(img_np)
 
-    for y in range(0, H - patch_size[1] + 1, stride[1]):
-        for x in range(0, W - patch_size[0] + 1, stride[0]):
+    for i in range(num_rows):
+        for j in range(num_cols):
+            y = i * patch_h
+            x = j * patch_w
             reverse_occluded = base_img.copy()
-            reverse_occluded[y:y + patch_size[1], x:x + patch_size[0], :] = img_np[y:y + patch_size[1], x:x + patch_size[0], :]
+            reverse_occluded[y:y + patch_h, x:x + patch_w, :] = img_np[y:y + patch_h, x:x + patch_w, :]
             rev_occ_img = Image.fromarray(reverse_occluded)
             reverse_occluded_images.append(((x, y), rev_occ_img))
     return reverse_occluded_images
@@ -82,7 +86,7 @@ You are a certified home inspector. Describe the status roof. Is it in good cond
     return reply
 
 
-def occlusion_test_roof(image_path, client, patch_size=PATCH_SIZE, stride=STRIDE):
+def occlusion_test_roof(image_path, client, num_rows, num_cols):
     # Import sentence-transformers utilities
     from sentence_transformers import SentenceTransformer, util
     embedder = SentenceTransformer('all-MiniLM-L6-v2')
@@ -92,7 +96,7 @@ def occlusion_test_roof(image_path, client, patch_size=PATCH_SIZE, stride=STRIDE
     print(f"Baseline roof rating: {baseline_text}")
 
     occlusion_results = []
-    occlusions = generate_occluded_images(image_path, patch_size, stride)
+    occlusions = generate_occluded_images(image_path, num_rows, num_cols)
 
     for (x, y), occ_img in occlusions:
         with NamedTemporaryFile(suffix=".jpg", delete=False) as tmp:
@@ -117,7 +121,7 @@ def occlusion_test_roof(image_path, client, patch_size=PATCH_SIZE, stride=STRIDE
     return baseline_text, occlusion_results
 
 
-def reverse_occlusion_test_roof(image_path, client, patch_size=PATCH_SIZE, stride=STRIDE):
+def reverse_occlusion_test_roof(image_path, client, num_rows, num_cols):
     # Import sentence-transformers utilities
     from sentence_transformers import SentenceTransformer, util
     embedder = SentenceTransformer('all-MiniLM-L6-v2')
@@ -127,7 +131,7 @@ def reverse_occlusion_test_roof(image_path, client, patch_size=PATCH_SIZE, strid
     print(f"Baseline roof rating (reverse occlusion): {baseline_text}")
 
     occlusion_results = []
-    reverse_occlusions = generate_reverse_occluded_images(image_path, patch_size, stride)
+    reverse_occlusions = generate_reverse_occluded_images(image_path, num_rows, num_cols)
 
     for (x, y), rev_occ_img in reverse_occlusions:
         with NamedTemporaryFile(suffix=".jpg", delete=False) as tmp:
@@ -152,26 +156,27 @@ def reverse_occlusion_test_roof(image_path, client, patch_size=PATCH_SIZE, strid
     return baseline_text, occlusion_results
 
 
-def plot_occlusion_heatmap(image_path, occlusion_results, patch_size, output_path=None):
+def plot_occlusion_heatmap(image_path, occlusion_results, num_rows, num_cols, output_path=None):
     img = Image.open(image_path).convert('RGB')
     img_width, img_height = img.size
 
-    grid_rows = img_height // patch_size[1]
-    grid_cols = img_width // patch_size[0]
-    heatmap = np.zeros((grid_rows, grid_cols))
+    patch_h = img_height // num_rows
+    patch_w = img_width // num_cols
+
+    heatmap = np.zeros((num_rows, num_cols))
 
     for r in occlusion_results:
         x = r["patch_x"]
         y = r["patch_y"]
-        i = y // patch_size[1]
-        j = x // patch_size[0]
+        i = y // patch_h
+        j = x // patch_w
         heatmap[i, j] = r["diff_from_baseline"]
 
     fig, ax = plt.subplots(figsize=(8, 8))
     ax.imshow(img)
 
     # Resize heatmap to match image resolution
-    heatmap_resized = np.kron(heatmap, np.ones((patch_size[1], patch_size[0])))
+    heatmap_resized = np.kron(heatmap, np.ones((patch_h, patch_w)))
     ax.imshow(heatmap_resized, cmap='hot', alpha=0.5, interpolation='nearest')
 
     ax.set_title("Occlusion Sensitivity Heatmap (1 - Cosine Similarity)")
@@ -208,40 +213,40 @@ def main():
 
         print("GOOD")
 
-        baseline_good, results_good = occlusion_test_roof(good_image, client)
+        baseline_good, results_good = occlusion_test_roof(good_image, client, num_rows=10, num_cols=10)
         plot_occlusion_heatmap(
             good_image,
             results_good,
-            PATCH_SIZE,
+            10, 10,
             output_path=output_dir / f"good_roof_{i}_heatmap_gpt.png"
         )
 
         print("GOOD REVERSE")
 
-        reverse_baseline_good, reverse_results_good = reverse_occlusion_test_roof(good_image, client)
+        reverse_baseline_good, reverse_results_good = reverse_occlusion_test_roof(good_image, client, num_rows=10, num_cols=10)
         plot_occlusion_heatmap(
             good_image,
             reverse_results_good,
-            PATCH_SIZE,
+            10, 10,
             output_path=output_dir / f"good_roof_{i}_reverse_heatmap_gpt.png"
         )
 
         print("BAD")
 
-        baseline_bad, results_bad = occlusion_test_roof(bad_image, client)
+        baseline_bad, results_bad = occlusion_test_roof(bad_image, client, num_rows=10, num_cols=10)
         plot_occlusion_heatmap(
             bad_image,
             results_bad,
-            PATCH_SIZE,
+            10, 10,
             output_path=output_dir / f"bad_roof_{i}_heatmap_gpt.png"
         )
 
         print("BAD REVERSE")
 
-        reverse_baseline_bad, reverse_results_bad = reverse_occlusion_test_roof(good_image, client)
+        reverse_baseline_bad, reverse_results_bad = reverse_occlusion_test_roof(bad_image, client, num_rows=10, num_cols=10)
         plot_occlusion_heatmap(
             bad_image,
             reverse_results_bad,
-            PATCH_SIZE,
+            10, 10,
             output_path=output_dir / f"bad_roof_{i}_reverse_heatmap_gpt.png"
         )

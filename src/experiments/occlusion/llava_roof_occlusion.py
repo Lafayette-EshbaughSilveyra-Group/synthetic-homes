@@ -17,7 +17,8 @@ bnb_config = BitsAndBytesConfig(
 
 MODEL_NAME = "llava-hf/llava-1.5-7b-hf"
 PROMPT = "USER: <image>\nYou are a certified home inspector. Describe the status roof. Is it in good condition? Why or why not? ASSISTANT:"
-GRID_SIZE = 16
+NUM_ROWS = 10
+NUM_COLS = 10
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 OCCLUSION_COLOR = (127, 127, 127)
 
@@ -46,26 +47,26 @@ def mask_image(img, mask_box, color=OCCLUSION_COLOR):
     return masked
 
 
-def get_occlusion_boxes(img_width, img_height, grid_size):
-    patch_w = img_width // grid_size
-    patch_h = img_height // grid_size
+def get_occlusion_boxes(img_width, img_height, num_rows, num_cols):
+    patch_w = img_width // num_cols
+    patch_h = img_height // num_rows
     boxes = [(i * patch_w, j * patch_h, (i + 1) * patch_w, (j + 1) * patch_h)
-             for i in range(grid_size) for j in range(grid_size)]
+             for j in range(num_rows) for i in range(num_cols)]
     return boxes
 
 
 def run_occlusion_test_with_heatmap(image_path, heatmap_filename):
     original_img = Image.open(image_path).convert("RGB")
     img_width, img_height = original_img.size
-    boxes = get_occlusion_boxes(img_width, img_height, GRID_SIZE)
+    boxes = get_occlusion_boxes(img_width, img_height, NUM_ROWS, NUM_COLS)
 
-    print(f"Running occlusion test on {len(boxes)} patches ({GRID_SIZE}x{GRID_SIZE} grid).")
+    print(f"Running occlusion test on {len(boxes)} patches ({NUM_ROWS}x{NUM_COLS} grid).")
 
     original_output = run_inference(original_img, PROMPT)
     original_embedding = embedder.encode(original_output, convert_to_tensor=True)
     print(f"\nOriginal output:\n{original_output}\n")
 
-    heatmap = np.zeros((GRID_SIZE, GRID_SIZE))
+    heatmap = np.zeros((NUM_ROWS, NUM_COLS))
 
     for idx, box in enumerate(boxes):
         occluded_img = mask_image(original_img, box)
@@ -74,7 +75,7 @@ def run_occlusion_test_with_heatmap(image_path, heatmap_filename):
         cosine_sim = util.cos_sim(original_embedding, occluded_embedding).item()
         diff = 1 - cosine_sim
 
-        i, j = idx % GRID_SIZE, idx // GRID_SIZE
+        i, j = idx % NUM_COLS, idx // NUM_COLS
         heatmap[j, i] = diff
 
         print(f"\n--- Patch {idx + 1}/{len(boxes)} ---")
@@ -84,7 +85,7 @@ def run_occlusion_test_with_heatmap(image_path, heatmap_filename):
 
     fig, ax = plt.subplots(figsize=(8, 8))
     ax.imshow(original_img)
-    heatmap_resized = np.kron(heatmap, np.ones((img_height // GRID_SIZE, img_width // GRID_SIZE)))
+    heatmap_resized = np.kron(heatmap, np.ones((img_height // NUM_ROWS, img_width // NUM_COLS)))
     ax.imshow(heatmap_resized, cmap='hot', alpha=0.5, interpolation='nearest')
 
     ax.set_title("Occlusion Sensitivity Heatmap (1 - Cosine Similarity)")
@@ -97,16 +98,16 @@ def run_occlusion_test_with_heatmap(image_path, heatmap_filename):
 def run_reverse_occlusion_test_with_heatmap(image_path, heatmap_filename):
     original_img = Image.open(image_path).convert("RGB")
     img_width, img_height = original_img.size
-    boxes = get_occlusion_boxes(img_width, img_height, GRID_SIZE)
+    boxes = get_occlusion_boxes(img_width, img_height, NUM_ROWS, NUM_COLS)
 
-    print(f"Running REVERSE occlusion test on {len(boxes)} patches ({GRID_SIZE}x{GRID_SIZE} grid).")
+    print(f"Running REVERSE occlusion test on {len(boxes)} patches ({NUM_ROWS}x{NUM_COLS} grid).")
 
     original_output = run_inference(original_img, PROMPT)
     original_embedding = embedder.encode(original_output, convert_to_tensor=True)
     print(f"\nOriginal output:\n{original_output}\n")
 
     fully_masked = Image.new('RGB', original_img.size, OCCLUSION_COLOR)
-    heatmap = np.zeros((GRID_SIZE, GRID_SIZE))
+    heatmap = np.zeros((NUM_ROWS, NUM_COLS))
 
     for idx, box in enumerate(boxes):
         temp_img = fully_masked.copy()
@@ -117,7 +118,7 @@ def run_reverse_occlusion_test_with_heatmap(image_path, heatmap_filename):
         cosine_sim = util.cos_sim(original_embedding, occluded_embedding).item()
         diff = 1 - cosine_sim
 
-        i, j = idx % GRID_SIZE, idx // GRID_SIZE
+        i, j = idx % NUM_COLS, idx // NUM_COLS
         heatmap[j, i] = diff
 
         print(f"\n--- Patch {idx + 1}/{len(boxes)} ---")
@@ -127,7 +128,7 @@ def run_reverse_occlusion_test_with_heatmap(image_path, heatmap_filename):
 
     fig, ax = plt.subplots(figsize=(8, 8))
     ax.imshow(original_img)
-    heatmap_resized = np.kron(heatmap, np.ones((img_height // GRID_SIZE, img_width // GRID_SIZE)))
+    heatmap_resized = np.kron(heatmap, np.ones((img_height // NUM_ROWS, img_width // NUM_COLS)))
     ax.imshow(heatmap_resized, cmap='hot', alpha=0.5, interpolation='nearest')
 
     ax.set_title("Reverse Occlusion Heatmap (1 - Cosine Similarity)")
