@@ -52,7 +52,7 @@ def simulate_home(home_folder_name: str) -> None:
 
         run_energyplus_simulation(
             home_folder_name,
-            os.path.join('../weather', f'{weather_station}.epw')
+            os.path.join('weather', f'{weather_station}.epw')
         )
     except Exception as e:
         print(f"[ERROR] Could not run EnergyPlus simulation for {home_folder_name}: {e}")
