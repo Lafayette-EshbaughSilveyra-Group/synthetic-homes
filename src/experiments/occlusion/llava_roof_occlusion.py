@@ -83,6 +83,8 @@ def run_occlusion_test_with_heatmap(image_path, heatmap_filename):
         print(f"Cosine similarity: {cosine_sim:.4f} (Difference: {diff:.4f})")
         print(f"Output: {output_text}")
 
+    del occluded_embedding, output_text
+
     fig, ax = plt.subplots(figsize=(8, 8))
     ax.imshow(original_img)
     heatmap_resized = np.kron(heatmap, np.ones((img_height // NUM_ROWS, img_width // NUM_COLS)))
@@ -92,6 +94,9 @@ def run_occlusion_test_with_heatmap(image_path, heatmap_filename):
     ax.axis('off')
     plt.colorbar(plt.cm.ScalarMappable(cmap='hot'), ax=ax, label='Semantic Difference')
     plt.savefig(heatmap_filename, dpi=300, bbox_inches='tight')
+    import gc
+    torch.cuda.empty_cache()
+    gc.collect()
     plt.close()
 
 
@@ -126,6 +131,8 @@ def run_reverse_occlusion_test_with_heatmap(image_path, heatmap_filename):
         print(f"Cosine similarity: {cosine_sim:.4f} (Difference: {diff:.4f})")
         print(f"Output: {output_text}")
 
+    del occluded_embedding, output_text, temp_img
+
     fig, ax = plt.subplots(figsize=(8, 8))
     ax.imshow(original_img)
     heatmap_resized = np.kron(heatmap, np.ones((img_height // NUM_ROWS, img_width // NUM_COLS)))
@@ -135,6 +142,9 @@ def run_reverse_occlusion_test_with_heatmap(image_path, heatmap_filename):
     ax.axis('off')
     plt.colorbar(plt.cm.ScalarMappable(cmap='hot'), ax=ax, label='Semantic Difference')
     plt.savefig(heatmap_filename, dpi=300, bbox_inches='tight')
+    import gc
+    torch.cuda.empty_cache()
+    gc.collect()
     plt.close()
 
 

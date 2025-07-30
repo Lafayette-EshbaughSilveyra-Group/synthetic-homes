@@ -89,6 +89,7 @@ You are a certified home inspector. Describe the status roof. Is it in good cond
 def occlusion_test_roof(image_path, client, num_rows, num_cols):
     # Import sentence-transformers utilities
     from sentence_transformers import SentenceTransformer, util
+    import torch
     embedder = SentenceTransformer('all-MiniLM-L6-v2')
 
     baseline_text = rate_roof_condition(image_path, client)
@@ -115,8 +116,14 @@ def occlusion_test_roof(image_path, client, num_rows, num_cols):
                     "diff_from_baseline": diff
                 })
                 print(f"Patch ({x},{y}) | Diff: {diff:.3f}")
+                del response_embedding
             else:
                 print(f"Skipping patch ({x},{y}) due to invalid rating.")
+
+    import gc
+    del embedder, baseline_embedding
+    torch.cuda.empty_cache()
+    gc.collect()
 
     return baseline_text, occlusion_results
 
@@ -124,6 +131,7 @@ def occlusion_test_roof(image_path, client, num_rows, num_cols):
 def reverse_occlusion_test_roof(image_path, client, num_rows, num_cols):
     # Import sentence-transformers utilities
     from sentence_transformers import SentenceTransformer, util
+    import torch
     embedder = SentenceTransformer('all-MiniLM-L6-v2')
 
     baseline_text = rate_roof_condition(image_path, client)
@@ -150,8 +158,14 @@ def reverse_occlusion_test_roof(image_path, client, num_rows, num_cols):
                     "diff_from_baseline": diff
                 })
                 print(f"Patch ({x},{y}) | Diff: {diff:.3f}")
+                del response_embedding
             else:
                 print(f"Skipping patch ({x},{y}) due to invalid rating.")
+
+    import gc
+    del embedder, baseline_embedding
+    torch.cuda.empty_cache()
+    gc.collect()
 
     return baseline_text, occlusion_results
 
