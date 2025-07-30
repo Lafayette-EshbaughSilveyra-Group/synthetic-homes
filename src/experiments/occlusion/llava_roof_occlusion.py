@@ -90,7 +90,19 @@ def run_occlusion_test_with_heatmap(image_path, heatmap_filename):
     heatmap_resized = np.kron(heatmap, np.ones((img_height // NUM_ROWS, img_width // NUM_COLS)))
     ax.imshow(heatmap_resized, cmap='hot', alpha=0.5, interpolation='nearest')
 
-    ax.set_title("Occlusion Sensitivity Heatmap (1 - Cosine Similarity)")
+    for row in range(NUM_ROWS):
+        for col in range(NUM_COLS):
+            ax.text(
+                col * (img_width // NUM_COLS) + (img_width // (2 * NUM_COLS)),
+                row * (img_height // NUM_ROWS) + (img_height // (2 * NUM_ROWS)),
+                f"{heatmap[row, col]:.2f}",
+                ha='center',
+                va='center',
+                color='black' if heatmap[row, col] < 0.5 else 'white',
+                fontsize=8
+            )
+
+    ax.set_title("Semantic Sensitivity Heatmap")
     ax.axis('off')
     plt.colorbar(plt.cm.ScalarMappable(cmap='hot'), ax=ax, label='Semantic Difference')
     plt.savefig(heatmap_filename, dpi=300, bbox_inches='tight')
@@ -138,7 +150,19 @@ def run_reverse_occlusion_test_with_heatmap(image_path, heatmap_filename):
     heatmap_resized = np.kron(heatmap, np.ones((img_height // NUM_ROWS, img_width // NUM_COLS)))
     ax.imshow(heatmap_resized, cmap='hot', alpha=0.5, interpolation='nearest')
 
-    ax.set_title("Reverse Occlusion Heatmap (1 - Cosine Similarity)")
+    for row in range(NUM_ROWS):
+        for col in range(NUM_COLS):
+            ax.text(
+                col * (img_width // NUM_COLS) + (img_width // (2 * NUM_COLS)),
+                row * (img_height // NUM_ROWS) + (img_height // (2 * NUM_ROWS)),
+                f"{heatmap[row, col]:.2f}",
+                ha='center',
+                va='center',
+                color='black' if heatmap[row, col] < 0.5 else 'white',
+                fontsize=8
+            )
+
+    ax.set_title("Semantic Sensitivity Heatmap")
     ax.axis('off')
     plt.colorbar(plt.cm.ScalarMappable(cmap='hot'), ax=ax, label='Semantic Difference')
     plt.savefig(heatmap_filename, dpi=300, bbox_inches='tight')
@@ -155,30 +179,20 @@ def main():
 
     for i in range(1, 11):
 
-        print(f"IMAGE {i}")
-
-        print("GOOD")
-
         run_occlusion_test_with_heatmap(
             Path(__file__).resolve().parents[3] / "assets" / "roof_examples" / f"good_roof_{i}.jpg",
             output_dir / f"good_roof_{i}_occlusion_heatmap_llava.png"
         )
-
-        print("BAD")
 
         run_occlusion_test_with_heatmap(
             Path(__file__).resolve().parents[3] / "assets" / "roof_examples" / f"bad_roof_{i}.jpg",
             output_dir / f"bad_roof_{i}_occlusion_heatmap_llava.png"
         )
 
-        print("GOOD REVERSE")
-
         run_reverse_occlusion_test_with_heatmap(
             Path(__file__).resolve().parents[3] / "assets" / "roof_examples" / f"good_roof_{i}.jpg",
             output_dir / f"good_roof_{i}_reverse_occlusion_heatmap_llava.png"
         )
-
-        print("BAD REVERSE")
 
         run_reverse_occlusion_test_with_heatmap(
             Path(__file__).resolve().parents[3] / "assets" / "roof_examples" / f"bad_roof_{i}.jpg",

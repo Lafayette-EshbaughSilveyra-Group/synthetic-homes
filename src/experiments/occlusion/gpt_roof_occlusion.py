@@ -193,7 +193,20 @@ def plot_occlusion_heatmap(image_path, occlusion_results, num_rows, num_cols, ou
     heatmap_resized = np.kron(heatmap, np.ones((patch_h, patch_w)))
     ax.imshow(heatmap_resized, cmap='hot', alpha=0.5, interpolation='nearest')
 
-    ax.set_title("Occlusion Sensitivity Heatmap (1 - Cosine Similarity)")
+    # Annotate each cell with its difference value
+    for row in range(num_rows):
+        for col in range(num_cols):
+            ax.text(
+                col * patch_w + patch_w // 2,
+                row * patch_h + patch_h // 2,
+                f"{heatmap[row, col]:.2f}",
+                ha='center',
+                va='center',
+                color='black' if heatmap[row, col] < 0.5 else 'white',
+                fontsize=8
+            )
+
+    ax.set_title("Semantic Sensitivity Heatmap")
     ax.axis('off')
     plt.colorbar(plt.cm.ScalarMappable(cmap='hot'), ax=ax, label='Semantic Difference')
 
@@ -220,12 +233,8 @@ def main():
 
     for i in range(1, 11):
 
-        print(f"IMAGE {i}")
-
         good_image = image_dir / f"good_roof_{i}.jpg"
         bad_image = image_dir / f"bad_roof_{i}.jpg"
-
-        print("GOOD")
 
         baseline_good, results_good = occlusion_test_roof(good_image, client, num_rows=10, num_cols=10)
         plot_occlusion_heatmap(
@@ -235,8 +244,6 @@ def main():
             output_path=output_dir / f"good_roof_{i}_heatmap_gpt.png"
         )
 
-        print("GOOD REVERSE")
-
         reverse_baseline_good, reverse_results_good = reverse_occlusion_test_roof(good_image, client, num_rows=10, num_cols=10)
         plot_occlusion_heatmap(
             good_image,
@@ -245,8 +252,6 @@ def main():
             output_path=output_dir / f"good_roof_{i}_reverse_heatmap_gpt.png"
         )
 
-        print("BAD")
-
         baseline_bad, results_bad = occlusion_test_roof(bad_image, client, num_rows=10, num_cols=10)
         plot_occlusion_heatmap(
             bad_image,
@@ -254,8 +259,6 @@ def main():
             10, 10,
             output_path=output_dir / f"bad_roof_{i}_heatmap_gpt.png"
         )
-
-        print("BAD REVERSE")
 
         reverse_baseline_bad, reverse_results_bad = reverse_occlusion_test_roof(bad_image, client, num_rows=10, num_cols=10)
         plot_occlusion_heatmap(
