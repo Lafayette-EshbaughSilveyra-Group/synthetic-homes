@@ -171,10 +171,11 @@ Only include the JSON. No explanation or commentary.
         else:
             raise ValueError(f"Unsupported energyplus label method: {energyplus_label_method}")
 
+        total_weight = text_weight + energyplus_weight
         result = {
-            "insulation": ((text_data["insulation"] * text_weight) + (
-                        energyplus_data["insulation"] * energyplus_weight)) / 2,
-            "hvac": ((text_data["hvac"] * text_weight) + (energyplus_data["hvac"] * energyplus_weight)) / 2,
+            "insulation": (text_data["insulation"] * text_weight + energyplus_data[
+                "insulation"] * energyplus_weight) / total_weight,
+            "hvac": (text_data["hvac"] * text_weight + energyplus_data["hvac"] * energyplus_weight) / total_weight,
         }
 
         if home_dir_name is None:

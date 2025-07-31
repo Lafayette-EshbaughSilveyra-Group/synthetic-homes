@@ -22,35 +22,36 @@ with open('results/text_variation_results.json', 'r') as f:
 
 # Helper: parse variable name and index
 def parse_example_id(example_id):
-    match = re.match(r'test_(.*?)_(\d+)', example_id)
+    match = re.match(r'(ROOFR|WALLR|HVACC|HVACH)-(\d+)', example_id)
     if match:
         var_name = match.group(1)
         index = int(match.group(2))
         return var_name, index
     else:
-        return example_id, -1
+        return None, -1
 
 # Group by variable
-grouped = {}
+target_vars = ["ROOFR", "WALLR", "HVACC", "HVACH"]
+grouped = {k: [] for k in target_vars}
+
 for entry in energyplus_results:
     var_name, index = parse_example_id(entry['example_id'])
-    if var_name not in grouped:
-        grouped[var_name] = []
-    grouped[var_name].append({
-        'index': index,
-        'mean_insulation': entry['mean_insulation'],
-        'std_insulation': entry['std_insulation'],
-        'mean_hvac': entry['mean_hvac'],
-        'std_hvac': entry['std_hvac'],
-        'example_id': entry['example_id']
-    })
+    if var_name in target_vars:
+        grouped[var_name].append({
+            'index': index,
+            'mean_insulation': entry['mean_insulation'],
+            'std_insulation': entry['std_insulation'],
+            'mean_hvac': entry['mean_hvac'],
+            'std_hvac': entry['std_hvac']
+        })
 
 # Sort within groups
 for var in grouped:
     grouped[var] = sorted(grouped[var], key=lambda x: x['index'])
 
-# Plot each variable group
-for var, entries in grouped.items():
+# Plot each variable group as a separate image
+for var in target_vars:
+    entries = grouped[var]
     indices = [e['index'] for e in entries]
     mean_insulation = [e['mean_insulation'] for e in entries]
     std_insulation = [e['std_insulation'] for e in entries]
@@ -60,13 +61,13 @@ for var, entries in grouped.items():
     x = np.arange(len(entries))
     width = 0.3
 
-    fig, ax = plt.subplots(figsize=(12,6))
+    fig, ax = plt.subplots(figsize=(10, 5))
     ax.bar(x - width/2, mean_insulation, width, yerr=std_insulation, capsize=5, label='Insulation')
     ax.bar(x + width/2, mean_hvac, width, yerr=std_hvac, capsize=5, label='HVAC')
 
+    ax.set_title(f'Experiment 2: {var} Variation Results')
     ax.set_xlabel(f'{var} Variation Index')
     ax.set_ylabel('Mean Label Value')
-    ax.set_title(f'Experiment 2: {var} Variation Results')
     ax.set_xticks(x)
     ax.set_xticklabels(indices)
     ax.legend()
