@@ -22,7 +22,7 @@ def extract_results_from_csv(home_dir: str) -> dict:
     """
     df = pd.read_csv(f"{home_dir}/simulation_output/eplusout.csv")
 
-    air_col = "GENERATED_HOME:Zone Air Temperature [C](Hourly) "
+    air_col = "GENERATED_HOME:Zone Air Temperature [C](Hourly)"
     heating_coil = "GENERATED_HOME PTAC HEATING COIL:Heating Coil Heating Energy [J](Hourly)"
     facility_electricity = "Electricity:Facility [J](Hourly)"
     hvac_electricity = "Electricity:HVAC [J](Hourly)"
