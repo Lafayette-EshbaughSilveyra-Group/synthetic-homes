@@ -22,8 +22,10 @@ def extract_results_from_csv(home_dir: str) -> dict:
     """
     df = pd.read_csv(f"{home_dir}/simulation_output/eplusout.csv")
 
-    mean_air_col = "MAINZONE:Zone Mean Air Temperature [C](Hourly)"
-    air_col = "MAINZONE:Zone Air Temperature [C](Hourly) "
+    air_col = "GENERATED_HOME:Zone Air Temperature [C](Hourly) "
+    heating_coil = "GENERATED_HOME PTAC HEATING COIL:Heating Coil Heating Energy [J](Hourly)"
+    facility_electricity = "Electricity:Facility [J](Hourly)"
+    hvac_electricity = "Electricity:HVAC [J](Hourly)"
 
     def compute_stats(series):
         return {
@@ -34,10 +36,12 @@ def extract_results_from_csv(home_dir: str) -> dict:
         }
 
     return {
-        "zone": "MAINZONE",
+        "zone": "GENERATED_HOME",
         "features": {
-            "mean_air_temperature": compute_stats(df[mean_air_col]),
-            "air_temperature": compute_stats(df[air_col])
+            "air_temperature": compute_stats(df[air_col]),
+            "heating_coil": compute_stats(df[heating_coil]),
+            "facility_electricity": compute_stats(df[facility_electricity]),
+            "hvac_electricity": compute_stats(df[hvac_electricity]),
         }
     }
 
