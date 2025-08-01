@@ -42,8 +42,10 @@ def merge_dataset(dataset_dir: str = "dataset") -> None:
             results = json.load(open(os.path.join(home, "results.json")))
             note = json.load(open(os.path.join(home, "cleaned.geojson")))["features"][0]["properties"]["inspection_note"]
 
-            mean_air = results["features"]["mean_air_temperature"]
             air = results["features"]["air_temperature"]
+            heating = results["features"]["heating_coil"]
+            facility = results["features"]["facility_electricity"]
+            hvac = results["features"]["hvac_electricity"]
 
             row = {
                 "home_id": os.path.basename(home),
@@ -51,16 +53,27 @@ def merge_dataset(dataset_dir: str = "dataset") -> None:
                 **label,
 
                 # Summary stats
-                "mean_air_temp_avg": mean_air["average"],
-                "mean_air_temp_min": mean_air["min"],
-                "mean_air_temp_max": mean_air["max"],
                 "air_temp_avg": air["average"],
                 "air_temp_min": air["min"],
                 "air_temp_max": air["max"],
 
+                "heating_coil_avg": heating["average"],
+                "heating_coil_min": heating["min"],
+                "heating_coil_max": heating["max"],
+
+                "facility_electricity_avg": facility["average"],
+                "facility_electricity_min": facility["min"],
+                "facility_electricity_max": facility["max"],
+
+                "hvac_electricity_avg": hvac["average"],
+                "hvac_electricity_min": hvac["min"],
+                "hvac_electricity_max": hvac["max"],
+
                 # Full hourly time series
-                "mean_air_temp_hourly": mean_air["hourly"],
-                "air_temp_hourly": air["hourly"]
+                "air_temp_hourly": air["hourly"],
+                "heating_coil_hourly": heating["hourly"],
+                "facility_electricity_hourly": facility["hourly"],
+                "hvac_electricity_hourly": hvac["hourly"],
             }
 
             rows.append(row)
