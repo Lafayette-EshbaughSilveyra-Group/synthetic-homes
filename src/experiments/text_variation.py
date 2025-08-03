@@ -16,7 +16,7 @@ def run(client, runs_per_sample=5):
         """
 
     from pathlib import Path
-    summary_path = Path(__file__).resolve().parents[2] / "experimental_energyplus_simulations" / "summary_stats.json"
+    summary_path = Path(__file__).resolve().parents[2] / "energyplus_data" / "summary_stats.json"
     dataset = json.load(open(summary_path, 'r'))
     example = next(iter(dataset.values()))
 
