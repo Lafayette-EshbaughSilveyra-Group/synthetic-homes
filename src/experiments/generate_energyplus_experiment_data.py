@@ -125,13 +125,13 @@ def main():
             }
 
             # Generate IDF
-            idf_path = f"../experimental_energyplus_simulations/test_{param}_{i + 1}/in.idf"
+            idf_path = f"experimental_energyplus_simulations/test_{param}_{i + 1}/in.idf"
             os.makedirs(os.path.dirname(idf_path), exist_ok=True)
             generate_idf_from_geojson(geojson, idf_path)
 
     # === Simulation Loop ===
 
-    test_idfs = glob.glob("../experimental_energyplus_simulations/test_*/in.idf")
+    test_idfs = glob.glob("experimental_energyplus_simulations/test_*/in.idf")
 
     for idf in test_idfs:
         abs_weather_path = os.path.abspath('weather/KMSP.epw')
@@ -154,6 +154,8 @@ def main():
             os.chdir(cwd)
 
     # === Execute parsing and summarizing ===
+
+    os.makedirs(os.path.join(os.getcwd(), 'energyplus_data'), exist_ok=True)
 
     parse_eplusout_csvs_to_json(os.getcwd(), os.path.join(os.getcwd(), 'energyplus_data', "experimental_set.json"))
     generate_summary_statistics_version(os.path.join(os.getcwd(), 'energyplus_data', "experimental_set.json"))
