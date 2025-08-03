@@ -8,6 +8,7 @@ import pandas as pd
 import numpy as np
 from eppy.modeleditor import IDF
 
+import config
 from pipeline.idf_generation import generate_idf_from_geojson
 
 
@@ -66,8 +67,7 @@ def generate_summary_statistics_version(full_experimental_set_data):
 
 
 def main():
-    # ✅ Set IDD path
-    IDF.setiddname("/Applications/EnergyPlus-25-1-0/Energy+.idd")
+    IDF.setiddname(config.IDD_FILE_PATH)
 
     # === Baseline performance parameters ===
     baseline = {
