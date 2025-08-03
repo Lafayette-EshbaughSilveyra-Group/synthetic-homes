@@ -61,7 +61,7 @@ def generate_summary_statistics_version(full_experimental_set_data):
 
         summary_statistics_version[simulation_name] = simulation_summary_stats
 
-    with open(full_experimental_set_data,
+    with open(os.path.join(os.path.dirname(full_experimental_set_data), 'summary_stats.json'),
               'w') as f:
         json.dump(summary_statistics_version, f, indent=2)
 
