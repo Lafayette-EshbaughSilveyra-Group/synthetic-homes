@@ -39,19 +39,9 @@ def save_results(results, name):
 
 
 def main(client):
-    parser = argparse.ArgumentParser()
-    parser.add_argument("experiment", choices=["text", "energyplus", "combined", "all"], nargs="?")
-    args = parser.parse_args()
+    # Generate experimental data
+    generate_energyplus_experiment_data.main()
 
-    if args.experiment:
-
-        # Generate experimental data
-        generate_energyplus_experiment_data.main()
-
-        if args.experiment == "all":
-            for name, exp_func in EXPERIMENTS.items():
-                save_results(exp_func(client), name)
-        else:
-            save_results(EXPERIMENTS[args.experiment](client), args.experiment)
-
+    for name, exp_func in EXPERIMENTS.items():
+        save_results(exp_func(client), name)
     plot_results.main(RESULTS_DIR)
