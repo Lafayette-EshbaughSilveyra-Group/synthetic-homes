@@ -157,5 +157,5 @@ def main():
 
     os.makedirs(os.path.join(os.getcwd(), 'energyplus_data'), exist_ok=True)
 
-    parse_eplusout_csvs_to_json(os.getcwd(), os.path.join(os.getcwd(), 'energyplus_data', "experimental_set.json"))
+    parse_eplusout_csvs_to_json(os.path.join(os.getcwd(), 'experimental_energyplus_simulations'), os.path.join(os.getcwd(), 'energyplus_data', "experimental_set.json"))
     generate_summary_statistics_version(os.path.join(os.getcwd(), 'energyplus_data', "experimental_set.json"))
