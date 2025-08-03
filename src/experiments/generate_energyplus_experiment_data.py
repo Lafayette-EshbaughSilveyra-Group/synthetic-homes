@@ -61,7 +61,7 @@ def generate_summary_statistics_version(full_experimental_set_data):
 
         summary_statistics_version[simulation_name] = simulation_summary_stats
 
-    with open(os.path.join(os.path.dirname(full_experimental_set_data), 'energyplus_data', 'experimental_set_summary_stats.json'),
+    with open(os.path.join(os.path.dirname(full_experimental_set_data)),
               'w') as f:
         json.dump(summary_statistics_version, f, indent=2)
 
@@ -125,16 +125,16 @@ def main():
             }
 
             # Generate IDF
-            idf_path = f"../../experimental_energyplus_simulations/test_{param}_{i + 1}/in.idf"
+            idf_path = f"../experimental_energyplus_simulations/test_{param}_{i + 1}/in.idf"
             os.makedirs(os.path.dirname(idf_path), exist_ok=True)
             generate_idf_from_geojson(geojson, idf_path)
 
     # === Simulation Loop ===
 
-    test_idfs = glob.glob("../../experimental_energyplus_simulations/test_*/in.idf")
+    test_idfs = glob.glob("../experimental_energyplus_simulations/test_*/in.idf")
 
     for idf in test_idfs:
-        abs_weather_path = os.path.abspath('../weather/KMSP.epw')
+        abs_weather_path = os.path.abspath('weather/KMSP.epw')
         cwd = os.getcwd()
         try:
             os.chdir(os.path.dirname(idf))
