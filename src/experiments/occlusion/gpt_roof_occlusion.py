@@ -62,7 +62,7 @@ def rate_roof_condition(image_path, client):
 
     image_base64 = encode_image(image_path)
     prompt = """
-You are a certified home inspector. Describe the status roof. Is it in good condition? Why or why not?.
+You are a certified home inspector. Describe the status roof. Is it in good condition? Why or why not?
 """
     try:
         response = client.chat.completions.create(

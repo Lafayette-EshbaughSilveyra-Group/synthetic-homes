@@ -131,6 +131,42 @@ Only include the JSON. No explanation or commentary.
         return cleaned
 
     def heuristic_labeler(results: dict):
+        # Dynamically compute best and worst values from all homes in dataset
+        dataset_dir = "dataset"
+        heating_loads = []
+        hvac_loads = []
+
+        homes = glob.glob(os.path.join(dataset_dir, "*"))
+        for home in homes:
+            results_path = os.path.join(home, "results.json")
+            if os.path.isfile(results_path):
+                with open(results_path, "r") as f:
+                    res = json.load(f)
+                heating_load_hourly_J = 0.0
+                hvac_hourly_J = 0.0
+                for var_name, var_data in res.items():
+                    if "Heating Coil Heating Energy" in var_name:
+                        heating_load_hourly_J = float(var_data.get("average", var_data.get("mean", 0)))
+                    elif "Electricity:HVAC" in var_name:
+                        hvac_hourly_J = float(var_data.get("average", var_data.get("mean", 0)))
+                heating_load_annual_kWh = (heating_load_hourly_J * 730 * 12) / 3600000
+                hvac_annual_kWh = (hvac_hourly_J * 730 * 12) / 3600000
+                heating_loads.append(heating_load_annual_kWh)
+                hvac_loads.append(hvac_annual_kWh)
+
+        if heating_loads:
+            hl_best = min(heating_loads)
+            hl_worst = max(heating_loads)
+        else:
+            hl_best = 0
+            hl_worst = 1
+        if hvac_loads:
+            hvac_best = min(hvac_loads)
+            hvac_worst = max(hvac_loads)
+        else:
+            hvac_best = 0
+            hvac_worst = 1
+
         heating_load_hourly_J = 0.0
         hvac_hourly_J = 0.0
 
@@ -143,8 +179,8 @@ Only include the JSON. No explanation or commentary.
         heating_load_annual_kWh = (heating_load_hourly_J * 730 * 12) / 3600000
         hvac_annual_kWh = (hvac_hourly_J * 730 * 12) / 3600000
 
-        insulation_score = (heating_load_annual_kWh - config.HL_BEST) / (config.HL_WORST - config.HL_BEST)
-        hvac_score = (hvac_annual_kWh - config.HVAC_BEST) / (config.HVAC_WORST - config.HVAC_BEST)
+        insulation_score = (heating_load_annual_kWh - hl_best) / (hl_worst - hl_best) if hl_worst != hl_best else 0
+        hvac_score = (hvac_annual_kWh - hvac_best) / (hvac_worst - hvac_best) if hvac_worst != hvac_best else 0
 
         insulation_score = max(min(insulation_score, 1), 0)
         hvac_score = max(min(hvac_score, 1), 0)

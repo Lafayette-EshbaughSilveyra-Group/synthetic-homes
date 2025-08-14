@@ -24,12 +24,6 @@ DEFAULT_WINDOW_U_VALUE = 2.0
 DEFAULT_HEATING_COP = 0.8
 DEFAULT_COOLING_COP = 3.0
 
-# Energy thresholds for labeling
-HL_WORST = 6000  # kWh/yr
-HL_BEST = 25     # kWh/yr
-HVAC_WORST = 3000  # kWh/yr
-HVAC_BEST = 25     # kWh/yr
-
 # Streets to scrape
 STREETS = [
     "STANBRIDGE CT",
