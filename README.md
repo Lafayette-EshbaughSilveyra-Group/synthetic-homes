@@ -13,16 +13,27 @@ Additionally, **occlusion experiments** analyze model sensitivity to localized i
 
 ---
 
+## Publication
+
+TODO: Update once the preprint is out
+
+---
+
 ## Pipeline Flow
 
 ```mermaid
-flowchart TB
-    A[Department of Assessment] -- tabular data, images --> B["GPT-4o"]
-    B -- GeoJSON data --> C["GeoJSON to IDF"]
-    C -- IDF EnergyPlus input --> D["EnergyPlus"]
-    D -- "results.json" --> E["GPT-4o"] & F["X (model inputs)"]
-    B -- home inspection report --> E & F
-    E -- labels --> G["Y (ground truth)"]
+graph TD
+  A["County Scraping"] --Home Image--> B["LLaVA 1"]
+  A --Home Floor Plan--> C["LLaVA 2"]
+  B --Home Image Description--> D["GPT-4-mini"]
+  C --Home Floor Plan Description--> D
+  A --Home Data--> D
+  D --GeoJSON--> E[EnergyPlus]
+  D --Home Inspection Notes--> F["GPT-4-mini"]
+  E --Simulation Results--> G["Heuristic Labeler (Eq. 1)"]
+  G --> H["Weighted Sum (Eq. 2)"]
+  F --> H
+  H --> I["Results"] 
 ```
 _Figure 1_: Flow of data through the dataset generation pipeline.
 
