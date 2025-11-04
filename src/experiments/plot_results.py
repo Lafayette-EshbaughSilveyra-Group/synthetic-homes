@@ -18,6 +18,9 @@ def main(results_dir):
     with open(results_dir / 'text_results.json', 'r') as f:
         text_variation_results = json.load(f)
 
+    with open(results_dir / 'optimize_weights_results.json', 'r') as f:
+        optimize_weights_results = json.load(f)
+
     # ==============================
     # 🔬 Plot 1: EnergyPlus Variation (Experiment 2)
     # ==============================
@@ -139,3 +142,23 @@ def main(results_dir):
     plt.tight_layout()
     plt.savefig(results_dir / 'experiment1_text_variation_insulation.png')
     plt.close()
+
+    # Plot 4: Weight Optimization
+
+    results = optimize_weights_results['results']
+
+    # results is [((text_weight, sim_weight), diff), ...]
+    text_weights = [w[0][0] for w in results]
+    diffs = [w[1] for w in results]
+
+    plt.figure()
+    plt.plot(text_weights, diffs)  # default color, default style
+
+    plt.xlabel("Text Weight (%)")
+    plt.ylabel("Absolute Difference of Experimental Outcomes")
+    plt.title("Text/Simulation Weight Sweep")
+
+    plt.tight_layout()
+    plt.savefig(results_dir / 'weight_optimization.png')
+    plt.close()
+
