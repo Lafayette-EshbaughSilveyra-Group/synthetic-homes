@@ -4,7 +4,7 @@ import numpy as np
 import re
 
 
-def main(results_dir):
+def main(results_dir, include_weight_optimization=False):
     # ==============================
     # 🔧 Load Results Files
     # ==============================
@@ -144,21 +144,21 @@ def main(results_dir):
     plt.close()
 
     # Plot 4: Weight Optimization
+    if include_weight_optimization:
+        results = optimize_weights_results['results']
 
-    results = optimize_weights_results['results']
+        # results is [((text_weight, sim_weight), diff), ...]
+        text_weights = [w[0][0] for w in results]
+        diffs = [w[1] for w in results]
 
-    # results is [((text_weight, sim_weight), diff), ...]
-    text_weights = [w[0][0] for w in results]
-    diffs = [w[1] for w in results]
+        plt.figure()
+        plt.plot(text_weights, diffs)  # default color, default style
 
-    plt.figure()
-    plt.plot(text_weights, diffs)  # default color, default style
+        plt.xlabel("Text Weight (%)")
+        plt.ylabel("Absolute Difference of Experimental Outcomes")
+        plt.title("Text/Simulation Weight Sweep")
 
-    plt.xlabel("Text Weight (%)")
-    plt.ylabel("Absolute Difference of Experimental Outcomes")
-    plt.title("Text/Simulation Weight Sweep")
-
-    plt.tight_layout()
-    plt.savefig(results_dir / 'weight_optimization.png')
-    plt.close()
+        plt.tight_layout()
+        plt.savefig(results_dir / 'weight_optimization.png')
+        plt.close()
 

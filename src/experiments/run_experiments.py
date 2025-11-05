@@ -31,7 +31,7 @@ EXPERIMENTS = {
     "text": text_var.run,
     "energyplus": eplus_var.run,
     "combined": combined_var.run,
-    "optimize_weights": opt_weights.run
+    # "optimize_weights": opt_weights.run
 }
 
 

@@ -1,16 +1,18 @@
+"""
+This experiment has been deprecated as we moved to a system that finds weights through a
+different process. However, this code remains to document our experimental process.
+"""
+
 import json
 from pathlib import Path
 from typing import List, Tuple, Dict, Any
-import csv
 
 from experiments.constants import HVAC_TEXT_SAMPLES
 from pipeline.postprocessing import label_data
-import matplotlib.pyplot as plt
 
 
 def absolute_difference_of_experimental_outcomes(good_text_bad_sim: float, bad_text_good_sim: float) -> float:
     return abs(good_text_bad_sim - bad_text_good_sim)
-
 
 def run(client, average_of: int = 5) -> Dict[str, Any]:
     """
