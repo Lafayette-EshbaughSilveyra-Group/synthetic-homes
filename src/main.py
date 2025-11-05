@@ -6,14 +6,14 @@ import os
 from eppy.modeleditor import IDF
 from openai import OpenAI
 
-from src.pipeline.build_concept_scaler import build_concept_scaler
-from src.pipeline.generate_full_factorial import generate
-from src.pipeline.scraper import scrape_all_records_on_street, delete_folders_without_jpg_or_png, init_driver
-from src.pipeline.geometry_generation import run_generation_for_dataset, clean_gpt_geojson_for_all_entries
-from src.pipeline.idf_generation import transform_dataset
-from src.pipeline.energyplus_runner import simulate_all_homes
-from src.pipeline.postprocessing import run_postprocessing_for_dataset
-from src.pipeline.dataset_merging import merge_dataset
+from pipeline.build_concept_scaler import build_concept_scaler
+from pipeline.generate_full_factorial import generate
+from pipeline.scraper import scrape_all_records_on_street, delete_folders_without_jpg_or_png, init_driver
+from pipeline.geometry_generation import run_generation_for_dataset, clean_gpt_geojson_for_all_entries
+from pipeline.idf_generation import transform_dataset
+from pipeline.energyplus_runner import simulate_all_homes
+from pipeline.postprocessing import run_postprocessing_for_dataset
+from pipeline.dataset_merging import merge_dataset
 
 from experiments.run_experiments import RESULTS_DIR, main as run_experiments
 import experiments.plot_results as plot_results
@@ -56,7 +56,7 @@ if __name__ == "__main__":
     print("[SETUP] Initialized OpenAI")
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--mode", choices=["pipeline", "pipeline-no-scrape", "experiments", "occlusion", "prepare-labeler"], default="pipeline",
+    parser.add_argument("--mode", choices=["pipeline", "pipeline-no-scrape", "experiments", "occlusion"], default="pipeline",
                         help="Run full pipeline, experiments, or occlusion tests.")
     args = parser.parse_args()
 

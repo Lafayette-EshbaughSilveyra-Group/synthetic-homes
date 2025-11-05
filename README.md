@@ -93,7 +93,7 @@ Our labeler uses scalers to determine how to weigh different scores. Here, we pr
 
 ```bash
 # Build calibration sims
-python -m src.main --mode prepare-labeler
+python3 src/main.py --mode prepare-labeler
 ```
 
 ### Run with interactive script
@@ -104,7 +104,7 @@ chmod +x run.sh    # Only once after cloning
 
 Or, run manually:
 ```bash
-python -m src.main --mode pipeline
+python3 src/main.py --mode pipeline
 ```
 
 ## Requirements
