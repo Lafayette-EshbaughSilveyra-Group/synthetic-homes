@@ -19,10 +19,11 @@ while true; do
   echo "2) Run pipeline except for scraping (GeoJSON → IDF → EnergyPlus → labels)"
   echo "3) Run labeling experiments"
   echo "4) Run occlusion experiments"
-  echo "5) Exit"
+  echo "5) Setup labeling scales (run this before anything else)"
+  echo "6) Exit"
   echo
 
-  read -p "Enter choice [1-5]: " choice
+  read -p "Enter choice [1-6]: " choice
 
   case $choice in
     1)
@@ -42,6 +43,10 @@ while true; do
       python3 src/main.py --mode occlusion
       ;;
     5)
+      echo "Preparing labeler scales..."
+      python3 src/main.py --mode
+      ;;
+    6)
       echo "Exiting."
       break
       ;;
