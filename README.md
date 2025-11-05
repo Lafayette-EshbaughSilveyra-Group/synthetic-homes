@@ -89,23 +89,28 @@ OPENAI_API_KEY=your-api-key-here
 
 ## Prepare the Labeler
 
-Our labeler uses scalers to determine how to weigh different scores. Here, we prepare these scalers.
+Our labeler uses scalers to determine how to weigh different scores. Here, we prepare these scalers. You can either choose to initialize these in the `run.sh` script or run it manually:
 
 ```bash
 # Build calibration sims
 python3 src/main.py --mode prepare-labeler
 ```
 
-### Run with interactive script
+## Running the Pipeline
+
+### Option 1: Run with interactive script
 ```bash
 chmod +x run.sh    # Only once after cloning
 ./run.sh           # Choose from pipeline, experiments, occlusion
 ```
 
-Or, run manually:
+### Option 2: Run manually:
 ```bash
-python3 src/main.py --mode pipeline
+# <mode> is either "pipeline", "pipeline-no-scrape", "experiments", "occlusion", or "prepare-labeler". Each of these correspond to an option in the main menu (`run.sh`)
+python3 src/main.py --mode <mode>
 ```
+
+Option 2 is useful for running tasks in the background, as option 1 requires user input to select an option.
 
 ## Requirements
 - CUDA
