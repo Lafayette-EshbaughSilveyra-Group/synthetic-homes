@@ -72,6 +72,6 @@ if __name__ == "__main__":
     elif args.mode == "occlusion":
         run_occlusions.run_occlusion_suite()
     elif args.mode == "prepare-labeler":
-        generate(epw="../weather/KMSP.epw")
+        generate(epw="../../weather/KMSP.epw")
         build_concept_scaler("hvac", "Electricity:HVAC [J](Hourly)", "mean")
         build_concept_scaler("insulation", "Heating Coil Heating Energy [J](Hourly)", "mean")
