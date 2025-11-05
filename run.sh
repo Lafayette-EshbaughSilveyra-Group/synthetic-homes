@@ -44,7 +44,7 @@ while true; do
       ;;
     5)
       echo "Preparing labeler scales..."
-      python3 src/main.py --mode
+      python3 src/main.py --mode prepare-labeler
       ;;
     6)
       echo "Exiting."
