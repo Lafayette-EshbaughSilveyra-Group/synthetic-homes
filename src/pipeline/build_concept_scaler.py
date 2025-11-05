@@ -233,7 +233,7 @@ def build_concept_scaler(concept: str,
         f"corr(fused,zT)={np.corrcoef(fused, zT)[0, 1]:.3f}  "
         f"corr(fused,zS)={np.corrcoef(fused, zS)[0, 1]:.3f}"
     )
-    print(f"✅ saved {out}")
+    print(f"saved {out}")
     return 0
 
 

@@ -1,17 +1,15 @@
-import argparse
 import json
 import os
 from datetime import datetime
 from pathlib import Path
 
+import config
 import experiments.combined_input_variation as combined_var
 import experiments.energyplus_variation as eplus_var
 import experiments.plot_results as plot_results
 import experiments.text_variation as text_var
-import experiments.optimize_weights as opt_weights
+# import experiments.optimize_weights as opt_weights
 from experiments import generate_energyplus_experiment_data
-
-import config
 
 # Create unique results directory for each run
 project_root = Path(__file__).resolve().parents[2]
