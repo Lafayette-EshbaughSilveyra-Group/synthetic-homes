@@ -87,6 +87,22 @@ Copy `.env.example` to `.env` and add your OpenAI API key:
 OPENAI_API_KEY=your-api-key-here
 ```
 
+## Prepare the Labeler
+
+Our labeler uses scalers to determine how to weigh different scores. Here, we prepare these scalers.
+
+```bash
+# Build calibration sims
+python -m src.pipeline.simdata.factorial_generate --epw weather/KMSP.epw
+
+# Fit scalers
+python -m src.pipeline.calibration.build_concept_scaler --concept hvac \
+  --sim-var "Electricity:HVAC [J](Hourly)" --sim-stat mean
+
+python -m src.pipeline.calibration.build_concept_scaler --concept insulation \
+  --sim-var "Heating Coil Heating Energy [J](Hourly)" --sim-stat mean
+```
+
 ### Run with interactive script (recommended)
 ```bash
 chmod +x run.sh    # Only once after cloning

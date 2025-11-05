@@ -147,9 +147,9 @@ def main():
                 'expanded.idf'
             ], check=True)
 
-            print(f"✅ Successfully ran EnergyPlus on {idf}")
+            print(f"Successfully ran EnergyPlus on {idf}")
         except Exception as e:
-            print(f"❌ Failed to run EnergyPlus: {e}")
+            print(f"Failed to run EnergyPlus: {e}")
         finally:
             os.chdir(cwd)
 

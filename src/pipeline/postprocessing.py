@@ -1,6 +1,8 @@
 import os
 import glob
 import json
+
+import numpy as np
 import pandas as pd
 import re
 import time
@@ -47,11 +49,68 @@ def extract_results_from_csv(home_dir: str) -> dict:
     }
 
 
+# src/pipeline/fusion/fuse_equal.py
+import json
+from pathlib import Path
+
+_cache = {}
+
+
+def _load_params(path: str | Path):
+    path = str(path)
+    if path not in _cache:
+        _cache[path] = json.load(open(path))
+    return _cache[path]
+
+
+def fuse_equal_from_raw(text_raw: float, sim_raw: float, *,
+                        scaler_path="energyplus_data/hvac_scaler_params.json",
+                        tau: float = 0.0):
+    params = _load_params(scaler_path)
+    muT, sdT = params["text"]["mean"], params["text"]["std"]
+    muS, sdS = params["sim"]["mean"], params["sim"]["std"]
+
+    zt = (text_raw - muT) / (sdT or 1e-8)
+    zs = (sim_raw - muS) / (sdS or 1e-8)
+    fused = 0.5 * zt + 0.5 * zs
+
+    # optional symmetric abstain band
+    decision = 1 if fused > tau else (0 if fused < -tau else -1)
+    return {"fused": fused, "decision": decision, "z_text": zt, "z_sim": zs}
+
+
+def _get_sim_raw_for_concept(results: dict, concept: str) -> float:
+    """
+    Returns a RAW simulation scalar (no 0-1 normalization) for the given concept.
+    This should match what you used when building the scaler.
+
+    For HVAC we take Electricity:HVAC mean J/hour.
+    For Insulation we take Heating Coil Heating Energy mean J/hour (proxy for envelope load).
+
+    Adjust if your scaler was fit on different variables.
+    """
+    # keys per your extract_results_from_csv()
+    # "hvac_electricity": "Electricity:HVAC [J](Hourly)"
+    # "heating_coil":     "Heating Coil Heating Energy [J](Hourly)"
+    if concept == "hvac":
+        return float(results["features"]["hvac_electricity"]["average"])
+    elif concept == "insulation":
+        return float(results["features"]["heating_coil"]["average"])
+    else:
+        raise ValueError(f"Unknown concept: {concept}")
+
+
 def label_data(results_json: dict, inspection_report: str, home_dir_name: str, client: Any,
-               text_weight: float = 0.2, energyplus_weight: float = 0.8, energyplus_label_method: str = 'heuristic') -> \
-        dict[str, float | Any]:
+               text_weight: float = 0.2, energyplus_weight: float = 0.8,
+               energyplus_label_method: str = 'heuristic',
+               use_calibrated_fusion: bool = True,
+               hvac_scaler_path: str = "energyplus_data/hvac_scaler_params.json",
+               ins_scaler_path: str = "energyplus_data/insulation_scaler_params.json",
+               tau: float = 0.0) -> dict[str, float | Any]:
     """
     Uses OpenAI API to label a datapoint based on its results.json and inspection report.
+    If `use_calibrated_fusion` is True and scaler files exist, we fuse per concept via z-scored 50/50.
+    Otherwise we fall back to the legacy weighted average.
     """
 
     def build_text_prompt(inspection_report: str) -> str:
@@ -196,23 +255,64 @@ Only include the JSON. No explanation or commentary.
 
         text_response = safe_chat_response(text_prompt)
         text_content = extract_json_from_response(text_response.choices[0].message.content)
-        text_data = json.loads(text_content)
+        text_data = json.loads(text_content)  # {"insulation": x, "hvac": y} in [0,1]
 
+        # EnergyPlus pathway (only used for fallback path or if you explicitly want LLM 0-1)
         if energyplus_label_method == 'gpt':
             energyplus_response = safe_chat_response(energyplus_prompt)
             energyplus_content = extract_json_from_response(energyplus_response.choices[0].message.content)
-            energyplus_data = json.loads(energyplus_content)
+            energyplus_data = json.loads(energyplus_content)  # {"insulation": x, "hvac": y} in [0,1]
         elif energyplus_label_method == 'heuristic':
-            energyplus_data = heuristic_labeler(results_json)
+            energyplus_data = heuristic_labeler(results_json)  # {"insulation": x, "hvac": y} in [0,1]
+        elif energyplus_label_method == 'raw':
+            # Not used directly; raw values are taken below per concept for calibrated fusion
+            energyplus_data = None
         else:
             raise ValueError(f"Unsupported energyplus label method: {energyplus_label_method}")
 
-        total_weight = text_weight + energyplus_weight
-        result = {
-            "insulation": (text_data["insulation"] * text_weight + energyplus_data[
-                "insulation"] * energyplus_weight) / total_weight,
-            "hvac": (text_data["hvac"] * text_weight + energyplus_data["hvac"] * energyplus_weight) / total_weight,
-        }
+        hvac_scaler_ok = Path(hvac_scaler_path).exists()
+        ins_scaler_ok = Path(ins_scaler_path).exists()
+        can_use_calibrated = use_calibrated_fusion and hvac_scaler_ok and ins_scaler_ok
+
+        if can_use_calibrated:
+            # ---- Per-concept calibrated fusion (recommended) ----
+            # TEXT raws are the LLM outputs for each concept (0..1).
+            text_hvac_raw = float(text_data["hvac"])
+            text_ins_raw = float(text_data["insulation"])
+
+            # SIM raws must be the *raw scalars* used in calibration (not 0..1)
+            sim_hvac_raw = _get_sim_raw_for_concept(results_json, "hvac")
+            sim_ins_raw = _get_sim_raw_for_concept(results_json, "insulation")
+
+            hvac_fused = fuse_equal_from_raw(text_hvac_raw, sim_hvac_raw,
+                                             scaler_path=hvac_scaler_path, tau=tau)
+            ins_fused = fuse_equal_from_raw(text_ins_raw, sim_ins_raw,
+                                            scaler_path=ins_scaler_path, tau=tau)
+
+            result = {
+                "insulation": float(np.clip(ins_fused["fused"], -3, 3)),  # keep a bounded range if you want
+                "hvac": float(np.clip(hvac_fused["fused"], -3, 3)),
+                # optional debug:
+                "_debug": {
+                    "hvac": hvac_fused,
+                    "insulation": ins_fused
+                }
+            }
+        else:
+            # ---- Fallback: legacy weighted average on 0..1 scores ----
+            if energyplus_data is None:
+                # If user set energyplus_label_method='raw' but we can't fuse, approximate with heuristic
+                energyplus_data = heuristic_labeler(results_json)
+
+            total_weight = text_weight + energyplus_weight
+            result = {
+                "insulation": (text_data["insulation"] * text_weight +
+                               energyplus_data["insulation"] * energyplus_weight) / total_weight,
+                "hvac": (text_data["hvac"] * text_weight +
+                         energyplus_data["hvac"] * energyplus_weight) / total_weight,
+                "_fallback": True,
+                "_note": "Calibrated fusion unavailable; used legacy weighted average."
+            }
 
         if home_dir_name is None:
             return result
@@ -220,8 +320,10 @@ Only include the JSON. No explanation or commentary.
         with open(label_path, "w") as f:
             json.dump(result, f, indent=2)
 
+        return result
+
     except json.JSONDecodeError as e:
-        print("⚠️ Failed to parse JSON. Raw content:")
+        print("Failed to parse JSON. Raw content:")
         raise e
 
 
