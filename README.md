@@ -93,14 +93,7 @@ Our labeler uses scalers to determine how to weigh different scores. Here, we pr
 
 ```bash
 # Build calibration sims
-python -m src.pipeline.generate_full_factorial --epw weather/KMSP.epw
-
-# Fit scalers
-python -m src.pipeline.build_concept_scaler --concept hvac \
-  --sim-var "Electricity:HVAC [J](Hourly)" --sim-stat mean
-
-python -m src.pipeline.build_concept_scaler --concept insulation \
-  --sim-var "Heating Coil Heating Energy [J](Hourly)" --sim-stat mean
+python -m src.main --mode prepare-labeler
 ```
 
 ### Run with interactive script

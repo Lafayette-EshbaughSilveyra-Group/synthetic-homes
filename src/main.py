@@ -6,6 +6,8 @@ import os
 from eppy.modeleditor import IDF
 from openai import OpenAI
 
+from pipeline.build_concept_scaler import build_concept_scaler
+from pipeline.generate_full_factorial import generate
 from pipeline.scraper import scrape_all_records_on_street, delete_folders_without_jpg_or_png, init_driver
 from pipeline.geometry_generation import run_generation_for_dataset, clean_gpt_geojson_for_all_entries
 from pipeline.idf_generation import transform_dataset
@@ -69,3 +71,7 @@ if __name__ == "__main__":
         plot_results.main(RESULTS_DIR)
     elif args.mode == "occlusion":
         run_occlusions.run_occlusion_suite()
+    elif args.mode == "prepare-labeler":
+        generate(epw="../weather/KMSP.epw")
+        build_concept_scaler("hvac", "Electricity:HVAC [J](Hourly)", "mean")
+        build_concept_scaler("insulation", "Heating Coil Heating Energy [J](Hourly)", "mean")
