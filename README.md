@@ -51,9 +51,34 @@ _Figure 1_: Flow of data through the dataset generation pipeline.
 
 ---
 
+## Create Virtual Environment
+Create the `venv` that the pipeline will use with the following command:
+```bash
+python3 -m venv venv
+
+# Activate the environment
+source venv/bin/activate
+```
+
+
 ## Install dependencies:
+
+1. First, install the base requirements:
 ```bash
 pip install -r requirements.txt
+```
+
+2. Then, based on your version of CUDA, install the corresponding CUDA packages:
+
+```bash
+# CUDA 11.8
+pip install -r requirements_cuda118.txt
+
+# CUDA 12.1
+pip install -r requirements_cuda121.txt
+
+# CUDA 12.6
+pip install -r requirements_cuda126.txt
 ```
 
 ## Setup environment variables
@@ -74,6 +99,7 @@ python -m src.main --mode pipeline
 ```
 
 ## Requirements
+- CUDA
 - Python 3.x
 - EnergyPlus (with `expandobjects` in `PATH`)
 - ChromeDriver for Selenium
