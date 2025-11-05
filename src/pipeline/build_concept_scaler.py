@@ -32,6 +32,47 @@ class ScalerParams:
     sim: ModStats
 
 
+def _resolve_sim_block(entry: dict, sim_var: str) -> dict | None:
+    """
+    Resolve a simulation variable block from a summary entry with tolerant matching.
+    Tries, in order:
+      1) Exact key match
+      2) Exact match after stripping trailing/leading whitespace
+      3) Case/whitespace-insensitive match
+      4) Suffix match (entry key endswith desired key), useful when a home-specific prefix is present
+    Returns the matched block (dict) or None.
+    """
+    # 1) exact
+    if sim_var in entry:
+        return entry[sim_var]
+
+    # Build normalized lookup maps
+    wanted = sim_var.strip()
+    by_stripped = {k.strip(): (k, v) for k, v in entry.items()}
+    by_lower = {k.strip().lower(): (k, v) for k, v in entry.items()}
+
+    # 2) stripped exact
+    if wanted in by_stripped:
+        _, v = by_stripped[wanted]
+        return v
+
+    # 3) case-insensitive exact
+    if wanted.lower() in by_lower:
+        _, v = by_lower[wanted.lower()]
+        return v
+
+    # 4) suffix match on stripped keys (handles prefixes like "FF_0001 ..." or trailing spaces)
+    candidates = [(k, v) for k, v in entry.items() if k.strip().endswith(wanted)]
+    if len(candidates) == 1:
+        return candidates[0][1]
+    if len(candidates) > 1:
+        # Prefer the shortest key (least-prefix) as a heuristic
+        k_best, v_best = sorted(candidates, key=lambda kv: len(kv[0]))[0]
+        return v_best
+
+    return None
+
+
 # ---- utils ----
 def _fit_mean_std(xs):
     xs = np.asarray(xs, dtype=float)
@@ -162,11 +203,12 @@ def build_concept_scaler(concept: str,
         t_score = _ordinal_score_from_index(idx)
 
         # simulation scalar
-        s_block = summary[h].get(sim_var)
+        s_block = _resolve_sim_block(summary[h], sim_var)
         if s_block is None:
-            # help debug by surfacing available keys
             keys_preview = list(summary[h].keys())[:8]
-            raise KeyError(f"{sim_var} not in summary for {h}. Example keys: {keys_preview}")
+            raise KeyError(f"{sim_var} not in summary for {h}. Tried exact/stripped/case-insensitive/suffix matching. Example keys: {keys_preview}")
+        if sim_stat not in s_block:
+            raise KeyError(f"Statistic '{sim_stat}' not found for '{sim_var}'. Available: {list(s_block.keys())}")
         s_score = float(s_block[sim_stat])
 
         T_raw.append(t_score)

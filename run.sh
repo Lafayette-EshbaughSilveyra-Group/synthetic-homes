@@ -19,11 +19,12 @@ while true; do
   echo "2) Run pipeline except for scraping (GeoJSON → IDF → EnergyPlus → labels)"
   echo "3) Run labeling experiments"
   echo "4) Run occlusion experiments"
-  echo "5) Setup labeling scales (run this before anything else)"
-  echo "6) Exit"
+  echo "5) Generate factorial data (used to build scalers)"
+  echo "6) Build scalers (used in the labeler)"
+  echo "7) Exit"
   echo
 
-  read -p "Enter choice [1-6]: " choice
+  read -p "Enter choice [1-7]: " choice
 
   case $choice in
     1)
@@ -43,10 +44,14 @@ while true; do
       python3 src/main.py --mode occlusion
       ;;
     5)
-      echo "Preparing labeler scales..."
-      python3 src/main.py --mode prepare-labeler
+      echo "Generating factorial dataset..."
+      python3 src/main.py --mode generate-factorial
       ;;
     6)
+      echo "Building scalers..."
+      python3 src/main.py --mode build-scalers
+      ;;
+    7)
       echo "Exiting."
       break
       ;;

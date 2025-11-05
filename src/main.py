@@ -56,7 +56,7 @@ if __name__ == "__main__":
     print("[SETUP] Initialized OpenAI")
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--mode", choices=["pipeline", "pipeline-no-scrape", "experiments", "occlusion", "prepare-labeler"], default="pipeline",
+    parser.add_argument("--mode", choices=["pipeline", "pipeline-no-scrape", "experiments", "occlusion", "generate-factorial", "build-scalers"], default="pipeline",
                         help="Run full pipeline, experiments, or occlusion tests.")
     args = parser.parse_args()
 
@@ -71,7 +71,8 @@ if __name__ == "__main__":
         plot_results.main(RESULTS_DIR)
     elif args.mode == "occlusion":
         run_occlusions.run_occlusion_suite()
-    elif args.mode == "prepare-labeler":
+    elif args.mode == "generate-factorial":
         generate(epw="../../weather/KMSP.epw")
+    elif args.mode == "build-scalers":
         build_concept_scaler("hvac", "Electricity:HVAC [J](Hourly)", "mean")
         build_concept_scaler("insulation", "Heating Coil Heating Energy [J](Hourly)", "mean")

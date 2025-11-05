@@ -89,11 +89,12 @@ OPENAI_API_KEY=your-api-key-here
 
 ## Prepare the Labeler
 
-Our labeler uses scalers to determine how to weigh different scores. Here, we prepare these scalers. You can either choose to initialize these in the `run.sh` script or run it manually:
+Our labeler uses scalers to determine how to weigh different scores. Here, we prepare these scalers. You can either choose to initialize these in the `run.sh` script (Generate factorial data & Build scalers) or run it manually:
 
 ```bash
 # Build calibration sims
-python3 src/main.py --mode prepare-labeler
+python3 src/main.py --mode generate-factorial
+python3 src/main.py --mode build-scalers
 ```
 
 ## Running the Pipeline
@@ -106,7 +107,7 @@ chmod +x run.sh    # Only once after cloning
 
 ### Option 2: Run manually:
 ```bash
-# <mode> is either "pipeline", "pipeline-no-scrape", "experiments", "occlusion", or "prepare-labeler". Each of these correspond to an option in the main menu (`run.sh`)
+# <mode> is either "pipeline", "pipeline-no-scrape", "experiments", "occlusion", "generate-factorial", or "build-scalers". Each of these correspond to an option in the main menu (`run.sh`)
 python3 src/main.py --mode <mode>
 ```
 
