@@ -12,9 +12,12 @@ INSUL = "insulation"
 
 # ---- default sim vars (override with CLI flags if your column names differ) ----
 DEFAULTS = {
-    HVAC:  {"sim_var": "Electricity:HVAC [J](Hourly)", "sim_stat": "mean", "out": "energyplus_data/hvac_scaler_params.json"},
-    INSUL: {"sim_var": "Heating Coil Heating Energy [J](Hourly)", "sim_stat": "mean", "out": "energyplus_data/insulation_scaler_params.json"},
+    HVAC: {"sim_var": "Electricity:HVAC [J](Hourly)", "sim_stat": "mean",
+           "out": "energyplus_data/hvac_scaler_params.json"},
+    INSUL: {"sim_var": "Heating Coil Heating Energy [J](Hourly)", "sim_stat": "mean",
+            "out": "energyplus_data/insulation_scaler_params.json"},
 }
+
 
 # ---- dataclasses ----
 @dataclass
@@ -22,20 +25,24 @@ class ModStats:
     mean: float
     std: float
 
+
 @dataclass
 class ScalerParams:
     text: ModStats
     sim: ModStats
 
+
 # ---- utils ----
 def _fit_mean_std(xs):
     xs = np.asarray(xs, dtype=float)
-    m  = float(xs.mean())
+    m = float(xs.mean())
     sd = float(xs.std(ddof=1) if len(xs) > 1 else 1.0)
     return m, max(sd, 1e-8)
 
+
 def _nearest_index(value: float, bins: list[float]) -> int:
     return int(np.argmin([abs(value - b) for b in bins]))  # 0..4
+
 
 # ---- text composition per concept ----
 def _compose_hvac_text(meta_row: dict) -> tuple[str, int]:
@@ -48,6 +55,7 @@ def _compose_hvac_text(meta_row: dict) -> tuple[str, int]:
     text = HVAC_TEXT_SAMPLES[hvac_idx]
     return text, hvac_idx
 
+
 def _compose_insulation_text(meta_row: dict) -> tuple[str, int]:
     wall_bins = [4.0, 7.0, 13.0, 20.0, 30.0]
     roof_bins = [10.0, 20.0, 30.0, 40.0, 50.0]
@@ -57,29 +65,87 @@ def _compose_insulation_text(meta_row: dict) -> tuple[str, int]:
     text = INSULATION_TEXT_SAMPLES[ins_idx]
     return text, ins_idx
 
+
 def _ordinal_score_from_index(idx: int) -> float:
     # 0..4 -> 1..5
     return float(idx + 1)
+
 
 # ---- main builder ----
 def build_concept_scaler(concept: str,
                          sim_var: str | None = None,
                          sim_stat: str | None = None,
                          out: str | None = None) -> int:
+    """
+    Fit and save per-concept scaler parameters for text/simulation fusion.
+
+    This function reads the factorial simulation summaries and metadata produced by the
+    full-factorial EnergyPlus generator (i.e., `energyplus_data/summary_stats.json` and
+    `energyplus_data/factorial_meta.json`) and computes z-score parameters that align
+    the text-side signal and the simulation-side signal on the same scale, per concept
+    (currently: "hvac" or "insulation").
+
+    Workflow
+    --------
+    1) Map each synthetic home to a concept-specific ordinal text index (0..4) from the
+       factorial metadata (e.g., HVAC levels derived from heating/cooling COP bins;
+       insulation levels from wall/roof R-value bins). Convert that index to a numeric
+       text score in [1..5].
+    2) Extract a single simulation scalar per home from `summary_stats.json` using
+       `sim_var` (column key) and `sim_stat` (e.g., "mean").
+    3) Compute mean and std for the text scores and for the sim scalars; these become
+       the scaler parameters.
+    4) Write the result as JSON to `out`, e.g.:
+           energyplus_data/hvac_scaler_params.json
+           energyplus_data/insulation_scaler_params.json
+
+    Parameters
+    ----------
+    concept : {"hvac", "insulation"}
+        Which concept to build a scaler for. Determines how metadata is mapped to
+        a text level and which defaults to use.
+    sim_var : str, optional
+        Key in `summary_stats.json` for the simulation variable to use (defaults are
+        set in DEFAULTS per concept).
+    sim_stat : {"mean","min","max","std"}, optional
+        Which statistic from the selected simulation variable to use.
+    out : str, optional
+        Output path for the scaler JSON. Defaults are set in DEFAULTS.
+
+    Returns
+    -------
+    int
+        0 on success. Also prints small diagnostics (variance contribution and
+        correlations) to help verify parity between text and simulation signals.
+
+    Output format
+    -------------
+    {
+      "text": {"mean": <float>, "std": <float>},
+      "sim":  {"mean": <float>, "std": <float>}
+    }
+
+    Notes
+    -----
+    - The produced scaler is consumed at label time by `fuse_equal_from_raw(...)` which
+      standardizes text and sim inputs and fuses them 50/50.
+    - Ensure that the `sim_var` you choose here matches the *raw* metric you will pass
+      at runtime when labeling (e.g., HVAC electricity mean in J/hour).
+    """
     concept = concept.lower()
     assert concept in (HVAC, INSUL), "concept must be 'hvac' or 'insulation'"
 
     # defaults if not provided
-    sim_var  = sim_var  or DEFAULTS[concept]["sim_var"]
+    sim_var = sim_var or DEFAULTS[concept]["sim_var"]
     sim_stat = sim_stat or DEFAULTS[concept]["sim_stat"]
-    out      = out      or DEFAULTS[concept]["out"]
+    out = out or DEFAULTS[concept]["out"]
 
     root = Path(".")
     summary_path = root / "energyplus_data" / "summary_stats.json"
-    meta_path    = root / "energyplus_data" / "factorial_meta.json"
+    meta_path = root / "energyplus_data" / "factorial_meta.json"
 
     summary = json.load(open(summary_path))
-    meta    = json.load(open(meta_path))
+    meta = json.load(open(meta_path))
 
     homes = sorted(summary.keys())
     T_raw, S_raw = [], []
@@ -118,22 +184,24 @@ def build_concept_scaler(concept: str,
     # diagnostics (label-free)
     zT = (np.array(T_raw) - muT) / sdT
     zS = (np.array(S_raw) - muS) / sdS
-    fused = 0.5*zT + 0.5*zS
+    fused = 0.5 * zT + 0.5 * zS
     print(
-        f"[{concept}] var(0.5*zT)={np.var(0.5*zT):.3f}  "
-        f"var(0.5*zS)={np.var(0.5*zS):.3f}  "
-        f"corr(fused,zT)={np.corrcoef(fused,zT)[0,1]:.3f}  "
-        f"corr(fused,zS)={np.corrcoef(fused,zS)[0,1]:.3f}"
+        f"[{concept}] var(0.5*zT)={np.var(0.5 * zT):.3f}  "
+        f"var(0.5*zS)={np.var(0.5 * zS):.3f}  "
+        f"corr(fused,zT)={np.corrcoef(fused, zT)[0, 1]:.3f}  "
+        f"corr(fused,zS)={np.corrcoef(fused, zS)[0, 1]:.3f}"
     )
     print(f"✅ saved {out}")
     return 0
 
+
 if __name__ == "__main__":
     import argparse
+
     ap = argparse.ArgumentParser()
     ap.add_argument("--concept", required=True, choices=[HVAC, INSUL])
     ap.add_argument("--sim-var", help="Exact key from summary_stats.json", default=None)
-    ap.add_argument("--sim-stat", choices=["mean","min","max","std"], default=None)
+    ap.add_argument("--sim-stat", choices=["mean", "min", "max", "std"], default=None)
     ap.add_argument("--out", help="Output scaler JSON path", default=None)
     a = ap.parse_args()
     raise SystemExit(build_concept_scaler(a.concept, a.sim_var, a.sim_stat, a.out))

@@ -62,7 +62,43 @@ def _generate_summary_statistics_version(full_experimental_set_data: str):
         json.dump(summary_statistics_version, f, indent=2)
 
 
-def generate(epw: str, out_root: str = "experimental_energyplus_simulations"):
+def generate(epw: str, out_root: str = "factorial_energyplus_simulations"):
+    """
+    Generate a full-factorial EnergyPlus simulation dataset, summarize outputs, and
+    produce metadata for text/simulation label scaling.
+
+    This routine:
+
+    1. Defines a baseline building with default envelope + HVAC parameters.
+    2. Defines discrete level sets (bins) for wall insulation, roof insulation,
+       heating system efficiency, and cooling system efficiency.
+    3. Produces a full Cartesian product of all parameter combinations (5×5×5×5 = 625 homes).
+    4. For each combination:
+       - Generates a temporary synthetic geometry + parameterized feature set.
+       - Constructs an IDF using the pipeline's generator.
+       - Records the parameter configuration to `energyplus_data/factorial_meta.json`.
+    5. Runs EnergyPlus for each generated home, using ExpandObjects to expand HVAC templates.
+    6. Parses all `eplusout.csv` simulation outputs into a compact JSON form (`experimental_set.json`).
+    7. Produces a derived summary statistics version (`summary_stats.json`) with mean/min/max/std per variable.
+
+    Parameters
+    ----------
+    epw : str
+        Path to the EPW weather file used for all simulations.
+    out_root : str, optional
+        Directory where all generated simulations and results will be stored.
+
+    Outputs (written to disk)
+    -------------------------
+    factorial_energyplus_simulations/
+        Contains per-home simulation folders and IDFs.
+    energyplus_data/factorial_meta.json
+        Contains the parameter values for each home (needed for text scaling).
+    energyplus_data/experimental_set.json
+        Contains parsed hourly and summary metrics for all simulations.
+    energyplus_data/summary_stats.json
+        A higher-level statistical summary derived from `experimental_set.json`.
+    """
     random.seed(42)
     IDF.setiddname(config.IDD_FILE_PATH)
 
@@ -137,13 +173,28 @@ def generate(epw: str, out_root: str = "experimental_energyplus_simulations"):
     for idf in test_idfs:
         cwd = os.getcwd()
         try:
+            # Preprocess HVACTemplate objects: run ExpandObjects to generate expanded.idf
+            expanded_file = "expanded.idf"
+            try:
+                # remove any stale expanded.idf from previous runs
+                if os.path.exists(expanded_file):
+                    os.remove(expanded_file)
+                # Try both common executable names
+                try:
+                    subprocess.run(["expandobjects"], check=True)
+                except FileNotFoundError:
+                    subprocess.run(["ExpandObjects"], check=True)
+            except Exception as ee:
+                print(f"(Warning) ExpandObjects failed or not found for {idf}: {ee}")
+            # Use expanded.idf if present; otherwise fall back to in.idf
+            input_idf = expanded_file if os.path.exists(expanded_file) else "in.idf"
             os.chdir(os.path.dirname(idf))
             subprocess.run([
                 "energyplus",
                 "-w", os.path.abspath(epw),
                 "-d", "simulation_output",
                 "-r",
-                "in.idf"
+                input_idf
             ], check=True)
             print(f"Ran EnergyPlus: {idf}")
         except Exception as e:
@@ -162,6 +213,6 @@ if __name__ == "__main__":
     import argparse
     ap = argparse.ArgumentParser()
     ap.add_argument("--epw", required=True)
-    ap.add_argument("--out-root", default="experimental_energyplus_simulations")
+    ap.add_argument("--out-root", default="factorial_energyplus_simulations")
     a = ap.parse_args()
     raise SystemExit(generate(epw=a.epw, out_root=a.out_root))
