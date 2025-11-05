@@ -56,7 +56,7 @@ if __name__ == "__main__":
     print("[SETUP] Initialized OpenAI")
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--mode", choices=["pipeline", "pipeline-no-scrape", "experiments", "occlusion"], default="pipeline",
+    parser.add_argument("--mode", choices=["pipeline", "pipeline-no-scrape", "experiments", "occlusion", "prepare-labeler"], default="pipeline",
                         help="Run full pipeline, experiments, or occlusion tests.")
     args = parser.parse_args()
 
