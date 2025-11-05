@@ -7,8 +7,8 @@ import numpy as np
 import pandas as pd
 from eppy.modeleditor import IDF
 
-from src import config
-from src.pipeline.idf_generation import generate_idf_from_geojson
+import config
+from pipeline.idf_generation import generate_idf_from_geojson
 
 def _parse_eplusout_csvs_to_json(parent_folder: str, output_json_path: str):
     all_results = {}
