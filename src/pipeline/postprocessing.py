@@ -289,9 +289,11 @@ Only include the JSON. No explanation or commentary.
             ins_fused = fuse_equal_from_raw(text_ins_raw, sim_ins_raw,
                                             scaler_path=ins_scaler_path, tau=tau)
 
+            def _sigmoid(x): return 1 / (1 + np.exp(-x))
+
             result = {
-                "insulation": float(np.clip(ins_fused["fused"], -3, 3)),  # keep a bounded range if you want
-                "hvac": float(np.clip(hvac_fused["fused"], -3, 3)),
+                "insulation": _sigmoid(float(np.clip(ins_fused["fused"], -3, 3))),  # keep a bounded range if you want
+                "hvac": _sigmoid(float(np.clip(hvac_fused["fused"], -3, 3))),
                 # optional debug:
                 "_debug": {
                     "hvac": hvac_fused,
