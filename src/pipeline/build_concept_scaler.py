@@ -4,7 +4,7 @@ from dataclasses import dataclass, asdict
 from pathlib import Path
 import numpy as np
 
-from src.experiments.constants import HVAC_TEXT_SAMPLES, INSULATION_TEXT_SAMPLES
+from experiments.constants import HVAC_TEXT_SAMPLES, INSULATION_TEXT_SAMPLES
 
 # ---- concept enum ----
 HVAC = "hvac"
