@@ -31,9 +31,8 @@ def run(client, average_of: int = 5) -> Dict[str, Any]:
     with open(dataset_path, "r") as f:
         dataset = json.load(f)
 
-    # Be sure these keys exist in your JSON (double-check spelling):
-    bad_sim = dataset["HVACC-1"]
-    good_sim = dataset["HVACC-5"]
+    bad_sim = dataset["test_hvac_cooling_cop_1"]
+    good_sim = dataset["test_hvac_cooling_cop_5"]
 
     results: List[Tuple[Tuple[int, int], float]] = []
 
