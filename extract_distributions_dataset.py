@@ -1,9 +1,9 @@
-
 import os
 import json
 import math
 import csv
 from typing import Dict, Any, List, Optional, Tuple
+
 
 def walk_home_dirs(root: str) -> List[str]:
     homes = []
@@ -12,12 +12,14 @@ def walk_home_dirs(root: str) -> List[str]:
             homes.append(dirpath)
     return sorted(homes)
 
+
 def load_geojson(path: str) -> Optional[Dict[str, Any]]:
     try:
         with open(path, "r", encoding="utf-8") as f:
             return json.load(f)
     except Exception:
         return None
+
 
 def extract_from_geojson(gj: Dict[str, Any]) -> Dict[str, Any]:
     feat = (gj.get("features") or [None])[0] or {}
@@ -35,8 +37,10 @@ def extract_from_geojson(gj: Dict[str, Any]) -> Dict[str, Any]:
     rec["area_m2"] = float(area_sqft) * 0.092903 if area_sqft is not None else None
     height_ft = props.get("height_ft")
     rec["height_m"] = float(height_ft) * 0.3048 if height_ft is not None else None
-    rec["volume_m3"] = (rec["area_m2"] * rec["height_m"]) if (rec["area_m2"] is not None and rec["height_m"] is not None) else None
+    rec["volume_m3"] = (rec["area_m2"] * rec["height_m"]) if (
+                rec["area_m2"] is not None and rec["height_m"] is not None) else None
     return rec
+
 
 def parse_idf_objects(idf_text: str) -> List[Tuple[str, Dict[str, str]]]:
     objects = []
@@ -65,9 +69,11 @@ def parse_idf_objects(idf_text: str) -> List[Tuple[str, Dict[str, str]]]:
             objects.append((obj_type, fields))
     return objects
 
+
 def find_objects(objects, obj_type_prefix):
     prefix = obj_type_prefix.upper()
     return [(t, f) for (t, f) in objects if t.startswith(prefix)]
+
 
 def float_or_none(x: Any) -> Optional[float]:
     try:
@@ -75,15 +81,17 @@ def float_or_none(x: Any) -> Optional[float]:
     except Exception:
         return None
 
+
 def polygon_area_xy(coords: List[Tuple[float, float]]) -> float:
     if len(coords) < 3:
         return 0.0
     s = 0.0
     for i in range(len(coords)):
         x1, y1 = coords[i]
-        x2, y2 = coords[(i+1) % len(coords)]
-        s += x1*y2 - x2*y1
+        x2, y2 = coords[(i + 1) % len(coords)]
+        s += x1 * y2 - x2 * y1
     return abs(s) * 0.5
+
 
 def extract_from_idf(idf_path: str) -> Dict[str, Any]:
     rec = {"source": "idf", "name": os.path.basename(os.path.dirname(idf_path))}
@@ -112,13 +120,13 @@ def extract_from_idf(idf_path: str) -> Dict[str, Any]:
     if ptac:
         # From your generator: Cooling_Coil_Gross_Rated_Cooling_COP and Gas_Heating_Coil_Efficiency
         # In positional terms these are commonly Field_6 and Field_9, but layouts vary; we try a few positions.
-        for fld in ("Field_6","Field_7","Field_8","Field_9","Field_10"):
+        for fld in ("Field_6", "Field_7", "Field_8", "Field_9", "Field_10"):
             val = float_or_none(ptac[0][1].get(fld))
             if val is not None:
                 rec.setdefault("COP_cool", val)
                 break
         # crude scan for another numeric as heating efficiency
-        for fld in ("Field_8","Field_9","Field_10","Field_11","Field_12"):
+        for fld in ("Field_8", "Field_9", "Field_10", "Field_11", "Field_12"):
             val = float_or_none(ptac[0][1].get(fld))
             if val is not None and ("COP_cool" not in rec or val != rec["COP_cool"]):
                 rec.setdefault("COP_heat", val)
@@ -129,7 +137,7 @@ def extract_from_idf(idf_path: str) -> Dict[str, Any]:
     wall_k = None
     roof_k = None
     for _, fld in mats:
-        name = fld.get("Field_1","").lower()
+        name = fld.get("Field_1", "").lower()
         k = float_or_none(fld.get("Field_4"))
         if not k:
             continue
@@ -151,13 +159,17 @@ def extract_from_idf(idf_path: str) -> Dict[str, Any]:
         coords = []
         i = 9
         while True:
-            x = fld.get(f"Field_{i}"); y = fld.get(f"Field_{i+1}"); z = fld.get(f"Field_{i+2}")
+            x = fld.get(f"Field_{i}");
+            y = fld.get(f"Field_{i + 1}");
+            z = fld.get(f"Field_{i + 2}")
             if x is None or y is None or z is None:
                 break
-            x = float_or_none(x); y = float_or_none(y); z = float_or_none(z)
+            x = float_or_none(x);
+            y = float_or_none(y);
+            z = float_or_none(z)
             if x is None or y is None or z is None:
                 break
-            coords.append((x,y,z))
+            coords.append((x, y, z))
             max_z = max(max_z, z)
             i += 3
         # Detect floor by all z == 0
@@ -172,10 +184,12 @@ def extract_from_idf(idf_path: str) -> Dict[str, Any]:
 
     return rec
 
+
 def merge_records(pref: Dict[str, Any], fallback: Dict[str, Any]) -> Dict[str, Any]:
     out = dict(fallback)
     out.update({k: v for k, v in pref.items() if v is not None})
     return out
+
 
 def extract_dataset(root: str) -> List[Dict[str, Any]]:
     rows = []
@@ -191,12 +205,14 @@ def extract_dataset(root: str) -> List[Dict[str, Any]]:
         rows.append(rec)
     return rows
 
+
 def save_csv_json(rows: List[Dict[str, Any]], out_csv: str, out_json: str):
     if not rows:
         print("No rows to save.")
         return
     # Determine columns
-    cols = ["name","home_path","source","R_wall","R_roof","U_window","ACH","COP_heat","COP_cool","area_m2","height_m","volume_m3"]
+    cols = ["name", "home_path", "source", "R_wall", "R_roof", "U_window", "ACH", "COP_heat", "COP_cool", "area_m2",
+            "height_m", "volume_m3"]
     # Ensure all keys exist
     for r in rows:
         for c in cols:
@@ -210,8 +226,10 @@ def save_csv_json(rows: List[Dict[str, Any]], out_csv: str, out_json: str):
         json.dump(rows, f, ensure_ascii=False, indent=2)
     print(f"Saved {len(rows)} rows to:\n - {out_csv}\n - {out_json}")
 
+
 if __name__ == "__main__":
     import argparse
+
     p = argparse.ArgumentParser(description="Extract building parameter dataset from cleaned.geojson / expanded.idf")
     p.add_argument("--root", default="dataset", help="Root folder containing home subfolders")
     p.add_argument("--out_csv", default="building_params.csv", help="Output CSV path")
