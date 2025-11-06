@@ -27,8 +27,10 @@ def extract_from_geojson(gj: Dict[str, Any]) -> Dict[str, Any]:
     rec = {}
     rec["source"] = "geojson"
     rec["name"] = str(props.get("name", props.get("Name", "unknown"))).replace(" ", "_")
-    rec["R_wall"] = props.get("wall_r_value")
-    rec["R_roof"] = props.get("roof_r_value")
+    wall_r = props.get("wall_r_value")
+    rec["R_wall"] = float(wall_r) * 0.1761 if wall_r is not None else None
+    roof_r = props.get("roof_r_value")
+    rec["R_roof"] = float(roof_r) * 0.1761 if roof_r is not None else None
     rec["U_window"] = props.get("window_u_value")
     rec["ACH"] = props.get("air_change_rate")
     rec["COP_heat"] = props.get("hvac_heating_cop")
@@ -131,8 +133,8 @@ def extract_from_idf(idf_path: str) -> Dict[str, Any]:
             if val is not None and ("COP_cool" not in rec or val != rec["COP_cool"]):
                 rec.setdefault("COP_heat", val)
 
-    # MATERIAL conductivity back-calc to R (IP) given known thickness in generator
-    # Wall Material thickness in generator = 0.2 m, R_ip = 0.2 / (0.1761 * conductivity)
+    # MATERIAL conductivity back-calc to R (SI) given known thickness in generator
+    # Wall Material thickness in generator = 0.2 m, R_si = 0.2 / conductivity
     mats = find_objects(objs, "MATERIAL")
     wall_k = None
     roof_k = None
@@ -146,9 +148,9 @@ def extract_from_idf(idf_path: str) -> Dict[str, Any]:
         if "roof material" in name and roof_k is None:
             roof_k = k
     if wall_k:
-        rec["R_wall"] = 0.2 / (0.1761 * wall_k)
+        rec["R_wall"] = 0.2 / wall_k
     if roof_k:
-        rec["R_roof"] = 0.15 / (0.1761 * roof_k)
+        rec["R_roof"] = 0.15 / roof_k
 
     # Derive height and floor area from BUILDINGSURFACE:DETAILED if possible
     surfs = find_objects(objs, "BUILDINGSURFACE:DETAILED")
