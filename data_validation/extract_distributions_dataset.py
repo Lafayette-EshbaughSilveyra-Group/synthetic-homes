@@ -1,7 +1,6 @@
-import os
-import json
-import math
 import csv
+import json
+import os
 from typing import Dict, Any, List, Optional, Tuple
 
 
@@ -28,9 +27,9 @@ def extract_from_geojson(gj: Dict[str, Any]) -> Dict[str, Any]:
     rec["source"] = "geojson"
     rec["name"] = str(props.get("name", props.get("Name", "unknown"))).replace(" ", "_")
     wall_r = props.get("wall_r_value")
-    rec["R_wall"] = float(wall_r) * 0.1761 if wall_r is not None else None
+    rec["R_wall"] = float(wall_r) if wall_r is not None else None
     roof_r = props.get("roof_r_value")
-    rec["R_roof"] = float(roof_r) * 0.1761 if roof_r is not None else None
+    rec["R_roof"] = float(roof_r) if roof_r is not None else None
     rec["U_window"] = props.get("window_u_value")
     rec["ACH"] = props.get("air_change_rate")
     rec["COP_heat"] = props.get("hvac_heating_cop")
@@ -212,9 +211,67 @@ def save_csv_json(rows: List[Dict[str, Any]], out_csv: str, out_json: str):
     if not rows:
         print("No rows to save.")
         return
-    # Determine columns
+
+    def normalize_units(row: Dict[str, Any]) -> None:
+        # Convert R-values from IP to SI (m²·K/W) if they appear to be in IP
+        rv = row.get("R_wall")
+        try:
+            if rv is not None:
+                rv_f = float(rv)
+                if rv_f > 10.0:  # heuristic: IP R-values for walls are typically > 10
+                    row["R_wall"] = rv_f * 0.1761
+        except Exception:
+            pass
+
+        rv = row.get("R_roof")
+        try:
+            if rv is not None:
+                rv_f = float(rv)
+                if rv_f > 10.0:  # heuristic: IP R-values for roofs are typically > 10
+                    row["R_roof"] = rv_f * 0.1761
+        except Exception:
+            pass
+
+        # Convert window U-factor from IP (Btu/h·ft²·°F) to SI (W/m²·K) if clearly in IP range
+        uv = row.get("U_window")
+        try:
+            if uv is not None:
+                uv_f = float(uv)
+                # Typical IP U for windows ~0.2–1.3; SI ~1.1–7.0
+                if 0.1 <= uv_f <= 2.0:
+                    row["U_window"] = uv_f * 5.678
+        except Exception:
+            pass
+
+        # Convert cooling efficiency if values look like SEER instead of COP
+        cc = row.get("COP_cool")
+        try:
+            if cc is not None:
+                cc_f = float(cc)
+                # If clearly SEER (>= 8), convert to COP; if already COP (~2–6), leave
+                if cc_f >= 8.0:
+                    row["COP_cool"] = cc_f / 3.412
+        except Exception:
+            pass
+
+        # Convert heating efficiency if values look like AFUE %
+        ch = row.get("COP_heat")
+        try:
+            if ch is not None:
+                ch_f = float(ch)
+                # AFUE given as percent 50–100
+                if 50.0 <= ch_f <= 100.0:
+                    row["COP_heat"] = ch_f / 100.0
+        except Exception:
+            pass
+
     cols = ["name", "home_path", "source", "R_wall", "R_roof", "U_window", "ACH", "COP_heat", "COP_cool", "area_m2",
             "height_m", "volume_m3"]
+
+    # Normalize units (convert from IP encodings to SI where needed)
+    for r in rows:
+        normalize_units(r)
+
     # Ensure all keys exist
     for r in rows:
         for c in cols:
