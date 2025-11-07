@@ -90,10 +90,16 @@ if (df["Parameter"] == "HVAC Heating Efficiency").any():
 # 3) Wall Insulation -> R_wall_SI (if encoded as R-## in IP)
 if (df["Parameter"] == "Wall Insulation").any():
     sub = df[df["Parameter"] == "Wall Insulation"].copy()
-    sub["r_ip"] = sub["Option"].apply(parse_num)
-    # basic sanity filter
-    sub.loc[~sub["r_ip"].between(1, 60), "r_ip"] = np.nan
-    sub["r_si"] = sub["r_ip"] * 0.1761
+    sub["r_val"] = sub["Option"].apply(parse_num)
+    # If values are already SI (typical range 0.5–10), keep them.
+    # If they look like IP R-values (> 10), convert to SI.
+    def r_to_si(r):
+        if math.isnan(r):
+            return np.nan
+        if r > 10.0:
+            return r * 0.1761  # IP -> SI
+        return r              # assume already SI
+    sub["r_si"] = sub["r_val"].apply(r_to_si)
     qs = weighted_quantile(sub["r_si"], sub["Saturation"], [0.1, 0.5, 0.9])
     rows.append({
         "parameter": "Wall Insulation",
@@ -106,9 +112,14 @@ if (df["Parameter"] == "Wall Insulation").any():
 # 4) Roof Insulation -> R_roof_SI
 if (df["Parameter"] == "Roof Insulation").any():
     sub = df[df["Parameter"] == "Roof Insulation"].copy()
-    sub["r_ip"] = sub["Option"].apply(parse_num)
-    sub.loc[~sub["r_ip"].between(1, 100), "r_ip"] = np.nan
-    sub["r_si"] = sub["r_ip"] * 0.1761
+    sub["r_val"] = sub["Option"].apply(parse_num)
+    def r_to_si_roof(r):
+        if math.isnan(r):
+            return np.nan
+        if r > 10.0:
+            return r * 0.1761
+        return r
+    sub["r_si"] = sub["r_val"].apply(r_to_si_roof)
     qs = weighted_quantile(sub["r_si"], sub["Saturation"], [0.1, 0.5, 0.9])
     rows.append({
         "parameter": "Roof Insulation",
