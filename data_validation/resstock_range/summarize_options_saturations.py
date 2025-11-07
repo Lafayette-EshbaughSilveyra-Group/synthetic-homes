@@ -8,6 +8,20 @@ OUTPUT = "options_saturations_summary.csv"
 
 df = pd.read_csv(INPUT)
 
+# Normalize common column name variants if present
+colmap = {c.lower(): c for c in df.columns}
+
+def rename_if_exists(lower_name: str, target_name: str):
+    if lower_name in colmap:
+        src = colmap[lower_name]
+        if src != target_name:
+            df.rename(columns={src: target_name}, inplace=True)
+
+# Handle typical ResStock-style names
+rename_if_exists("characteristic", "Parameter")
+rename_if_exists("option", "Option")
+rename_if_exists("saturation", "Saturation")
+
 
 def weighted_quantile(values, weights, quantiles):
     values = np.asarray(values, dtype=float)
@@ -88,8 +102,10 @@ if (df["Parameter"] == "HVAC Heating Efficiency").any():
     })
 
 # 3) Wall Insulation -> R_wall_SI (if encoded as R-## in IP)
-if (df["Parameter"] == "Wall Insulation").any():
-    sub = df[df["Parameter"] == "Wall Insulation"].copy()
+wall_mask = df["Parameter"].astype(str).str.contains("Wall", case=False) & \
+            df["Parameter"].astype(str).str.contains("Insulation", case=False)
+if wall_mask.any():
+    sub = df[wall_mask].copy()
     sub["r_val"] = sub["Option"].apply(parse_num)
     # If values are already SI (typical range 0.5–10), keep them.
     # If they look like IP R-values (> 10), convert to SI.
@@ -110,8 +126,10 @@ if (df["Parameter"] == "Wall Insulation").any():
     })
 
 # 4) Roof Insulation -> R_roof_SI
-if (df["Parameter"] == "Roof Insulation").any():
-    sub = df[df["Parameter"] == "Roof Insulation"].copy()
+roof_mask = df["Parameter"].astype(str).str.contains("Roof", case=False) & \
+            df["Parameter"].astype(str).str.contains("Insulation", case=False)
+if roof_mask.any():
+    sub = df[roof_mask].copy()
     sub["r_val"] = sub["Option"].apply(parse_num)
     def r_to_si_roof(r):
         if math.isnan(r):
