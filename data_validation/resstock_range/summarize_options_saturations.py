@@ -172,21 +172,6 @@ if (df["Parameter"] == "Window U-Factor").any():
         "q90": qs[2],
     })
 
-# 6) Infiltration (if present and looks like ACHnat)
-if (df["Parameter"] == "Infiltration").any():
-    sub = df[df["Parameter"] == "Infiltration"].copy()
-    sub["val"] = sub["Option"].apply(parse_num)
-    # crude: keep only plausible ACHnat range
-    sub.loc[~sub["val"].between(0.1, 3.0), "val"] = np.nan
-    qs = weighted_quantile(sub["val"], sub["Saturation"], [0.1, 0.5, 0.9])
-    rows.append({
-        "parameter": "Infiltration",
-        "metric": "ACH_nat",
-        "q10": qs[0],
-        "q50": qs[1],
-        "q90": qs[2],
-    })
-
 summary = pd.DataFrame(rows)
 summary.to_csv(OUTPUT, index=False)
 print(summary)

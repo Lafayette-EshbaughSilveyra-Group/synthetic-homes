@@ -16,7 +16,6 @@ os.makedirs(OUT_DIR, exist_ok=True)
 VARIABLES = [
     ("R_wall",   "R_wall",   "R_wall_SI",      "Wall R-value (m²·K/W)"),
     ("R_roof",   "R_roof",   "R_roof_SI",      "Roof/Attic R-value (m²·K/W)"),
-    ("U_window", "U_window", "U_window_SI",    "Window U-factor (W/m²·K)"),
     ("COP_cool", "COP_cool", "COP_cool",       "Cooling efficiency (COP)"),
     ("COP_heat", "COP_heat", "COP_heat_like",  "Heating efficiency (–)")
 ]
