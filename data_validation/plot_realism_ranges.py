@@ -2,6 +2,8 @@ import os
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from scipy.stats import ks_2samp
+import math
 
 
 # Paths
@@ -19,6 +21,17 @@ VARIABLES = [
     ("COP_cool", "COP_cool", "COP_cool",       "Cooling efficiency (COP)"),
     ("COP_heat", "COP_heat", "COP_heat_like",  "Heating efficiency (–)")
 ]
+
+
+def sample_from_quantiles(q10: float, q50: float, q90: float, size: int) -> np.ndarray:
+    """Create a synthetic reference sample using a triangular distribution
+    with support [q10, q90] and mode at q50. If inputs are invalid, returns empty array."""
+    if any(map(lambda v: (v is None) or (isinstance(v, float) and math.isnan(v)), [q10, q50, q90])):
+        return np.array([])
+    if not (q10 < q50 < q90):
+        return np.array([])
+    # numpy.random.triangular expects a<=mode<=b
+    return np.random.triangular(q10, q50, q90, size=size)
 
 
 def load_data():
@@ -98,10 +111,12 @@ def plot_one(name: str,
         print(f"[ok] {name}: saved {out_path} (coverage {coverage:.1f}% in 10–90%)")
     else:
         print(f"[ok] {name}: saved {out_path} (no valid 10–90% band; plotted ECDF only)")
+    return coverage
 
 
 def main():
     gen, ranges = load_data()
+    rows = []
 
     for name, gen_col, metric, xlabel in VARIABLES:
         if gen_col not in gen.columns:
@@ -127,8 +142,38 @@ def main():
             print(f"[skip] {name}: all values NaN/invalid after cleaning.")
             continue
 
+        # Build a synthetic reference sample from q10/q50/q90 for KS testing
+        ref = sample_from_quantiles(q10, q50, q90, size=max(2000, vals.size * 5))
+        if ref.size > 0:
+            res = ks_2samp(vals, ref, alternative="two-sided", mode="auto")
+            ks_D, ks_p = float(res.statistic), float(res.pvalue)
+            n_ref = int(ref.size)
+        else:
+            ks_D, ks_p = (np.nan, np.nan)
+            n_ref = 0
+
         out_path = os.path.join(OUT_DIR, f"ecdf_{name}.png")
-        plot_one(name, vals, q10, q50, q90, xlabel, out_path)
+        coverage = plot_one(name, vals, q10, q50, q90, xlabel, out_path)
+
+        rows.append({
+            "variable": name,
+            "n_gen": int(vals.size),
+            "n_ref": n_ref,
+            "q10": q10,
+            "q50": q50,
+            "q90": q90,
+            "coverage_pct": float(coverage) if not np.isnan(coverage) else np.nan,
+            "ks_D": float(ks_D) if not np.isnan(ks_D) else np.nan,
+            "ks_p": float(ks_p) if not np.isnan(ks_p) else np.nan,
+        })
+
+    # Write per-variable summary CSV
+    if rows:
+        report_path = os.path.join(OUT_DIR, "realism_summary.csv")
+        pd.DataFrame(rows).to_csv(report_path, index=False)
+        print(f"[ok] Wrote summary CSV: {report_path}")
+    else:
+        print("[warn] No variables processed; no summary CSV written.")
 
 
 if __name__ == "__main__":
