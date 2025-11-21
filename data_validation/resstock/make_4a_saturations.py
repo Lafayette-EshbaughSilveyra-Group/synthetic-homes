@@ -1,4 +1,7 @@
 import pandas as pd
+import numpy as np
+import re
+import math
 from pathlib import Path
 
 METADATA_PATH = Path("baseline_metadata_only.csv")
@@ -87,50 +90,104 @@ def assign_option(row: pd.Series) -> str:
     wall_ins = row.get("in.insulation_wall")
     wall_label = insul_label(wall_ins, "Rwall_", "Rwall_unknown")
 
-    # Cooling COP
+    # --- HVAC parsing helpers for ResStock-style strings ---
+
+    def parse_cooling_cop(text):
+        """
+        Cooling efficiency strings example patterns:
+          'AC, SEER 13'
+          'Room AC, EER 10.7'
+          'ASHP, SEER 13, 7.7 HSPF'
+          'Ducted Heat Pump' (no number)
+        Extract SEER/EER/COP if present and convert to COP.
+        """
+        if pd.isna(text):
+            return np.nan
+        s = str(text)
+
+        m = re.search(r"SEER\s*([0-9]*\.?[0-9]+)", s, flags=re.I)
+        if m:
+            seer = float(m.group(1))
+            return seer / 3.412
+
+        m = re.search(r"EER\s*([0-9]*\.?[0-9]+)", s, flags=re.I)
+        if m:
+            eer = float(m.group(1))
+            return eer / 3.412
+
+        m = re.search(r"COP\s*([0-9]*\.?[0-9]+)", s, flags=re.I)
+        if m:
+            return float(m.group(1))
+
+        return np.nan
+
+
+    def parse_heating_cop(text, heat_type_str):
+        """
+        Heating efficiency strings example patterns:
+          'Fuel Furnace, 80% AFUE'
+          'Fuel Furnace, 92.5% AFUE'
+          'ASHP, SEER 13, 7.7 HSPF'
+        Extract HSPF/AFUE/COP if present and convert to COP-like number.
+        """
+        ht = (heat_type_str or "").lower()
+
+        # Electric resistance-type systems
+        if "electric" in ht and "ashp" not in ht and "heat pump" not in ht:
+            return 1.0
+
+        if pd.isna(text):
+            return np.nan
+        s = str(text)
+
+        # Heat pumps: HSPF -> COP
+        m = re.search(r"HSPF\s*([0-9]*\.?[0-9]+)", s, flags=re.I)
+        if m:
+            hspf = float(m.group(1))
+            return hspf / 3.412
+
+        # Furnaces/boilers: AFUE percent -> fraction (COP-like)
+        m = re.search(r"([0-9]*\.?[0-9]+)\s*%?\s*AFUE", s, flags=re.I)
+        if m:
+            afue = float(m.group(1))
+            if afue > 1.5:
+                afue = afue / 100.0
+            return afue
+
+        # Direct COP if ever present
+        m = re.search(r"COP\s*([0-9]*\.?[0-9]+)", s, flags=re.I)
+        if m:
+            return float(m.group(1))
+
+        return np.nan
+
+
+    # Cooling COP (robust parse from strings)
     cool_eff = row.get("in.hvac_cooling_efficiency")
-    if pd.isna(cool_eff):
+    cop_cool = parse_cooling_cop(cool_eff)
+
+    # fallback: sometimes SEER appears only in heating string for ASHP
+    if math.isnan(cop_cool):
+        cop_cool = parse_cooling_cop(row.get("in.hvac_heating_efficiency"))
+
+    if math.isnan(cop_cool):
         cop_cool_label = "COPc_unknown"
     else:
-        try:
-            val = float(cool_eff)
-            if val >= 8:
-                cop = val / 3.412  # SEER to COP
-            else:
-                cop = val
-            cop = round(cop, 1)
-            cop_str = str(cop).replace('.', 'p')
-            cop_cool_label = f"COPc_{cop_str}"
-        except Exception:
-            cop_cool_label = "COPc_unknown"
+        cop_cool = round(cop_cool, 1)
+        cop_str = str(cop_cool).replace('.', 'p')
+        cop_cool_label = f"COPc_{cop_str}"
 
-    # Heating COP
+    # Heating COP (robust parse from strings + heat type)
     heat_eff = row.get("in.hvac_heating_efficiency")
     heat_type = str(row.get("in.hvac_heating_type_and_fuel", "")).lower()
-    if pd.isna(heat_eff):
+    cop_heat = parse_heating_cop(heat_eff, heat_type)
+
+    if math.isnan(cop_heat):
         cop_heat_label = "COPh_unknown"
     else:
-        try:
-            val = float(heat_eff)
-            if "heat pump" in heat_type:
-                if val > 10:
-                    cop = val / 3.412  # HSPF to COP
-                else:
-                    cop = val
-            elif "electric" in heat_type:
-                cop = 1.0
-            else:
-                # fuel-fired
-                if val > 2:
-                    eff_frac = val / 100.0
-                else:
-                    eff_frac = val
-                cop = eff_frac
-            cop = round(cop, 2)
-            cop_str = str(cop).replace('.', 'p')
-            cop_heat_label = f"COPh_{cop_str}"
-        except Exception:
-            cop_heat_label = "COPh_unknown"
+        cop_heat = round(cop_heat, 2)
+        cop_str = str(cop_heat).replace('.', 'p')
+        cop_heat_label = f"COPh_{cop_str}"
 
     return f"{roof_label}__{wall_label}__{cop_cool_label}__{cop_heat_label}"
 
