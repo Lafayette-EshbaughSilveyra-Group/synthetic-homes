@@ -33,13 +33,17 @@ rows = []
 num_re = re.compile(r"([0-9]*\.?[0-9]+)")
 
 def extract_r(opt, prefix):
-    # find prefix_R-XX or prefix_XX
-    pat = prefix + r"[^,_]*"
-    m = re.search(pat, opt)
+    """Extract numeric R-value from a combined option string.
+    We first grab the whole segment starting with prefix up to the next '__' delimiter,
+    then look for the first number inside (e.g., 'R-30', 'R38').
+    """
+    if not isinstance(opt, str):
+        return np.nan
+    # Capture the full segment like 'Rwall_Wood_Stud,_R-11' or 'Rroof_Finished,_R-30'
+    m = re.search(prefix + r".*?(?=__|$)", opt, flags=re.IGNORECASE)
     if not m:
         return np.nan
     seg = m.group(0)
-    # extract number
     nm = num_re.search(seg)
     if not nm:
         return np.nan
@@ -54,7 +58,7 @@ wall_vals = []
 wall_w = []
 for opt, w in zip(df["Option"], df["Saturation"]):
     if "rwall" in opt.lower():
-        v = extract_r(opt, "Rwall_")
+        v = extract_r(opt, "rwall_")
         if not math.isnan(v) and w > 0:
             wall_vals.append(v)
             wall_w.append(w)
@@ -80,7 +84,7 @@ roof_vals = []
 roof_w = []
 for opt, w in zip(df["Option"], df["Saturation"]):
     if "rroof" in opt.lower():
-        v = extract_r(opt, "Rroof_")
+        v = extract_r(opt, "rroof_")
         if not math.isnan(v) and w > 0:
             roof_vals.append(v)
             roof_w.append(w)
