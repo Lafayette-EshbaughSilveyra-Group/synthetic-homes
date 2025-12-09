@@ -44,7 +44,8 @@ def extract_num_from_segment(seg: str):
     """Extract first number from a segment, else NaN."""
     if not seg:
         return np.nan
-    nm = num_re.search(seg)
+    norm = re.sub(r"(?P<int>\d+)p(?P<frac>\d+)", r"\g<int>.\g<frac>", seg)
+    nm = num_re.search(norm)
     return float(nm.group(1)) if nm else np.nan
 
 
