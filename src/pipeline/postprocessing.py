@@ -74,7 +74,7 @@ def fuse_equal_from_raw(text_raw: float, sim_raw: float, *,
     zs = (sim_raw - muS) / (sdS or 1e-8)
     fused = 0.5 * zt + 0.5 * zs
 
-    # optional symmetric abstain band
+    # symmetric abstain band
     decision = 1 if fused > tau else (0 if fused < -tau else -1)
     return {"fused": fused, "decision": decision, "z_text": zt, "z_sim": zs}
 
@@ -86,8 +86,6 @@ def _get_sim_raw_for_concept(results: dict, concept: str) -> float:
 
     For HVAC we take Electricity:HVAC mean J/hour.
     For Insulation we take Heating Coil Heating Energy mean J/hour (proxy for envelope load).
-
-    Adjust if your scaler was fit on different variables.
     """
     # keys per your extract_results_from_csv()
     # "hvac_electricity": "Electricity:HVAC [J](Hourly)"
@@ -108,9 +106,7 @@ def label_data(results_json: dict, inspection_report: str, home_dir_name: str, c
                ins_scaler_path: str = "energyplus_data/insulation_scaler_params.json",
                tau: float = 0.0) -> dict[str, float | Any]:
     """
-    Uses OpenAI API to label a datapoint based on its results.json and inspection report.
-    If `use_calibrated_fusion` is True and scaler files exist, we fuse per concept via z-scored 50/50.
-    Otherwise we fall back to the legacy weighted average.
+    Uses OpenAI API and heuristic formulas to label a datapoint based on its results.json and inspection report. If `use_calibrated_fusion` is True and scaler files exist, we fuse per concept via z-scored 50/50. Otherwise, we fall back to the legacy weighted average.
     """
 
     def build_text_prompt(inspection_report: str) -> str:

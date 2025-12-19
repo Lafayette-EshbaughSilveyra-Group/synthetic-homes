@@ -98,6 +98,26 @@ def weighted_quantiles(values, weights, qs=(0.1, 0.5, 0.9)):
         out.append(values[loc])
     return out
 
+def weighted_mean(values, weights):
+    values = np.asarray(values, dtype=float)
+    weights = np.asarray(weights, dtype=float)
+    mask = ~np.isnan(values) & ~np.isnan(weights) & (weights > 0)
+    if not mask.any():
+        return np.nan
+    return float(np.average(values[mask], weights=weights[mask]))
+
+
+def weighted_std(values, weights):
+    """Population-style weighted std (consistent with np.average weighting)."""
+    values = np.asarray(values, dtype=float)
+    weights = np.asarray(weights, dtype=float)
+    mask = ~np.isnan(values) & ~np.isnan(weights) & ~np.isnan(weights) & (weights > 0)
+    if not mask.any():
+        return np.nan
+    avg = np.average(values[mask], weights=weights[mask])
+    var = np.average((values[mask] - avg) ** 2, weights=weights[mask])
+    return float(np.sqrt(var))
+
 # 1) HVAC Cooling COP (from combined options like 'COPc_3.2' or 'COPcool_3.2')
 cool_vals = []
 cool_w = []
@@ -112,7 +132,15 @@ for opt, w in zip(df["Option"], df["Saturation"]):
 
 if cool_vals:
     qs = weighted_quantiles(cool_vals, cool_w)
-    rows.append(dict(parameter="HVAC Cooling Efficiency", metric="COP_cool", q10=qs[0], q50=qs[1], q90=qs[2]))
+    rows.append(dict(
+        parameter="HVAC Cooling Efficiency",
+        metric="COP_cool",
+        q10=qs[0],
+        q50=qs[1],
+        q90=qs[2],
+        mean=weighted_mean(cool_vals, cool_w),
+        std=weighted_std(cool_vals, cool_w),
+    ))
 
 # 2) HVAC Heating COP (from combined options like 'COPh_3.0' or 'COPheat_3.0')
 heat_vals = []
@@ -131,7 +159,15 @@ for opt, w in zip(df["Option"], df["Saturation"]):
 
 if heat_vals:
     qs = weighted_quantiles(heat_vals, heat_w)
-    rows.append(dict(parameter="HVAC Heating Efficiency", metric="COP_heat_like", q10=qs[0], q50=qs[1], q90=qs[2]))
+    rows.append(dict(
+        parameter="HVAC Heating Efficiency",
+        metric="COP_heat_like",
+        q10=qs[0],
+        q50=qs[1],
+        q90=qs[2],
+        mean=weighted_mean(heat_vals, heat_w),
+        std=weighted_std(heat_vals, heat_w),
+    ))
 
 # 1) Wall insulation
 wall_vals = []
@@ -145,7 +181,15 @@ for opt, w in zip(df["Option"], df["Saturation"]):
 
 if wall_vals:
     qs = weighted_quantiles(wall_vals, wall_w)
-    rows.append(dict(parameter="Wall Insulation", metric="R_wall_SI", q10=qs[0], q50=qs[1], q90=qs[2]))
+    rows.append(dict(
+        parameter="Wall Insulation",
+        metric="R_wall_SI",
+        q10=qs[0],
+        q50=qs[1],
+        q90=qs[2],
+        mean=weighted_mean(wall_vals, wall_w),
+        std=weighted_std(wall_vals, wall_w),
+    ))
 
 # 2) Roof insulation
 roof_vals = []
@@ -159,7 +203,15 @@ for opt, w in zip(df["Option"], df["Saturation"]):
 
 if roof_vals:
     qs = weighted_quantiles(roof_vals, roof_w)
-    rows.append(dict(parameter="Roof Insulation", metric="R_roof_SI", q10=qs[0], q50=qs[1], q90=qs[2]))
+    rows.append(dict(
+        parameter="Roof Insulation",
+        metric="R_roof_SI",
+        q10=qs[0],
+        q50=qs[1],
+        q90=qs[2],
+        mean=weighted_mean(roof_vals, roof_w),
+        std=weighted_std(roof_vals, roof_w),
+    ))
 
 summary = pd.DataFrame(rows)
 summary.to_csv(OUTPUT, index=False)

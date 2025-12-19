@@ -51,16 +51,18 @@ def ecdf(x: np.ndarray):
     return x, y
 
 
-def get_range(summary_df: pd.DataFrame, metric: str):
+def get_resstock_stats(summary_df: pd.DataFrame, metric: str):
     sub = summary_df[summary_df["metric"] == metric]
     if sub.empty:
         return None
     row = sub.iloc[0]
-    # Some summaries might be missing q10/q90; handle robustly
+    # Some summaries might be missing fields; handle robustly
     q10 = float(row.get("q10", np.nan))
     q50 = float(row.get("q50", np.nan))
     q90 = float(row.get("q90", np.nan))
-    return q10, q50, q90
+    mean = float(row.get("mean", np.nan))
+    std = float(row.get("std", np.nan))
+    return q10, q50, q90, mean, std
 
 
 def plot_one(name: str,
@@ -68,6 +70,7 @@ def plot_one(name: str,
              q10: float,
              q50: float,
              q90: float,
+             mean: float,
              xlabel: str,
              out_path: str):
     if gen_vals.size == 0:
@@ -88,6 +91,10 @@ def plot_one(name: str,
     # ResStock median
     if not np.isnan(q50):
         plt.axvline(q50, linestyle="--", linewidth=1.5, label="ResStock median")
+
+    # ResStock mean
+    if not np.isnan(mean):
+        plt.axvline(mean, linestyle=":", linewidth=1.8, label="ResStock mean")
 
     # Coverage metric: % of generated samples within [q10, q90]
     coverage = np.nan
@@ -123,12 +130,12 @@ def main():
             print(f"[skip] {name}: generated column '{gen_col}' not found in {GEN_CSV}")
             continue
 
-        rng = get_range(ranges, metric)
-        if rng is None:
+        stats = get_resstock_stats(ranges, metric)
+        if stats is None:
             print(f"[skip] {name}: metric '{metric}' not found in {RANGE_CSV}")
             continue
 
-        q10, q50, q90 = rng
+        q10, q50, q90, rs_mean, rs_std = stats
 
         vals = (
             gen[gen_col]
@@ -142,6 +149,8 @@ def main():
             print(f"[skip] {name}: all values NaN/invalid after cleaning.")
             continue
 
+        syn_std = float(np.std(vals, ddof=1)) if vals.size > 1 else np.nan
+
         # Build a synthetic reference sample from q10/q50/q90 for KS testing
         ref = sample_from_quantiles(q10, q50, q90, size=max(2000, vals.size * 5))
         if ref.size > 0:
@@ -153,7 +162,7 @@ def main():
             n_ref = 0
 
         out_path = os.path.join(OUT_DIR, f"ecdf_{name}.png")
-        coverage = plot_one(name, vals, q10, q50, q90, xlabel, out_path)
+        coverage = plot_one(name, vals, q10, q50, q90, rs_mean, xlabel, out_path)
 
         rows.append({
             "variable": name,
@@ -162,6 +171,9 @@ def main():
             "q10": q10,
             "q50": q50,
             "q90": q90,
+            "resstock_mean": float(rs_mean) if not np.isnan(rs_mean) else np.nan,
+            "resstock_std": float(rs_std) if not np.isnan(rs_std) else np.nan,
+            "synthetic_std": syn_std,
             "coverage_pct": float(coverage) if not np.isnan(coverage) else np.nan,
             "ks_D": float(ks_D) if not np.isnan(ks_D) else np.nan,
             "ks_p": float(ks_p) if not np.isnan(ks_p) else np.nan,
