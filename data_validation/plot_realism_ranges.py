@@ -121,6 +121,102 @@ def plot_one(name: str,
     return coverage
 
 
+def plot_hist_overlay(name: str,
+                      gen_vals: np.ndarray,
+                      ref_vals: np.ndarray,
+                      q10: float,
+                      q90: float,
+                      xlabel: str,
+                      out_path: str):
+    """Overlay histograms of generated values and a ResStock reference sample.
+
+    Note: `ref_vals` is an approximate ResStock reference distribution constructed
+    from quantiles (see `sample_from_quantiles`).
+    """
+    if gen_vals.size == 0:
+        print(f"[skip] {name}: no generated data for histogram.")
+        return
+
+    plt.figure(figsize=(6, 4))
+
+    # Use a shared binning so the two histograms are directly comparable.
+    all_vals = gen_vals
+    if ref_vals is not None and ref_vals.size > 0:
+        all_vals = np.concatenate([gen_vals, ref_vals])
+
+    # Robust bin count (avoid too many bins for small samples)
+    n_bins = int(np.clip(np.sqrt(all_vals.size), 15, 60))
+
+    plt.hist(gen_vals, bins=n_bins, density=True, alpha=0.55, label="Generated homes")
+
+    if ref_vals is not None and ref_vals.size > 0:
+        plt.hist(ref_vals, bins=n_bins, density=True, alpha=0.35,
+                 label="ResStock ref (triangular approx)")
+
+    # ResStock 10–90% band for visual context
+    if not np.isnan(q10) and not np.isnan(q90) and q10 < q90:
+        plt.axvspan(q10, q90, alpha=0.12, label="ResStock 10–90%")
+
+    plt.title(f"{name} histogram overlay")
+    plt.xlabel(xlabel)
+    plt.ylabel("Density")
+    plt.grid(alpha=0.2)
+    plt.legend(loc="best")
+    plt.tight_layout()
+    plt.savefig(out_path, dpi=300)
+    plt.close()
+    print(f"[ok] {name}: saved {out_path} (hist overlay)")
+
+
+def plot_boxplots(name: str,
+                  gen_vals: np.ndarray,
+                  ref_vals: np.ndarray,
+                  q10: float,
+                  q50: float,
+                  q90: float,
+                  xlabel: str,
+                  out_path: str):
+    """Side-by-side boxplots of generated values and a ResStock reference sample.
+
+    Note: `ref_vals` is an approximate ResStock reference distribution constructed
+    from quantiles (see `sample_from_quantiles`).
+    """
+    if gen_vals.size == 0:
+        print(f"[skip] {name}: no generated data for boxplot.")
+        return
+
+    data = [gen_vals]
+    labels = ["Generated homes"]
+
+    if ref_vals is not None and ref_vals.size > 0:
+        data.append(ref_vals)
+        labels.append("ResStock ref\n(triangular approx)")
+
+    plt.figure(figsize=(6, 4))
+    plt.boxplot(data, labels=labels, showfliers=True)
+
+    # Draw ResStock quantile markers for context (only if provided)
+    # These are x-positioned at the ResStock box (2) if it exists, else at 1.
+    x_pos = 2 if (ref_vals is not None and ref_vals.size > 0) else 1
+    if not np.isnan(q10):
+        plt.scatter([x_pos], [q10], marker="o", s=25, label="ResStock q10")
+    if not np.isnan(q50):
+        plt.scatter([x_pos], [q50], marker="D", s=25, label="ResStock q50")
+    if not np.isnan(q90):
+        plt.scatter([x_pos], [q90], marker="o", s=25, label="ResStock q90")
+
+    plt.title(f"{name} boxplot comparison")
+    plt.ylabel(xlabel)
+    plt.grid(alpha=0.2, axis="y")
+    # Keep legend from covering boxes when only one distribution is present
+    if (not np.isnan(q10)) or (not np.isnan(q50)) or (not np.isnan(q90)):
+        plt.legend(loc="best")
+    plt.tight_layout()
+    plt.savefig(out_path, dpi=300)
+    plt.close()
+    print(f"[ok] {name}: saved {out_path} (boxplot)")
+
+
 def main():
     gen, ranges = load_data()
     rows = []
@@ -163,6 +259,13 @@ def main():
 
         out_path = os.path.join(OUT_DIR, f"ecdf_{name}.png")
         coverage = plot_one(name, vals, q10, q50, q90, rs_mean, xlabel, out_path)
+
+        # Histogram overlay and boxplot comparisons against an approximate ResStock reference
+        out_hist = os.path.join(OUT_DIR, f"hist_overlay_{name}.png")
+        plot_hist_overlay(name, vals, ref, q10, q90, xlabel, out_hist)
+
+        out_box = os.path.join(OUT_DIR, f"boxplot_{name}.png")
+        plot_boxplots(name, vals, ref, q10, q50, q90, xlabel, out_box)
 
         rows.append({
             "variable": name,

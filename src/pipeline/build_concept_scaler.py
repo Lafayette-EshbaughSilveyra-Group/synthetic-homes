@@ -87,7 +87,7 @@ def _nearest_index(value: float, bins: list[float]) -> int:
 
 # ---- text composition per concept ----
 def _compose_hvac_text(meta_row: dict) -> tuple[str, int]:
-    # Levels defined by your factorial:
+    # Levels defined by factorial:
     heat_bins = [0.7, 0.8, 0.9, 0.95, 1.0]
     cool_bins = [1.0, 2.0, 3.0, 3.5, 4.0]
     h_idx = _nearest_index(meta_row["hvac_heating_cop"], heat_bins)
