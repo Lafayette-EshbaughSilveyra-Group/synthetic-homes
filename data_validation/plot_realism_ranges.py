@@ -86,7 +86,7 @@ def plot_one(name: str,
 
     # ResStock 10–90% band
     if not np.isnan(q10) and not np.isnan(q90) and q10 < q90:
-        plt.axvspan(q10, q90, alpha=0.15, label="ResStock 10–90%")
+        plt.axvspan(q10, q90, alpha=0.15, label="ResStock 10-90%")
 
     # ResStock median
     if not np.isnan(q50):
@@ -155,7 +155,7 @@ def plot_hist_overlay(name: str,
 
     # ResStock 10–90% band for visual context
     if not np.isnan(q10) and not np.isnan(q90) and q10 < q90:
-        plt.axvspan(q10, q90, alpha=0.12, label="ResStock 10–90%")
+        plt.axvspan(q10, q90, alpha=0.12, label="ResStock 10-90%")
 
     plt.title(f"{name} histogram overlay")
     plt.xlabel(xlabel)
@@ -193,7 +193,7 @@ def plot_boxplots(name: str,
         labels.append("ResStock ref\n(triangular approx)")
 
     plt.figure(figsize=(6, 4))
-    plt.boxplot(data, labels=labels, showfliers=True)
+    plt.boxplot(data, tick_labels=labels, showfliers=True)
 
     # Draw ResStock quantile markers for context (only if provided)
     # These are x-positioned at the ResStock box (2) if it exists, else at 1.
