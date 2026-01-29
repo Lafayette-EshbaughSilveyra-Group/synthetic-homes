@@ -131,13 +131,15 @@ for opt, w in zip(df["Option"], df["Saturation"]):
         cool_w.append(w)
 
 if cool_vals:
-    qs = weighted_quantiles(cool_vals, cool_w)
+    qs = weighted_quantiles(cool_vals, cool_w, qs=(0.10, 0.25, 0.50, 0.75, 0.90))
     rows.append(dict(
         parameter="HVAC Cooling Efficiency",
         metric="COP_cool",
         q10=qs[0],
-        q50=qs[1],
-        q90=qs[2],
+        q25=qs[1],
+        q50=qs[2],
+        q75=qs[3],
+        q90=qs[4],
         mean=weighted_mean(cool_vals, cool_w),
         std=weighted_std(cool_vals, cool_w),
     ))
@@ -158,13 +160,15 @@ for opt, w in zip(df["Option"], df["Saturation"]):
         heat_w.append(w)
 
 if heat_vals:
-    qs = weighted_quantiles(heat_vals, heat_w)
+    qs = weighted_quantiles(heat_vals, heat_w, qs=(0.10, 0.25, 0.50, 0.75, 0.90))
     rows.append(dict(
         parameter="HVAC Heating Efficiency",
         metric="COP_heat_like",
         q10=qs[0],
-        q50=qs[1],
-        q90=qs[2],
+        q25=qs[1],
+        q50=qs[2],
+        q75=qs[3],
+        q90=qs[4],
         mean=weighted_mean(heat_vals, heat_w),
         std=weighted_std(heat_vals, heat_w),
     ))
@@ -180,13 +184,15 @@ for opt, w in zip(df["Option"], df["Saturation"]):
             wall_w.append(w)
 
 if wall_vals:
-    qs = weighted_quantiles(wall_vals, wall_w)
+    qs = weighted_quantiles(wall_vals, wall_w, qs=(0.10, 0.25, 0.50, 0.75, 0.90))
     rows.append(dict(
         parameter="Wall Insulation",
         metric="R_wall_SI",
         q10=qs[0],
-        q50=qs[1],
-        q90=qs[2],
+        q25=qs[1],
+        q50=qs[2],
+        q75=qs[3],
+        q90=qs[4],
         mean=weighted_mean(wall_vals, wall_w),
         std=weighted_std(wall_vals, wall_w),
     ))
@@ -202,13 +208,15 @@ for opt, w in zip(df["Option"], df["Saturation"]):
             roof_w.append(w)
 
 if roof_vals:
-    qs = weighted_quantiles(roof_vals, roof_w)
+    qs = weighted_quantiles(roof_vals, roof_w, qs=(0.10, 0.25, 0.50, 0.75, 0.90))
     rows.append(dict(
         parameter="Roof Insulation",
         metric="R_roof_SI",
         q10=qs[0],
-        q50=qs[1],
-        q90=qs[2],
+        q25=qs[1],
+        q50=qs[2],
+        q75=qs[3],
+        q90=qs[4],
         mean=weighted_mean(roof_vals, roof_w),
         std=weighted_std(roof_vals, roof_w),
     ))
