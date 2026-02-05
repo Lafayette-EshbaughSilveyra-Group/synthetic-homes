@@ -95,7 +95,7 @@ def generate_geojson_and_note(house_data: Dict[str, Any], image_path: str, sketc
     - A detailed floorplan description: "{floorplan_description}"
 
     Your tasks:
-    1️⃣ Generate a **GeoJSON file** for this building with:
+    1. Generate a **GeoJSON file** for this building with:
     - A plausible (longitude, latitude) location in Bethlehem, PA.
     - A "FeatureCollection" containing exactly **one Feature**.
     - Geometry: Polygon or MultiPolygon representing the building footprint, realistic for the reported square footage and building style.
@@ -120,7 +120,7 @@ def generate_geojson_and_note(house_data: Dict[str, Any], image_path: str, sketc
         - "roof_r_value"
         - "air_change_rate" (0-1)
 
-    2️⃣ Write a short **inspection note** as if you had toured the home, focusing on energy-related observations: insulation, HVAC type/age, visible windows, and any inferred upgrades.
+    2. Write a short **inspection note** as if you had toured the home, focusing on energy-related observations: insulation, HVAC type/age, visible windows, and any inferred upgrades.
 
     **Strict Guidelines:**
     - Only base your outputs on the provided data and descriptions.
