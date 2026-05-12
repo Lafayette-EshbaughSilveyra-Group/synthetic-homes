@@ -354,10 +354,12 @@ def generate_geojson_and_note(house_data: Dict[str, Any], image_path: str, sketc
             f"Generated footprint unreasonable: {info}"
         )
 
-    raise ValueError(
-        f"Generated geometry footprint unreasonable after "
-        f"{max_generation_attempts} attempts: {last_error}"
+    print(
+        f"[GEOMETRY WARNING] Geometry remained outside target bounds after "
+        f"{max_generation_attempts} attempts; keeping final generated output: {last_error}"
     )
+
+    return parsed
 
 
 def clean_gpt_geojson(gpt_output: Dict[str, Any]) -> Dict[str, Any]:

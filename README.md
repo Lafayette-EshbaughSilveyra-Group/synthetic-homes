@@ -15,13 +15,13 @@ Additionally, **occlusion experiments** analyze model sensitivity to localized i
 
 ## Publication
 
-Jackson Eshbaugh, Chetan Tiwari, Jorge Silveyra. _A Modular and Multimodal Generative AI Framework for Urban Building Energy Data: Generating Synthetic Homes_. [arXiv:2509.09794](https://arxiv.org/abs/2509.09794).
+Jackson Eshbaugh, Chetan Tiwari, Jorge Silveyra. _Synthetic Homes: A Multimodal Generative AI Pipeline for Residential Building Generation Under Data Scarcity_. [arXiv:2509.09794](https://arxiv.org/abs/2509.09794).
 
 ```bibtex
 @misc{eshbaugh2025modularmultimodalgenerativeai,
-      title={A Modular and Multimodal Generative AI Framework for Urban Building Energy Data: Generating Synthetic Homes}, 
+      title={Synthetic Homes: A Multimodal Generative AI Pipeline for Residential Building Generation Under Data Scarcity}, 
       author={Jackson Eshbaugh and Chetan Tiwari and Jorge Silveyra},
-      year={2025},
+      year={2026},
       eprint={2509.09794},
       archivePrefix={arXiv},
       primaryClass={cs.AI},

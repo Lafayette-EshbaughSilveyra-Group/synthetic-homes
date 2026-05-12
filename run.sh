@@ -11,7 +11,7 @@ NC='\033[0m' # No Color
 
 while true; do
   echo "Urban Energy Data Pipeline"
-  echo "(c) 2025 Eshbaugh et al"
+  echo "(c) 2026 Eshbaugh et al"
   echo "============================"
   echo "What would you like to run?"
   echo
