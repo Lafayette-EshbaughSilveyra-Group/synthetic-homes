@@ -24,6 +24,7 @@ import uuid
 from datetime import datetime, timedelta
 import base64
 import shutil
+from copy import deepcopy
 from typing import Dict, Any
 from pipeline.llava_processing import describe_exterior, describe_floorplan
 from pyproj import Geod
@@ -107,11 +108,79 @@ def compute_polygon_area_ft2(geometry):
         raise ValueError(f"Unsupported geometry type: {geom_type}")
 
 
+def scale_geometry_to_target_area(geometry, house_data):
+    """
+    Deterministically rescales a generated GeoJSON footprint around its centroid
+    so that its area is closer to the metadata-derived target footprint area.
+
+    This preserves the model-generated shape approximately while correcting
+    unrealistic coordinate scale.
+    """
+
+    target_area = estimate_target_footprint_area(house_data)
+
+    if target_area is None or target_area <= 0:
+        return geometry
+
+    current_area = compute_polygon_area_ft2(geometry)
+
+    if current_area <= 0:
+        return geometry
+
+    scale_factor = (target_area / current_area) ** 0.5
+    scaled_geometry = deepcopy(geometry)
+
+    def collect_points_from_polygon(coords):
+        points = []
+        for ring in coords:
+            points.extend(ring)
+        return points
+
+    geom_type = scaled_geometry.get("type")
+
+    if geom_type == "Polygon":
+        all_points = collect_points_from_polygon(scaled_geometry["coordinates"])
+    elif geom_type == "MultiPolygon":
+        all_points = []
+        for polygon in scaled_geometry["coordinates"]:
+            all_points.extend(collect_points_from_polygon(polygon))
+    else:
+        raise ValueError(f"Unsupported geometry type: {geom_type}")
+
+    if not all_points:
+        return geometry
+
+    center_lon = sum(point[0] for point in all_points) / len(all_points)
+    center_lat = sum(point[1] for point in all_points) / len(all_points)
+
+    def scale_ring(ring):
+        scaled_ring = []
+        for lon, lat in ring:
+            new_lon = center_lon + (lon - center_lon) * scale_factor
+            new_lat = center_lat + (lat - center_lat) * scale_factor
+            scaled_ring.append([new_lon, new_lat])
+
+        if scaled_ring and scaled_ring[0] != scaled_ring[-1]:
+            scaled_ring.append(scaled_ring[0])
+
+        return scaled_ring
+
+    if geom_type == "Polygon":
+        scaled_geometry["coordinates"] = [scale_ring(ring) for ring in scaled_geometry["coordinates"]]
+    elif geom_type == "MultiPolygon":
+        scaled_geometry["coordinates"] = [
+            [scale_ring(ring) for ring in polygon]
+            for polygon in scaled_geometry["coordinates"]
+        ]
+
+    return scaled_geometry
+
+
 def geometry_is_reasonable(
     geometry,
     house_data,
-    lower_ratio=0.5,
-    upper_ratio=2.0
+    lower_ratio=0.4,
+    upper_ratio=2.5
 ):
     """
     Checks whether generated geometry footprint area is
@@ -309,7 +378,7 @@ def generate_geojson_and_note(house_data: Dict[str, Any], image_path: str, sketc
         )
 
     # ----- API Call + Geometry Validation -----
-    max_generation_attempts = 3
+    max_generation_attempts = 6
     last_error = None
 
     for attempt in range(max_generation_attempts):
@@ -325,6 +394,10 @@ def generate_geojson_and_note(house_data: Dict[str, Any], image_path: str, sketc
             Target footprint area: {last_error.get('target_area_ft2', 'unknown')} ft²
             Generated footprint area: {last_error.get('generated_area_ft2', 'unknown')} ft²
             Generated/target area ratio: {last_error.get('ratio', 'unknown')}
+
+            If the generated/target area ratio is greater than 1, the footprint is too large; reduce the coordinate span.
+            If the generated/target area ratio is less than 1, the footprint is too small; increase the coordinate span.
+            Adjust the footprint scale while preserving a compact residential building shape.
 
             Regenerate the full raw JSON object, but correct the GeoJSON geometry so that:
             - the footprint area is approximately consistent with the target footprint area,
@@ -356,8 +429,31 @@ def generate_geojson_and_note(house_data: Dict[str, Any], image_path: str, sketc
 
     print(
         f"[GEOMETRY WARNING] Geometry remained outside target bounds after "
-        f"{max_generation_attempts} attempts; keeping final generated output: {last_error}"
+        f"{max_generation_attempts} attempts; applying deterministic scale correction: {last_error}"
     )
+
+    geometry = get_generated_geometry(parsed)
+
+    if not geometry:
+        raise ValueError(
+            f"Generated geometry missing after {max_generation_attempts} attempts: {last_error}"
+        )
+
+    scaled_geometry = scale_geometry_to_target_area(geometry, house_data)
+
+    parsed["geojson"]["features"][0]["geometry"] = scaled_geometry
+
+    valid, info = geometry_is_reasonable(
+        scaled_geometry,
+        house_data
+    )
+
+    if not valid:
+        raise ValueError(
+            f"Generated geometry remained unreasonable after corrective scaling: {info}"
+        )
+
+    print(f"[GEOMETRY SCALED] Corrected generated footprint scale: {info}")
 
     return parsed
 
