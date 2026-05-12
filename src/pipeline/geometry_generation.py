@@ -26,7 +26,119 @@ import base64
 import shutil
 from typing import Dict, Any
 from pipeline.llava_processing import describe_exterior, describe_floorplan
+from pyproj import Geod
 
+
+def safe_float(val, default=None):
+    """
+    Safely converts values to float.
+    """
+    try:
+        if val is None:
+            return default
+        return float(str(val).replace(",", "").strip())
+    except:
+        return default
+
+
+def estimate_target_footprint_area(house_data):
+    """
+    Estimates target building footprint area in ft².
+
+    Uses:
+        footprint_area ≈ total_floor_area / number_of_stories
+    """
+
+    floor_area = safe_float(
+        house_data.get("Total Square Feet Living Area")
+    )
+
+    stories = safe_float(
+        house_data.get("Number of Stories"),
+        default=1
+    )
+
+    if floor_area is None or floor_area <= 0:
+        return None
+
+    if stories is None or stories <= 0:
+        stories = 1
+
+    return floor_area / stories
+
+
+def compute_polygon_area_ft2(geometry):
+    """
+    Computes GeoJSON polygon area in ft².
+
+    Supports:
+    - Polygon
+    - MultiPolygon
+    """
+
+    geod = Geod(ellps='WGS84')
+
+    def polygon_area(coords):
+        ring = coords[0]
+
+        lons = [p[0] for p in ring]
+        lats = [p[1] for p in ring]
+
+        area_m2, _ = geod.polygon_area_perimeter(lons, lats)
+
+        area_m2 = abs(area_m2)
+
+        return area_m2 * 10.76391  # m² → ft²
+
+    geom_type = geometry.get("type")
+
+    if geom_type == "Polygon":
+        return polygon_area(geometry["coordinates"])
+
+    elif geom_type == "MultiPolygon":
+        total = 0
+
+        for polygon in geometry["coordinates"]:
+            total += polygon_area(polygon)
+
+        return total
+
+    else:
+        raise ValueError(f"Unsupported geometry type: {geom_type}")
+
+
+def geometry_is_reasonable(
+    geometry,
+    house_data,
+    lower_ratio=0.5,
+    upper_ratio=2.0
+):
+    """
+    Checks whether generated geometry footprint area is
+    reasonably consistent with estimated target footprint area.
+
+    Returns:
+        (bool, dict)
+    """
+
+    target_area = estimate_target_footprint_area(house_data)
+
+    if target_area is None:
+        return True, {
+            "reason": "missing_target_area"
+        }
+
+    generated_area = compute_polygon_area_ft2(geometry)
+
+    ratio = generated_area / target_area
+
+    is_valid = lower_ratio <= ratio <= upper_ratio
+
+    return is_valid, {
+        "target_area_ft2": target_area,
+        "generated_area_ft2": generated_area,
+        "ratio": ratio
+    }
 
 def run_generation_for_dataset(dataset_dir: str, client: Any) -> None:
     """
@@ -85,6 +197,13 @@ def generate_geojson_and_note(house_data: Dict[str, Any], image_path: str, sketc
     exterior_description = describe_exterior(image_path)
     floorplan_description = describe_floorplan(sketch_path)
 
+    target_footprint_area = estimate_target_footprint_area(house_data)
+    target_footprint_text = (
+        f"{target_footprint_area:.1f} square feet"
+        if target_footprint_area is not None
+        else "unknown; estimate conservatively from the floorplan description"
+    )
+
     # ----- Prompt Setup -----
     prompt = f"""
     You are a certified home energy inspection expert and data specialist building synthetic training data for an AI model.
@@ -98,7 +217,13 @@ def generate_geojson_and_note(house_data: Dict[str, Any], image_path: str, sketc
     1. Generate a **GeoJSON file** for this building with:
     - A plausible (longitude, latitude) location in Bethlehem, PA.
     - A "FeatureCollection" containing exactly **one Feature**.
-    - Geometry: Polygon or MultiPolygon representing the building footprint, realistic for the reported square footage and building style.
+    - Geometry: Polygon or MultiPolygon representing an approximate simulation-ready building footprint.
+    - The geometry should be realistic in scale for the reported square footage, number of stories, and building style.
+    - Use the floorplan description to infer approximate shape, but use the structured property data to control scale.
+    - Target approximate footprint area: {target_footprint_text}.
+    - The generated polygon should represent the building footprint, not the parcel or lot boundary.
+    - The polygon area should be within approximately 20-30% of the target footprint area when possible.
+    - Avoid large coordinate spans. For typical residential homes in Bethlehem, PA, longitude/latitude differences should usually be very small.
     - Properties from the provided JSON:
         - "Year Built"
         - "Total Square Feet Living Area"
@@ -127,6 +252,9 @@ def generate_geojson_and_note(house_data: Dict[str, Any], image_path: str, sketc
     - Do not invent details not clearly supported by the inputs.
     - Ensure the GeoJSON is valid and realistic.
     - Coordinates should place the home plausibly in Bethlehem, PA.
+    - Do not generate parcel-sized rectangles.
+    - Do not use coordinate differences such as 0.0005 degrees unless the resulting footprint area is consistent with the target footprint area.
+    - Prefer compact residential-scale polygons.
 
     Here is the structured property data:
 
@@ -157,21 +285,79 @@ def generate_geojson_and_note(house_data: Dict[str, Any], image_path: str, sketc
     No backticks or explanation.
     """
 
-    # ----- API Call -----
-    response = client.chat.completions.create(
-        model="gpt-4.1-mini",
-        messages=[
-            {
-                "role": "user",
-                "content": prompt
-            }
-        ],
-        temperature=0.7
-    )
+    def call_generation_model(current_prompt: str) -> Dict[str, Any]:
+        response = client.chat.completions.create(
+            model="gpt-4.1-mini",
+            messages=[
+                {
+                    "role": "user",
+                    "content": current_prompt
+                }
+            ],
+            temperature=0.7
+        )
 
-    # ----- Parse -----
-    reply = response.choices[0].message.content
-    return json.loads(reply)
+        reply = response.choices[0].message.content
+        return json.loads(reply)
+
+    def get_generated_geometry(parsed_output: Dict[str, Any]):
+        return (
+            parsed_output
+            .get("geojson", {})
+            .get("features", [{}])[0]
+            .get("geometry")
+        )
+
+    # ----- API Call + Geometry Validation -----
+    max_generation_attempts = 3
+    last_error = None
+
+    for attempt in range(max_generation_attempts):
+        current_prompt = prompt
+
+        if attempt > 0 and last_error is not None:
+            current_prompt = f"""
+            {prompt}
+
+            IMPORTANT CORRECTION:
+            Your previous GeoJSON geometry was rejected because its footprint area was not realistic in scale.
+
+            Target footprint area: {last_error.get('target_area_ft2', 'unknown')} ft²
+            Generated footprint area: {last_error.get('generated_area_ft2', 'unknown')} ft²
+            Generated/target area ratio: {last_error.get('ratio', 'unknown')}
+
+            Regenerate the full raw JSON object, but correct the GeoJSON geometry so that:
+            - the footprint area is approximately consistent with the target footprint area,
+            - the geometry represents the building footprint, not the parcel or lot boundary,
+            - the coordinates remain plausible for Bethlehem, PA,
+            - the output remains valid raw JSON with the same top-level structure.
+            """
+
+        parsed = call_generation_model(current_prompt)
+        geometry = get_generated_geometry(parsed)
+
+        if not geometry:
+            last_error = {"reason": "missing_geometry"}
+            continue
+
+        valid, info = geometry_is_reasonable(
+            geometry,
+            house_data
+        )
+
+        if valid:
+            return parsed
+
+        last_error = info
+        print(
+            f"[GEOMETRY RETRY {attempt + 1}/{max_generation_attempts}] "
+            f"Generated footprint unreasonable: {info}"
+        )
+
+    raise ValueError(
+        f"Generated geometry footprint unreasonable after "
+        f"{max_generation_attempts} attempts: {last_error}"
+    )
 
 
 def clean_gpt_geojson(gpt_output: Dict[str, Any]) -> Dict[str, Any]:
