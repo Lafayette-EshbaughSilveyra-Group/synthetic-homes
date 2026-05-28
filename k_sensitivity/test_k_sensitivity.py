@@ -31,7 +31,7 @@ import math
 import statistics
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
+from typing import Any, Dict, List, Optional, Sequence
 
 
 DATASET_DIR = Path("../dataset")
@@ -172,6 +172,7 @@ def as_float(value: Any) -> Optional[float]:
         return None
 
 
+
 def nearest_level(parameter_name: str, value: Any) -> Optional[int]:
     numeric_value = as_float(value)
     if numeric_value is None:
@@ -182,15 +183,27 @@ def nearest_level(parameter_name: str, value: Any) -> Optional[int]:
     return index + 1
 
 
+def normalize_ordinal_level(value: Any) -> Optional[int]:
+    """Normalize either zero-based 0..4 rungs or one-based 1..5 levels to 1..5."""
+    numeric_value = as_float(value)
+    if numeric_value is None:
+        return None
+
+    rounded = int(round(numeric_value))
+    if 1 <= rounded <= 5:
+        return rounded
+    if 0 <= rounded <= 4:
+        return rounded + 1
+    return None
+
+
 def extract_level(record: Dict[str, Any], level_keys: Sequence[str], parameter_name: str) -> Optional[int]:
     """Extract an ordinal level from explicit level keys or parameter values."""
     for key in level_keys:
         value = record.get(key)
-        numeric_value = as_float(value)
-        if numeric_value is not None:
-            rounded = int(round(numeric_value))
-            if 1 <= rounded <= 5:
-                return rounded
+        normalized_level = normalize_ordinal_level(value)
+        if normalized_level is not None:
+            return normalized_level
 
     # Try common nested parameter locations.
     for container_key in ("params", "parameters", "features", "properties", "metadata"):
@@ -378,11 +391,22 @@ def load_calibration_rows_by_k() -> Dict[str, List[RawExample]]:
     for k_name, rows in rows_by_k.items():
         if not rows:
             raise RuntimeError(f"No calibration rows found for {k_name}.")
+        if rows:
+            example_ids_preview = ", ".join(row.example_id for row in rows[:3])
+            print(f"{k_name}: example preview: {example_ids_preview}")
         expected = len(LEVEL_SETS[k_name]) ** 4
         print(f"{k_name}: loaded {len(rows)} calibration rows; expected approximately {expected}.")
 
     if skipped:
         print(f"Skipped {skipped} calibration rows while filtering by k.")
+
+    if not rows_by_k["k2"]:
+        print(
+            "No k2 rows were found. This usually means the metadata keys used for "
+            "factorial levels do not match the extraction logic. Inspect the first "
+            "few records in energyplus_data/factorial_meta.json and update "
+            "extract_calibration_levels accordingly."
+        )
 
     return rows_by_k
 
