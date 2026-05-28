@@ -187,128 +187,13 @@ def nearest_level(parameter_name: str, value: Any) -> Optional[int]:
     return index + 1
 
 
-def normalize_ordinal_level(value: Any, *, zero_based: Optional[bool] = None) -> Optional[int]:
-    """Normalize ordinal rungs to one-based levels 1..5.
-
-    If zero_based is True, values 0..4 become 1..5. If zero_based is False,
-    values 1..5 remain 1..5. If zero_based is None, use a conservative fallback
-    that treats 0 as level 1 and 5 as level 5, but cannot disambiguate 1..4.
-    """
-    numeric_value = as_float(value)
-    if numeric_value is None:
-        return None
-
-    rounded = int(round(numeric_value))
-    if zero_based is True:
-        if 0 <= rounded <= 4:
-            return rounded + 1
-        return None
-    if zero_based is False:
-        if 1 <= rounded <= 5:
-            return rounded
-        return None
-
-    if rounded == 0:
-        return 1
-    if rounded == 5:
-        return 5
-    if 1 <= rounded <= 4:
-        return rounded
-    return None
-
-
-def extract_level(
-    record: Dict[str, Any],
-    level_keys: Sequence[str],
-    parameter_name: str,
-    *,
-    zero_based_levels: Optional[bool] = None,
-) -> Optional[int]:
-    """Extract an ordinal level from explicit level keys or parameter values."""
-    for key in level_keys:
-        value = record.get(key)
-        normalized_level = normalize_ordinal_level(value, zero_based=zero_based_levels)
-        if normalized_level is not None:
-            return normalized_level
-
-    # Try common nested parameter locations.
-    for container_key in ("params", "parameters", "features", "properties", "metadata"):
-        container = record.get(container_key)
-        if isinstance(container, dict):
-            value = container.get(parameter_name)
-            level = nearest_level(parameter_name, value)
-            if level is not None:
-                return level
-
-    value = record.get(parameter_name)
-    level = nearest_level(parameter_name, value)
-    if level is not None:
-        return level
-
-    return None
-
-
-# Helper function to detect if level metadata is zero-based or one-based.
-def detect_zero_based_level_metadata(records: Sequence[Dict[str, Any]]) -> Optional[bool]:
-    """Infer whether explicit level metadata uses 0..4 or 1..5 indexing."""
-    explicit_level_keys = (
-        "wall_level",
-        "wall_r_level",
-        "wall_r_value_level",
-        "roof_level",
-        "roof_r_level",
-        "roof_r_value_level",
-        "heating_level",
-        "hvac_heating_level",
-        "hvac_heating_cop_level",
-        "cooling_level",
-        "hvac_cooling_level",
-        "hvac_cooling_cop_level",
-    )
-    observed_values: List[int] = []
-    for record in records[: min(len(records), 1000)]:
-        for key in explicit_level_keys:
-            value = as_float(record.get(key))
-            if value is not None:
-                observed_values.append(int(round(value)))
-
-    if not observed_values:
-        return None
-    if 0 in observed_values:
-        return True
-    if 5 in observed_values:
-        return False
-    return None
-
-
-def extract_calibration_levels(
-    record: Dict[str, Any], *, zero_based_levels: Optional[bool] = None
-) -> Optional[Dict[str, int]]:
+def extract_calibration_levels(record: Dict[str, Any]) -> Optional[Dict[str, int]]:
+    """Map raw factorial parameter values to one-based ordinal levels 1..5."""
     levels = {
-        "wall": extract_level(
-            record,
-            ("wall_level", "wall_r_level", "wall_r_value_level"),
-            "wall_r_value",
-            zero_based_levels=zero_based_levels,
-        ),
-        "roof": extract_level(
-            record,
-            ("roof_level", "roof_r_level", "roof_r_value_level"),
-            "roof_r_value",
-            zero_based_levels=zero_based_levels,
-        ),
-        "heating": extract_level(
-            record,
-            ("heating_level", "hvac_heating_level", "hvac_heating_cop_level"),
-            "hvac_heating_cop",
-            zero_based_levels=zero_based_levels,
-        ),
-        "cooling": extract_level(
-            record,
-            ("cooling_level", "hvac_cooling_level", "hvac_cooling_cop_level"),
-            "hvac_cooling_cop",
-            zero_based_levels=zero_based_levels,
-        ),
+        "wall": nearest_level("wall_r_value", record.get("wall_r_value")),
+        "roof": nearest_level("roof_r_value", record.get("roof_r_value")),
+        "heating": nearest_level("hvac_heating_cop", record.get("hvac_heating_cop")),
+        "cooling": nearest_level("hvac_cooling_cop", record.get("hvac_cooling_cop")),
     }
     if any(value is None for value in levels.values()):
         return None
@@ -358,10 +243,6 @@ def load_calibration_records() -> List[RawExample]:
     stats_path = find_project_file("energyplus_data/summary_stats.json")
 
     meta_records = flatten_records(read_json(meta_path))
-    zero_based_levels = detect_zero_based_level_metadata(meta_records)
-    if zero_based_levels is not None:
-        basis = "zero-based 0..4" if zero_based_levels else "one-based 1..5"
-        print(f"Detected {basis} calibration level metadata.")
     stat_records = flatten_records(read_json(stats_path))
 
     stats_by_id: Dict[str, Dict[str, Any]] = {}
@@ -378,7 +259,7 @@ def load_calibration_records() -> List[RawExample]:
             skipped += 1
             continue
 
-        levels = extract_calibration_levels(meta_record, zero_based_levels=zero_based_levels)
+        levels = extract_calibration_levels(meta_record)
         stats_record = stats_by_id.get(identifier, {})
         merged = {**stats_record, **meta_record}
 
@@ -431,10 +312,6 @@ def load_calibration_rows_by_k() -> Dict[str, List[RawExample]]:
     stats_path = find_project_file("energyplus_data/summary_stats.json")
 
     meta_records = flatten_records(read_json(meta_path))
-    zero_based_levels = detect_zero_based_level_metadata(meta_records)
-    if zero_based_levels is not None:
-        basis = "zero-based 0..4" if zero_based_levels else "one-based 1..5"
-        print(f"Detected {basis} calibration level metadata.")
     stat_records = flatten_records(read_json(stats_path))
     stats_by_id = {get_identifier(record): record for record in stat_records if get_identifier(record) is not None}
 
@@ -443,7 +320,7 @@ def load_calibration_rows_by_k() -> Dict[str, List[RawExample]]:
 
     for meta_record in meta_records:
         identifier = get_identifier(meta_record)
-        levels = extract_calibration_levels(meta_record, zero_based_levels=zero_based_levels)
+        levels = extract_calibration_levels(meta_record)
         if identifier is None or levels is None:
             skipped += 1
             continue
@@ -471,23 +348,20 @@ def load_calibration_rows_by_k() -> Dict[str, List[RawExample]]:
 
     for k_name, rows in rows_by_k.items():
         if not rows:
+            print(
+                f"No calibration rows found for {k_name}. This usually means raw factorial "
+                "parameter values were not mapped to ordinal levels correctly. Check that "
+                "PARAM_LEVELS matches factorial_meta.json."
+            )
             raise RuntimeError(f"No calibration rows found for {k_name}.")
-        if rows:
-            example_ids_preview = ", ".join(row.example_id for row in rows[:3])
-            print(f"{k_name}: example preview: {example_ids_preview}")
+        example_ids_preview = ", ".join(row.example_id for row in rows[:3])
+        print(f"{k_name}: example preview: {example_ids_preview}")
         expected = len(LEVEL_SETS[k_name]) ** 4
         print(f"{k_name}: loaded {len(rows)} calibration rows; expected approximately {expected}.")
 
     if skipped:
         print(f"Skipped {skipped} calibration rows while filtering by k.")
 
-    if not rows_by_k["k2"]:
-        print(
-            "No k2 rows were found. This usually means the metadata keys used for "
-            "factorial levels do not match the extraction logic. Inspect the first "
-            "few records in energyplus_data/factorial_meta.json and update "
-            "extract_calibration_levels accordingly."
-        )
 
     return rows_by_k
 
