@@ -112,7 +112,11 @@ def write_json(path: Path, value: Any) -> None:
 
 def find_project_file(relative_path: str) -> Path:
     """Find a project artifact from likely working-directory locations."""
-    candidates = [Path(relative_path), Path("..") / relative_path]
+    candidates = [
+        Path(relative_path),
+        Path("..") / relative_path,
+        Path("../energyplus_data") / Path(relative_path).name,
+    ]
     for candidate in candidates:
         if candidate.exists():
             return candidate
