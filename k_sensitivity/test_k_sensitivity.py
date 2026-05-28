@@ -199,38 +199,61 @@ def extract_calibration_levels(record: Dict[str, Any]) -> Optional[Dict[str, int
         return None
     return {key: int(value) for key, value in levels.items() if value is not None}
 
+def resolve_sim_block(record: Dict[str, Any], sim_var: str) -> Optional[Any]:
+    if sim_var in record:
+        return record[sim_var]
+
+    wanted = sim_var.strip()
+
+    by_stripped = {str(k).strip(): v for k, v in record.items()}
+    if wanted in by_stripped:
+        return by_stripped[wanted]
+
+    by_lower = {str(k).strip().lower(): v for k, v in record.items()}
+    if wanted.lower() in by_lower:
+        return by_lower[wanted.lower()]
+
+    matches = [
+        (str(k), v)
+        for k, v in record.items()
+        if str(k).strip().endswith(wanted)
+    ]
+    if len(matches) == 1:
+        return matches[0][1]
+    if len(matches) > 1:
+        return sorted(matches, key=lambda item: len(item[0]))[0][1]
+
+    return None
 
 def extract_stat_value(record: Dict[str, Any], feature_candidates: Sequence[str]) -> Optional[float]:
-    """Extract a scalar simulation statistic from common summary-stat shapes."""
-    # Flat direct keys.
-    for candidate in feature_candidates:
-        value = as_float(record.get(candidate))
-        if value is not None:
-            return value
+    stat_keys = ("mean", "average", "avg", "value", "min", "max", "std")
 
-    # Common nested features shape: {features: {name: {average: ...}}}
+    for candidate in feature_candidates:
+        block = resolve_sim_block(record, candidate)
+        if isinstance(block, dict):
+            for stat_key in stat_keys:
+                numeric_value = as_float(block.get(stat_key))
+                if numeric_value is not None:
+                    return numeric_value
+        else:
+            numeric_value = as_float(block)
+            if numeric_value is not None:
+                return numeric_value
+
     for container_key in ("features", "summary", "summary_stats", "stats", "outputs"):
         container = record.get(container_key)
         if not isinstance(container, dict):
             continue
+
         for candidate in feature_candidates:
-            value = container.get(candidate)
-            if isinstance(value, dict):
-                for stat_key in ("average", "mean", "avg", "value"):
-                    numeric_value = as_float(value.get(stat_key))
+            block = resolve_sim_block(container, candidate)
+            if isinstance(block, dict):
+                for stat_key in stat_keys:
+                    numeric_value = as_float(block.get(stat_key))
                     if numeric_value is not None:
                         return numeric_value
             else:
-                numeric_value = as_float(value)
-                if numeric_value is not None:
-                    return numeric_value
-
-    # Shape from some EnergyPlus summaries: {feature_name: {average: ...}}
-    for candidate in feature_candidates:
-        value = record.get(candidate)
-        if isinstance(value, dict):
-            for stat_key in ("average", "mean", "avg", "value"):
-                numeric_value = as_float(value.get(stat_key))
+                numeric_value = as_float(block)
                 if numeric_value is not None:
                     return numeric_value
 
