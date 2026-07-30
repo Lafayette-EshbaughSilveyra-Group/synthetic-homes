@@ -377,7 +377,7 @@ def generate_geojson_and_note(house_data: Dict[str, Any], image_path: str, sketc
             .get("geometry")
         )
 
-    # ----- API Call + Geometry Validation -----
+    # ----- API Call + Area Validation -----
     max_generation_attempts = 6
     last_error = None
 

@@ -38,7 +38,6 @@ def merge_dataset(dataset_dir: str = "dataset") -> None:
     rows = []
     for home in glob.glob(os.path.join(dataset_dir, "*")):
         try:
-            label = json.load(open(os.path.join(home, "label.json")))
             results = json.load(open(os.path.join(home, "results.json")))
             note = json.load(open(os.path.join(home, "cleaned.geojson")))["features"][0]["properties"]["inspection_note"]
 
@@ -50,7 +49,6 @@ def merge_dataset(dataset_dir: str = "dataset") -> None:
             row = {
                 "home_id": os.path.basename(home),
                 "inspection_note": note,
-                **label,
 
                 # Summary stats
                 "air_temp_avg": air["average"],

@@ -7,15 +7,14 @@ This project builds a synthetic dataset for urban energy analysis using publicly
 2. **Generates** GeoJSON building footprints and inspection reports via OpenAI's API.
 3. **Converts** GeoJSON to IDF format for EnergyPlus simulation.
 4. **Runs** EnergyPlus simulations to produce energy performance outputs.
-5. **Labels** the simulation outputs and inspection reports using OpenAI's API or heuristics.
 
 Additionally, **occlusion experiments** analyze model sensitivity to localized image changes for robustness analysis.
 
 ---
 
-## Publication
+## Publications
 
-Jackson Eshbaugh, Chetan Tiwari, Jorge Silveyra. _Synthetic Homes: A Multimodal Generative AI Pipeline for Residential Building Generation Under Data Scarcity_. [arXiv:2509.09794](https://arxiv.org/abs/2509.09794).
+Jackson Eshbaugh, Chetan Tiwari, Jorge Silveyra. _Synthetic Homes: A Multimodal Generative AI Pipeline for Residential Building Generation under Data Scarcity_. [arXiv:2509.09794](https://arxiv.org/abs/2509.09794).
 
 ```bibtex
 @misc{eshbaugh2025modularmultimodalgenerativeai,
@@ -29,6 +28,8 @@ Jackson Eshbaugh, Chetan Tiwari, Jorge Silveyra. _Synthetic Homes: A Multimodal 
 }
 ```
 
+**Note**: We are continuing work on this pipeline and developing tools that can be used to enhance it. Stay posted for additional publications as we continue this work. We will list them below as they appear.
+
 ---
 
 ## Pipeline Flow
@@ -41,11 +42,8 @@ graph TD
   C --Home Floor Plan Description--> D
   A --Home Data--> D
   D --GeoJSON--> E[EnergyPlus]
-  D --Home Inspection Notes--> F["GPT-4-mini"]
-  E --Simulation Results--> G["Heuristic Labeler (Eq. 1)"]
-  G --> H["Weighted Sum (Eq. 2)"]
-  F --> H
-  H --> I["Results"] 
+  D --> F["Home Inspection Notes"]
+  E --> G["Simulation Results"]
 ```
 _Figure 1_: Flow of data through the dataset generation pipeline.
 
@@ -59,7 +57,6 @@ python3 -m venv venv
 # Activate the environment
 source venv/bin/activate
 ```
-
 
 ## Install dependencies:
 
@@ -87,27 +84,17 @@ Copy `.env.example` to `.env` and add your OpenAI API key:
 OPENAI_API_KEY=your-api-key-here
 ```
 
-## Prepare the Labeler
-
-Our labeler uses scalers to determine how to weigh different scores. Here, we prepare these scalers. You can either choose to initialize these in the `run.sh` script (Generate factorial data & Build scalers) or run it manually:
-
-```bash
-# Build calibration sims
-python3 src/main.py --mode generate-factorial
-python3 src/main.py --mode build-scalers
-```
-
 ## Running the Pipeline
 
 ### Option 1: Run with interactive script
 ```bash
 chmod +x run.sh    # Only once after cloning
-./run.sh           # Choose from pipeline, experiments, occlusion
+./run.sh           # Choose from pipeline, pipeline-no-scrape, occlusion
 ```
 
 ### Option 2: Run manually:
 ```bash
-# <mode> is either "pipeline", "pipeline-no-scrape", "experiments", "occlusion", "generate-factorial", or "build-scalers". Each of these correspond to an option in the main menu (`run.sh`)
+# <mode> is either "pipeline", "pipeline-no-scrape", or "occlusion". Each of these correspond to an option in the main menu (`run.sh`)
 python3 src/main.py --mode <mode>
 ```
 
@@ -124,14 +111,13 @@ Option 2 is useful for running tasks in the background, as option 1 requires use
 
 ## Outputs
 
-| $X$ (Input Data) | $Y$ (Ground Truth) |
-|------------------|--------------------|
-| `dataset/*/results.json` — EnergyPlus simulation results | `dataset/*/label.json` — Data labels $\in \mathbb{R}^2$ |
-| `dataset/*/cleaned.geojson["features"][0]["inspection_note"]` — synthetically generated inspection note | |
-| `results/final_dataset.jsonl` — all inputs and outputs | `results/final_dataset_summary.csv` — summary statistics |
+- **Individual (Per Synthetic Home):**
+  - EnergyPlus simulation results (`dataset/*/results.json`)
+  - Synthetically generated inspection note (`dataset/*/cleaned.geojson["features"][0]["inspection_note]`)
+- **Full Dataset**: `results/final_dataset.jsonl`, `results/final_dataset_summary.csv`
 
 > **Note**: All outputs are compiled into `final_dataset.jsonl` and `final_dataset_summary.csv` inside the `results/` directory for the entire dataset.
-
+---
 
 ## Experiments
 
@@ -140,13 +126,3 @@ Option 2 is useful for running tasks in the background, as option 1 requires use
 Occlusion and reverse occlusion tests are used to evaluate how models process images. Specifically, occlusion measures _necessity_—how important a region of an image is to produce the output—by masking each region of the input and comparing the model's output on this masked image to the output from the unmodified image. This produces a heatmap.
 
 Reverse occlusion (sometimes referred to as inclusion) measures _sufficiency_—if a feature or subset of the input alone leads the model to make the same prediction, then that feature is sufficient for the model’s decision. This testing is performed by masking everything except a given portion of the image and comparing to a baseline, like the above.
-
-### Ablation
-
-In ablation testing, we try to determine importance of each modality that is passed into the model. This is important as the embedders for each type of modality are unique and they need to be balanced with respect to each other. As such, we:
-
-1. Test only text input sensitivity (constant simulation input)
-2. Test only simulation input sensitivity (constant text input)
-3. Test both inputs together, in a bad/bad, good/bad, bad/good, good/good arrangement.
-
-More details can be found in `experiments.md`.

@@ -6,17 +6,12 @@ import os
 from eppy.modeleditor import IDF
 from openai import OpenAI
 
-from pipeline.build_concept_scaler import build_concept_scaler
-from pipeline.generate_full_factorial import generate
 from pipeline.scraper import scrape_all_records_on_street, delete_folders_without_jpg_or_png, init_driver
 from pipeline.geometry_generation import run_generation_for_dataset, clean_gpt_geojson_for_all_entries
 from pipeline.idf_generation import transform_dataset
 from pipeline.energyplus_runner import simulate_all_homes
-from pipeline.postprocessing import run_postprocessing_for_dataset
 from pipeline.dataset_merging import merge_dataset
 
-from experiments.run_experiments import RESULTS_DIR, main as run_experiments
-import experiments.plot_results as plot_results
 from experiments.occlusion import run_occlusions
 
 import config
@@ -42,7 +37,6 @@ def run_pipeline(client, scrape=True):
 
     transform_dataset(dataset_folder=str(OUTPUT_DIR), weather_station=config.WEATHER_STATION)
     simulate_all_homes(str(OUTPUT_DIR))
-    run_postprocessing_for_dataset(str(OUTPUT_DIR), client)
     merge_dataset(str(OUTPUT_DIR))
 
 
@@ -56,8 +50,7 @@ if __name__ == "__main__":
     print("[SETUP] Initialized OpenAI")
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--mode", choices=["pipeline", "pipeline-no-scrape", "experiments", "occlusion", "generate-factorial", "build-scalers"], default="pipeline",
-                        help="Run full pipeline, experiments, or occlusion tests.")
+    parser.add_argument("--mode", choices=["pipeline", "pipeline-no-scrape", "occlusion"], default="pipeline", help="Run full pipeline, experiments, or occlusion tests.")
     args = parser.parse_args()
 
     print(f"[MODE] Running Mode: {args.mode}")
@@ -66,13 +59,5 @@ if __name__ == "__main__":
         run_pipeline(client)
     elif args.mode == "pipeline-no-scrape":
         run_pipeline(client, scrape=False)
-    elif args.mode == "experiments":
-        run_experiments(client)
-        plot_results.main(RESULTS_DIR)
     elif args.mode == "occlusion":
         run_occlusions.run_occlusion_suite()
-    elif args.mode == "generate-factorial":
-        generate(epw="../../weather/KMSP.epw")
-    elif args.mode == "build-scalers":
-        build_concept_scaler("hvac", "Electricity:HVAC [J](Hourly)", "mean")
-        build_concept_scaler("insulation", "Heating Coil Heating Energy [J](Hourly)", "mean")
