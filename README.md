@@ -1,4 +1,4 @@
-# Urban Energy Data Pipeline
+# Synthetic Homes
 
 ## Overview
 This project builds a synthetic dataset for urban energy analysis using publicly available assessor data, AI models (including OpenAI GPT and LLaVA), and simulation tools. The pipeline:
@@ -14,17 +14,20 @@ Additionally, **occlusion experiments** analyze model sensitivity to localized i
 
 ## Publications
 
-Jackson Eshbaugh, Chetan Tiwari, Jorge Silveyra. _Synthetic Homes: A Multimodal Generative AI Pipeline for Residential Building Generation under Data Scarcity_. [arXiv:2509.09794](https://arxiv.org/abs/2509.09794).
+Jackson Eshbaugh, Chetan Tiwari, Jorge Silveyra, “Synthetic homes: A multimodal generative AI pipeline for residential building data generation under data scarcity”,
+_Machine Learning with Applications_, Volume 25, 2026. **DOI:** [10.1016/j.mlwa.2026.100959](https://doi.org/10.1016/j.mlwa.2026.100959)
 
 ```bibtex
-@misc{eshbaugh2025modularmultimodalgenerativeai,
-      title={Synthetic Homes: A Multimodal Generative AI Pipeline for Residential Building Generation Under Data Scarcity}, 
-      author={Jackson Eshbaugh and Chetan Tiwari and Jorge Silveyra},
-      year={2026},
-      eprint={2509.09794},
-      archivePrefix={arXiv},
-      primaryClass={cs.AI},
-      url={https://arxiv.org/abs/2509.09794}, 
+@article{Eshbaugh2026Synthetic,
+title = {Synthetic homes: A multimodal generative AI pipeline for residential building data generation under data scarcity},
+journal = {Machine Learning with Applications},
+volume = {25},
+pages = {100959},
+year = {2026},
+issn = {2666-8270},
+doi = {https://doi.org/10.1016/j.mlwa.2026.100959},
+url = {https://www.sciencedirect.com/science/article/pii/S2666827026001246},
+author = {Jackson Eshbaugh and Chetan Tiwari and Jorge Silveyra},
 }
 ```
 
